@@ -269,7 +269,7 @@ iex> :erlang.iolist_to_binary ["zzz" | [[["a"] | "b"] | "c"]]
 "zzzabc"
 ```
 
-There's an article by Evan Miller called [Elixir RAM and the Template of DOOM](https://www.evanmiller.org/elixir-ram-and-the-template-of-doom.html) that does a really good job on demonstrating the issues with concatenating lots of repeated data and how IO lists can greatly increase performance in those cases.
+There's an article by Evan Miller called [Elixir RAM and the Template of DOOM](https://www.evanmiller.org/elixir-ram-and-the-template-of-doom.html) that does a really good job at demonstrating the issues with concatenating lots of repeated data and how IO lists can greatly increase performance in those cases.
 
 ## Summary
 
