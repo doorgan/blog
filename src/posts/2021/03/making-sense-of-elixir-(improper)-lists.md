@@ -1,5 +1,5 @@
 ---
-title: "making sense of elixir (improper) lists"
+title: "Making sense of Elixir (improper) lists"
 date: "2021-03-03"
 tags:
   - elixir
@@ -52,7 +52,7 @@ iex> [list | 5]
 [[1, 2, 3, 4] | 5]
 ```
 
-But it's still now what we want.
+But it's still not exactly what we want.
 
 If we search the internets, we would probably find an answer like:
 
