@@ -3,4 +3,4 @@ layout: default
 title: This is me.
 ---
 
-She/her. A software person. Singapore.
+I live in a small town in Argentina. I write Elixir for fun :)
