@@ -54,7 +54,7 @@ iex> [list | 5]
 
 But it's still not exactly what we want.
 
-If we search the internets, we would probably find an answer like:
+Waht does the `|` even mean here? If we search the internets, we would probably find an answer like:
 
 > What you see there is an improper list. (linked) Lists in elixir are made of a term and a pointer to the next element in the linked list, called a cons cell. Lists where the second element of the last cell is not the empty list is called an improper list.
 
