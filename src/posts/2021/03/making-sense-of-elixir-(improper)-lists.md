@@ -278,3 +278,14 @@ Lists, both proper and improper, are made of two basic types in the BEAM: cons c
 When appending to lists with the `++` operator, we have to make sure that the right hand side is also a list, otherwise we will accidentally create an improper lists. Despite of this minor annoyance, improper lists are a very important data structure in the BEAM, and we can see them in action in the creation of IO Lists.
 
 At the end of the day, most of the details explained in this article aren't needed for your day to day Elixir coding, but I hope this knowledge will provide you with a more solid understanding of the language constructs, so the next time you see the `|` in your lists you will know how to *proper*ly read it.
+
+## References
+- [Elixir docs: List](https://hexdocs.pm/elixir/List.html)
+- [Cons - Wikipedia](https://en.wikipedia.org/wiki/Cons)
+- [Elixir term ordering](https://hexdocs.pm/elixir/master/operators.html#term-ordering)
+- [Erlang term comparisons](https://erlang.org/doc/reference_manual/expressions.html#term-comparisons)
+- [Data Types Memory Layout](http://beam-wisdoms.clau.se/en/latest/indepth-memory-layout.html)
+- [is_nil BEAM opcode for Elixirists](https://www.youtube.com/watch?v=nebDOqU0TJ0)
+- [BEAM Instruction codes](http://beam-wisdoms.clau.se/en/latest/indepth-beam-instructions.html)
+- [James Edward Gray II on using improper lists to quickly append elements](https://elixirforum.com/t/weird-sasl-lists-and-can-i-rely-on-kernel-is-list/470/7)
+- [Elixir RAM and the Template of DOOM](https://www.evanmiller.org/elixir-ram-and-the-template-of-doom.html)
