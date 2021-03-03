@@ -198,13 +198,13 @@ But since lists are a essentially nested cons cells, nothing stops us from creat
 
 ### Improper lists
 
-So, improper lists are just lists that lack the `[]` as a tail for their last cons cell. We could even argue that improper lists are any combination of cons cells that are not a list. For example, `[[1 | 2] | [3 | 4]]` is an improper list, but it's also a representation of the following binary tree:
+So, improper lists are just lists that lack the `[]` as a tail for their last cons cell. We could even argue that improper lists are any combination of cons cells that are not a list. For example, `[[1 | 2] | 3]` is an improper list, but it's also a representation of the following binary tree:
 ```
    *
   / \
- *   *
-/ \ / \
-1 2 3 4
+ *   3
+/ \
+1 2
 ```
 
 When we use the `++` operator, replaces the terminal element of the left hand side with the value of the right hand side. If we have the list `[1, 2]`, that is `[1 | [2 | []]]` written as cons cells, and we want to append `[3, 4]` to it, what happens when you do `[1, 2] ++ [3, 4]` is that the `[]` in `[2 | []]` get's replaced by `[3, 4]`, resulting in the list `[1, 2, 3, 4]`(remember how we said cons cells make it easy to connect the tail of a cons cell to an existing list?). To do this, the entire list at the left hand side needs to be traversed until the end, so appends will have a linear time complexity.
