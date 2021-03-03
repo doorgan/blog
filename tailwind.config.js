@@ -1,6 +1,6 @@
 module.exports = {
-  darkMode: 'class',
-  purge: ['./src/**/*.md', './_includes/**/*.liquid'],
+  darkMode: "class",
+  purge: ["./src/**/*.md", "./_includes/**/*.liquid"],
   theme: {
     extend: {
       typography: (theme) => ({
@@ -8,9 +8,9 @@ module.exports = {
           css: {
             color: "white",
             a: {
-              color: "#9ECE6A",
+              color: "#da77ff",
               "&:hover": {
-                color: "#9ECE6A",
+                color: "#da77ff",
               },
             },
             h1: {
@@ -50,16 +50,14 @@ module.exports = {
               backgroundColor: "white",
             },
           },
-        }
-      })
+        },
+      }),
     },
   },
   variants: {
     extend: {
-      typography: ['dark']
-    }
+      typography: ["dark"],
+    },
   },
-  plugins: [
-    require('@tailwindcss/typography')
-  ],
-}
+  plugins: [require("@tailwindcss/typography")],
+};
