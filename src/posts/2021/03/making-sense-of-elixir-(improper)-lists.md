@@ -74,7 +74,7 @@ The Elixir docs on lists provide a similar description:
 [1, 2, 3 | 4]
 ```
 
-With this knowledge, we could say to ourselves that "If we want to append to a list, we need to make sure the last element is a list too", write something in the lines of `list ++ [5]` andn call it a day. So, in a nutshell, lists are linked lists, the last element of the last cell needs to be the empty list in order to be a _proper_ list, otherwise it's an _improper_ list, and most of the time you don't want improper lists.
+With this knowledge, we could say to ourselves that "If we want to append to a list, we need to make sure the last element is a list too", write something in the lines of `list ++ [5]` and call it a day. So, in a nutshell, lists are linked lists, the last element of the last cell needs to be the empty list in order to be a _proper_ list, otherwise it's an _improper_ list, and most of the time you don't want improper lists.
 
 Why does Elixir allow us to build improper lists so easily -accidentally even- if we are almost immediately told to not use them? What's their purpose?
 
