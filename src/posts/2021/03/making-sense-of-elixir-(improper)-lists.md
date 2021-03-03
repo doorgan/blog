@@ -261,7 +261,7 @@ We can also prepend to this improper list in constant time:
 ["zzz" | [[["a"] | "b"] | "c"]]
 ```
 
-When we have this kind of combination of cons cells, where the terminals are either printable ASCII codepoints and binaries, with arbitraty nesting, we have what's known as an IO List. At first they may seem like a lot of gibberish, with lots of nesting and hard to traverse. In most cases this is true, but when you need to join a large number of binaries where there may also be a lot of repetition, this technique has huge benefits. Moreover, many of the lower level erlang functions know how to handle iolists, so the nesting isn't an issue.
+When we have this kind of combination of cons cells, where the terminals are either printable ASCII codepoints or binaries, with arbitrary nesting, we have what's known as an IO List. At first they may seem like a lot of gibberish, with lots of nesting and hard to traverse. In most cases this is true, but when you need to join a large number of binaries where there may also be a lot of repetition, this technique has huge benefits. Moreover, many of the lower level erlang functions know how to handle iolists, so the nesting isn't an issue.
 
 For instance the above io list can be printed as a binary by doing:
 ```elixir
