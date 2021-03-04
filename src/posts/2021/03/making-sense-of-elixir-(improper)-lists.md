@@ -6,7 +6,7 @@ tags:
   - elixir
 ---
 
-Deep dive into Elixir lists, trying to understand improper lists from first principles.
+A deep dive into the implementation of lists in Elixir
 
 <!-- excerpt -->
 
