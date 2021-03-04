@@ -209,6 +209,13 @@ Improper lists are just lists that lack the `[]` as a tail for their last cons c
 
 When we use the `++` operator, it replaces the terminal element of the left hand side with the value of the right hand side. If we have the list `[1, 2]`, that is `[1 | [2 | []]]` written as cons cells, and we want to append `[3, 4]` to it, what happens when you do `[1, 2] ++ [3, 4]` is that the `[]` in `[2 | []]` get's replaced by `[3, 4]`, resulting in the list `[1, 2, 3, 4]`(remember how we said cons cells make it easy to connect the tail of a cons cell to an existing list?). To do this, the entire list at the left hand side needs to be traversed until the end, so appends will have a linear time complexity.
 
+If we were to write our own append function, it would look something like this:
+```
+def append([head | []], list), do: [head | list]
+def append([head | tail], list), do: [head | append(tail, list)]
+```
+We recurse over the list, and we replace the terminal `[]` with the list to be appended.
+
 Prepending to a list is even easier, as we just need to create a new cons cell that points to an existing list:
 
 ```elixir
