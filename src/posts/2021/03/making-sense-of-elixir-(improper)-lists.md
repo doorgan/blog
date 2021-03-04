@@ -115,13 +115,14 @@ This was showcased at the start of the article, but note this time we are workin
 
 We could ask ourselves "why use cons cells when they're identical 2-tuples? Why not just have tuples?". The main difference lies in their memory layout, as explained in [BEAM VM Wisdoms](http://beam-wisdoms.clau.se/en/latest/indepth-memory-layout.htm).
 
-On one hand, cons cells in the heap use two memory words pointing to the head and the tail respectively. In the case of lists the tail points to the next cons cell, thus connecting the tail of a cons cell to an existing list and reusing existing data becomes easy. Consider the lists `a = [1 | [2 | []]]` and `b = [3 | [4 | []]]`. If we want to join them, we just need to replace inner tail in `a` with `b`, ie *connecting the tail to an existing list*. By doing this just one cons cell is "changed" and the second list is reused to create a bigger list.
+On one hand, cons cells in the heap use two memory words pointing to the head and the tail respectively. In the case of lists the tail points to the next cons cell, thus connecting the tail of a cons cell to an existing list and reusing existing data becomes easy. Consider the lists `a = [1 | [2 | []]]` and `b = [3 | [4 | []]]`. If we want to join them, we just need to replace inner tail in `a` with `b`, ie _connecting the tail to an existing list_. By doing this just one cons cell is "changed" and the second list is reused to create a bigger list.
 
 On the other hand, a tuple uses one word in the heap as a header and the rest of the words correspond to the tuple's elements. This allows tuples to have constant time access at an arbitrary index, but makes changing it's size a more expensive operation. Consider the tuple `{1, 2, 3}`. Since the tuple elements are stored in contiguous places in memory, if we want to add or remove an element to it a new memory space needs to be allocated, the tuple contents copied into them, and a new header is also required. For this reason tuples are mostly used for collections of fixed size and other data structures are utilized when dealing with collections of dynamic length.
 
 Because cons cells lack a header word, they also use less memory, which makes them more convenient for large collections than 2-tuples.
 
 A quick and dirty demonstration of this difference can be done with `:erts_debug.size/1`, which returns the size of a term in words:
+
 ```
 iex> :erts_debug.size([:a |:b])
 2
@@ -142,6 +143,7 @@ If we have the elements `1`, `2` and `3`, then `1` would point to `2` and then t
 In lisp and functional programming jargon, this terminal element is usually called `nil`. Adding it to our typespec it would become `list :: nil | [term | list]`, which reads as "A list is either nil(the terminal element), or a cons cell where the head is any term and the tail is a list". In languages that make use of Algebraic Data Types like Haskell, the type signature would be `List a = Nil | Cons a (List a)` which essentially means the same thing. In Erlang syntax, `nil` would be interpreted as an atom, but since in this context `nil` is a special type and not an atom, it is represented by a pair of square brackets `[]`, which is also close to the lisp notation `()`. Therefore the spec would really look like `list :: [] | [term | list]`.
 
 The recursive nature of the data structure hints us to a recursive solution if we want to traverse it. For example, if we wanted to write a function to find an element that matches a predicate, it would look like this:
+
 ```elixir
 def find([], _), do: {:error, :not_found}
 def find([head | tail], predicate) do
@@ -158,6 +160,7 @@ Note that the function headers match the two possible values for a list: a cons 
 In Erlang there's no concept of `nil` like in Elixir to denote the absence of a value. Moreover, `nil` is just an atom in both languages, but Elixir gives it a special meaning. In Elixir `nil` is an atom with the special property of being, in combination with the atom `false`, the only falsy values in the language. It's also used as a convention to represent the absence of a value, but this convention does not exist in Erlang.
 
 The `[]` value is normally called _empty list_, and visually it looks like one, but in reality it's a special value whose only purpose is to be the terminal element for this kind of recursive data structures. If you try to check that `[]` is a list, you would get a positive result:
+
 ```elixir
 iex> is_list([])
 true
@@ -197,6 +200,7 @@ But since lists are a essentially nested cons cells, nothing stops us from creat
 ### Improper lists
 
 Improper lists are just lists that lack the `[]` as a tail for their last cons cell. If we define improper lists as the opposite of a proper list, then we could say that improper lists are any combination of cons cells that are not a list. For example, `[[1 | 2] | 3]` is an improper list, but since it's just an arrangement of pairs, if we squint our eyes enough it's also a representation of the following binary tree:
+
 ```
    *
   / \
@@ -210,10 +214,12 @@ Improper lists are just lists that lack the `[]` as a tail for their last cons c
 When we use the `++` operator, it replaces the terminal element of the left hand side with the value of the right hand side. If we have the list `[1, 2]`, that is `[1 | [2 | []]]` written as cons cells, and we want to append `[3, 4]` to it, what happens when you do `[1, 2] ++ [3, 4]` is that the `[]` in `[2 | []]` get's replaced by `[3, 4]`, resulting in the list `[1, 2, 3, 4]`(remember how we said cons cells make it easy to connect the tail of a cons cell to an existing list?). To do this, the entire list at the left hand side needs to be traversed until the end, so appends will have a linear time complexity.
 
 If we were to write our own append function, it would look something like this:
-```
+
+```elixir
 def append([head | []], list), do: [head | list]
 def append([head | tail], list), do: [head | append(tail, list)]
 ```
+
 We recurse over the list, and we replace the terminal `[]` with the list to be appended.
 
 Prepending to a list is even easier, as we just need to create a new cons cell that points to an existing list:
