@@ -15,9 +15,7 @@
     <meta name="twitter:site" content="@{{ site.author.twitterHandle }}">
     <meta name="twitter:creator" content="@{{ site.author.twitterHandle }}">
   
-    {% if image %}
-      <meta property="og:image" content="{{ image }}">
-    {% endif %}
+    <meta property="og:image" content="{{ image | default: site.image }}">
 
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
 
@@ -33,8 +31,7 @@
       if (isDarkMode()) {
         document.documentElement.classList.add('dark')
       } else {
-        document.documentElement.classList.remove('dark')
-      }
+        document.documentElement.classList.remove('dark'))
     </script>
   </head>
 

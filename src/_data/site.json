@@ -3,6 +3,7 @@
     "url": "https://dorgan.netlify.app",
     "title": "Dorgan's blog",
     "description": "Welcome to my blog",
+    "image": "/assets/img/favicon/favicon-192x192.png",
     "github": "https://github.com/doorgan",
     "twitter": "",
     "linkedin": "",

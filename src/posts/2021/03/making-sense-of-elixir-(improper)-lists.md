@@ -141,6 +141,7 @@ If we have the elements `1`, `2` and `3`, then `1` would point to `2` and then t
 In lisp and functional programming jargon, this terminal element is usually called `nil`. Adding it to our typespec it would look like this: `list :: nil | [term | list]`, which reads as "A list is either the terminal element, or a cons cell where the head is any term and the tail is a list". In Erlang there's no concept of `nil` as in Elixir, in fact `nil` is just an atom in both languages. Because of this, the terminal element `nil` is represented by a pair of square brackets `[]`, and so the spec would really look like `list :: [] | [term | list]`.
 
 The recursive nature of the data structure hints us to a recursive solution if we want to traverse it. For example, if we wanted to write a function to find an element that matches a predicate, it would look like this:
+
 ```elixir
 def find([], _), do: {:error, :not_found}
 def find([head | tail], predicate) do
@@ -170,14 +171,14 @@ That's because `[]` is one of the two possible values for a list(remember the de
 In the elixir docs we are told this:
 
 > The reason we can compare different data types is pragmatism. Sorting algorithms don’t need to worry about different data types in order to sort. The overall sorting order is defined below:
-> 
+>
 > `number < atom < reference < function < port < pid < tuple < map < list < bitstring`
 
 So far we don't see anything weird: `list` is the only list type mentioned, so we could think that `[]` is indeed a list, nothing seems to say the opposite.
 However, if we look at the same explanation but in the Erlang docs:
 
 > The following order is defined:
-> 
+>
 > `number < atom < reference < fun < port < pid < tuple < map < nil < list < bit string`
 
 There's a subtle difference: there's an additional type, `nil`, that's listed as a separate type from `list`. The docs further explain:
@@ -199,6 +200,7 @@ But since lists are a essentially nested cons cells, nothing stops us from creat
 ### Improper lists
 
 So, improper lists are just lists that lack the `[]` as a tail for their last cons cell. We could even argue that improper lists are any combination of cons cells that are not a list. For example, `[[1 | 2] | 3]` is an improper list, but it's also a representation of the following binary tree:
+
 ```
    *
   / \
@@ -210,11 +212,13 @@ So, improper lists are just lists that lack the `[]` as a tail for their last co
 When we use the `++` operator, it replaces the terminal element of the left hand side with the value of the right hand side. If we have the list `[1, 2]`, that is `[1 | [2 | []]]` written as cons cells, and we want to append `[3, 4]` to it, what happens when you do `[1, 2] ++ [3, 4]` is that the `[]` in `[2 | []]` get's replaced by `[3, 4]`, resulting in the list `[1, 2, 3, 4]`(remember how we said cons cells make it easy to connect the tail of a cons cell to an existing list?). To do this, the entire list at the left hand side needs to be traversed until the end, so appends will have a linear time complexity.
 
 Prepending to a list is even easier, as we just need to create a new cons cell that points to an existing list:
+
 ```elixir
 iex> list = [1, 2, 3]
 iex> [0 | list]
 [0, 1, 2, 3]
 ```
+
 Cons cells creation is done in constant time, so this is the reason why people say prepending to a linked list is faster.
 
 If we try to append `3` to `[1, 2]`, doing `[1, 2] ++ 3` will return `[1, 2 | 3]`; the `[]` was replaced by `3`, thus turning it into an improper list, as hinted by the `|` at the end. In general, whenever you see the pipe at the end of a list it means you've done something wrong and accidentally created an improper list.
@@ -229,6 +233,7 @@ We said that appending to a linked list has linear time complexity. This means t
 Let's say we're building a large list by appending elements to it to write to a file or any other kind of IO operation. For the sake of demonstration we'll just use a sequence of strings, essentially rebuilding the list we were given as input, but in real life this would be some non trivial data, like the results of compiling a phoenix template.
 
 A first approximation would be:
+
 ```elixir
 Enum.reduce(~w[a b c d e f], [], fn n, acc ->
   acc ++ [n]
@@ -237,6 +242,7 @@ end)
 ```
 
 However, we're traversing the whole accumulator in each iteration. We could do better by building the list in reverse and correcting the ordering afterwards:
+
 ```elixir
 Enum.reduce(~w[a b c d e f], [], fn n, acc ->
   [n | acc]
@@ -244,9 +250,11 @@ end)
 |> Enum.reverse()
 ["a", "b", ...]
 ```
+
 However, this would still be slow for very large lists.
 
 Luckily, there's a clever trick we can use by taking advantage of improper lists. Remember that lists are basically nested cons cells, and that the creation of cons cells happens in constant time. We could exploit this fact by consing the new elements at the tail instead of the head:
+
 ```elixir
 Enum.reduce(~w[a b c d e f], [], fn n, acc ->
   [acc | n]
@@ -257,6 +265,7 @@ end)
 Of course this is no longer a proper list and we end up with a funny nesting at the head of the cons cells, but we're able to append elements in constant time!
 
 We can also prepend to this improper list in constant time:
+
 ```elixir
 ["zzz" | [[["a"] | "b"] | "c"]]
 ```
@@ -264,6 +273,7 @@ We can also prepend to this improper list in constant time:
 When we have this kind of combination of cons cells, where the terminals are either printable ASCII codepoints or binaries, with arbitrary nesting, we have what's known as an IO List. At first they may seem like a lot of gibberish, with lots of nesting and hard to traverse. In most cases this is true, but when you need to join a large number of binaries where there may also be a lot of repetition, this technique has huge benefits. Moreover, many of the lower level erlang functions know how to handle iolists, so the nesting isn't an issue.
 
 For instance the above io list can be printed as a binary by doing:
+
 ```elixir
 iex> :erlang.iolist_to_binary ["zzz" | [[["a"] | "b"] | "c"]]
 "zzzabc"
@@ -280,6 +290,7 @@ When appending to lists with the `++` operator, we have to make sure that the ri
 At the end of the day, most of the details explained in this article aren't needed for your day to day Elixir coding, but I hope this knowledge will provide you with a more solid understanding of the language constructs, so the next time you see the `|` in your lists you will know how to *proper*ly read it.
 
 ## References
+
 - [Elixir docs: List](https://hexdocs.pm/elixir/List.html)
 - [Cons - Wikipedia](https://en.wikipedia.org/wiki/Cons)
 - [Elixir term ordering](https://hexdocs.pm/elixir/master/operators.html#term-ordering)
