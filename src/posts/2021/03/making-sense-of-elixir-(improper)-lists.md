@@ -1,6 +1,7 @@
 ---
 title: "Making sense of Elixir (improper) lists"
 date: "2021-03-03"
+image: "/assets/img/posts/improper_lists_cover.png"
 tags:
   - elixir
 ---
@@ -8,6 +9,8 @@ tags:
 Deep dive into Elixir lists, trying to understand improper lists from first principles.
 
 <!-- excerpt -->
+
+<img class="w-full" src="/assets/img/posts/improper_lists_cover.png" alt="[1, 2, 3, 4 | 5], wft?">
 
 ## Introduction
 
