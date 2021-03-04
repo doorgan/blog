@@ -1,9 +1,13 @@
 {
     "name": "Dorgan",
-    "url": "https://dorgan.netlify.app/",
+    "url": "https://dorgan.netlify.app",
     "title": "Dorgan's blog",
     "description": "Welcome to my blog",
     "github": "https://github.com/doorgan",
     "twitter": "",
-    "linkedin": ""
+    "linkedin": "",
+    "author": {
+        "bio": "I live in a small town in Argentina. I write Elixir for fun :)",
+        "twitterHandle": "dorgandash1"
+    }
 }

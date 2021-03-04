@@ -4,9 +4,22 @@
     <meta charset="utf-8">
   	<meta name='viewport' content='width=device-width'>
 
-    <title>{{ site.title }}</title>
-    <meta name='description' content={{ site.description }}>
+    <title>{{ title || site.title }}</title>
+    <meta name='description' content="{{ post_excerpt || site.description }}">
     <meta name="theme-color" content="#ffffff"/>
+
+    <meta property="og:title" content="{{ title || site.title }}">
+    <meta property="og:description" content="{{ post_excerpt || site.description }}">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@{{ site.author.twitterHandle }}">
+    <meta name="twitter:creator" content="@{{ site.author.twitterHandle }}">
+  
+    {% if image %}
+      <meta property="og:image" content="{{ image }}">
+    {% endif %}
+
+    <link rel="canonical" href="{{ site.url }}{{ page.url }}">
 
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png">
