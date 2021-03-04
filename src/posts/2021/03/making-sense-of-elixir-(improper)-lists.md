@@ -115,14 +115,13 @@ This was showcased at the start of the article, but note this time we are workin
 
 We could ask ourselves "why use cons cells when they're identical 2-tuples? Why not just have tuples?". The main difference lies in their memory layout, as explained in [BEAM VM Wisdoms](http://beam-wisdoms.clau.se/en/latest/indepth-memory-layout.htm).
 
-On one hand, a cons cells in the heap use two memory words pointing to the head and the tail respectively. In the case of lists the tail points to the next cons cell, thus connecting the tail of a cons cell to an existing list and reuse existing data becomes easy. Consider the lists `a = [1 | [2 | []]]` and `b = [3 | [4 | []]]`. If we want to join them, we just need to replace inner tail in `a` with `b`, ie *connecting the tail to an existing list*. By doing this just one cons cell is "changed" and the second list is reused to create a bigger list.
+On one hand, cons cells in the heap use two memory words pointing to the head and the tail respectively. In the case of lists the tail points to the next cons cell, thus connecting the tail of a cons cell to an existing list and reusing existing data becomes easy. Consider the lists `a = [1 | [2 | []]]` and `b = [3 | [4 | []]]`. If we want to join them, we just need to replace inner tail in `a` with `b`, ie *connecting the tail to an existing list*. By doing this just one cons cell is "changed" and the second list is reused to create a bigger list.
 
 On the other hand, a tuple uses one word in the heap as a header and the rest of the words correspond to the tuple's elements. This allows tuples to have constant time access at an arbitrary index, but makes changing it's size a more expensive operation. Consider the tuple `{1, 2, 3}`. Since the tuple elements are stored in contiguous places in memory, if we want to add or remove an element to it a new memory space needs to be allocated, the tuple contents copied into them, and a new header is also required. For this reason tuples are mostly used for collections of fixed size and other data structures are utilized when dealing with collections of dynamic length.
 
 Because cons cells lack a header word, they also use less memory, which makes them more convenient for large collections than 2-tuples.
 
 A quick and dirty demonstration of this difference can be done with `:erts_debug.size/1`, which returns the size of a term in words:
-
 ```
 iex> :erts_debug.size([:a |:b])
 2
