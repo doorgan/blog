@@ -35,7 +35,7 @@
     <id>{{ absolutePostUrl }}</id>
     <image>{{ site.url }}{{ post.data.image or site.image }}</image>
     <summary>{{ post.data.post_excerpt }}</summary>
-    <content type="html">{{ post.templateContent | htmlToAbsoluteUrls(absolutePostUrl) }}</content>
+    <content type="html">{{ post.templateContent | htmlToAbsoluteUrls(absolutePostUrl) | safe }}</content>
   </entry>
   {%- endfor %}
 </feed>
