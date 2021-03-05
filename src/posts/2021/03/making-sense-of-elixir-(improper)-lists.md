@@ -126,7 +126,7 @@ Because cons cells lack a header word, they also use less memory, which makes th
 
 A quick and dirty demonstration of this difference can be done with `:erts_debug.size/1`, which returns the size of a term in words:
 
-```
+```elixir
 iex> :erts_debug.size([:a |:b])
 2
 iex> :erts_debug.size({:a, :b})
