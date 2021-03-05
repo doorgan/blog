@@ -116,7 +116,7 @@ This was showcased at the start of the article, but note this time we are workin
 
 ### Cons cells vs tuples
 
-We could ask ourselves "why use cons cells when they're identical to 2-tuples?". The main difference lies in their memory layout, as explained in [BEAM VM Wisdoms](http://beam-wisdoms.clau.se/en/latest/indepth-memory-layout.htm).
+We could ask ourselves "why use cons cells when they're identical to 2-tuples?". The main difference lies in their memory layout, as explained in [BEAM VM Wisdoms](https://beam-wisdoms.clau.se/en/latest/) article on [Data Types Memory Layout](https://beam-wisdoms.clau.se/en/latest/indepth-memory-layout.html).
 
 On one hand, cons cells in the heap use two memory words pointing to the head and the tail respectively. In the case of lists the tail points to the next cons cell, thus connecting the tail of a cons cell to an existing list and reusing existing data becomes easy. Consider the lists `a = [1 | [2 | []]]` and `b = [3 | [4 | []]]`. If we want to join them, we just need to replace inner tail in `a` with `b`, ie _connecting the tail to an existing list_. By doing this just one cons cell is "changed" and the second list is reused to create a bigger list.
 
