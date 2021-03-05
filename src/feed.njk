@@ -33,6 +33,7 @@
     <link href="{{ absolutePostUrl }}"/>
     <updated>{{ post.date | dateToRfc3339 }}</updated>
     <id>{{ absolutePostUrl }}</id>
+    <image>{{ site.url }}{{ post.data.image or site.image }}</image>
     <summary><![CDATA[{{ post.excerpt | safe }}]]></summary>
     <content type="html"><![CDATA[{{ post.templateContent | htmlToAbsoluteUrls(absolutePostUrl) }}]]></content>
   </entry>
