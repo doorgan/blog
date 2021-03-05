@@ -85,7 +85,7 @@ In the following paragraphs I will try to explain the origin of lists in Erlang 
 
 ## Cons cells
 
-Many of the Erlang developers back in the day were lisp hackers, and they drew a lot of inspiration from lisps when disigning lists.
+Many of the Erlang developers back in the day were lisp hackers, and they drew a lot of inspiration from lisps when designing lists.
 
 One of the most fundamental functions in lisp is `cons`: it **cons**tructs a memory object pointing to two elements. It basically builds _pair_, also known as a _cons cell_. It's used as `(cons a b)` and it's usually read as _"to cons a onto b"_, where `a` is the first element -also known as head or car- and `b` is the second element -the tail or cdr(car and cdr stand for **c**ontents of the **a**ddress part of the **r**egister and **c**ontents of the **d**ecrement part of the **r**egister, respectively). For the rest of the article I will call them `head` and `tail` respectively, which are the terms most commonly used in Elixir and Erlang.
 
@@ -187,7 +187,7 @@ There's a subtle difference: there's an additional type `nil` that's listed as a
 
 > nil in the previous expression represents the empty list ([]), which is regarded as a separate type from list/0. That is why nil < list.
 
-Even more interesting is the fact that there exists a dedicated opcode in the BEAM to check for `nil`, as shown in the [BEAM Instructions](http://beam-wisdoms.clau.se/en/latest/indepth-beam-instructions.html) section of BEAM VM Wisdoms, and also showcased by [Isaac Yonemoto](https://twitter.com/DNAutics) in his [is_nil BEAM opcode for Elixirists](https://www.youtube.com/watch?v=nebDOqU0TJ0) video.
+Even more interesting is the fact that there exists a dedicated opcode in the BEAM to check for `nil`, as shown in the [BEAM Instructions section of BEAM VM Wisdoms](http://beam-wisdoms.clau.se/en/latest/indepth-beam-instructions.html), and also showcased by [Isaac Yonemoto](https://twitter.com/DNAutics) in his [is_nil BEAM opcode for Elixirists](https://www.youtube.com/watch?v=nebDOqU0TJ0) video.
 
 This is a minor detail, really, but I find it interesting because it's one of those cases where Erlang and Elixir differ in their terminology: `nil` means completely different things for each language.
 
