@@ -10,7 +10,7 @@ A deep dive into the implementation of lists in Elixir
 
 <!-- excerpt -->
 
-<img class="w-full" src="/assets/img/posts/improper_lists_cover.png" alt="[1, 2, 3, 4 | 5], wft?">
+{% cover_img "improper_lists_cover.png" "[1, 2, 3, 4 | 5], wft?" %}
 
 ## Introduction
 
