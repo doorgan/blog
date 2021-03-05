@@ -55,9 +55,9 @@ iex> [list | 5]
 [[1, 2, 3, 4] | 5]
 ```
 
-But it's still not exactly what we want.
+It's still not exactly what we want.
 
-Waht does the `|` even mean here? If we search the internets, we would probably find an answer like:
+What does the `|` even mean here? If we search the internets, we would probably find an answer like:
 
 > What you see there is an improper list. (linked) Lists in elixir are made of a term and a pointer to the next element in the linked list, called a cons cell. Lists where the second element of the last cell is not the empty list is called an improper list.
 
@@ -81,7 +81,7 @@ With this knowledge, we could say to ourselves that "If we want to append to a l
 
 Why does Elixir allow us to build improper lists so easily -accidentally even- if we are almost immediately told to not use them? What's their purpose?
 
-In the following paragraphs I will try to explain the origin of lists in Erlang from it's most basic elements, some differences in the erlang and elixir terminology, and how clever usage of improper lists allows erlang to optimize the creation of data sequences that wouldn't be possible with proper lists.
+In the following paragraphs I will try to explain the origin of lists in Erlang from it's most basic elements, some differences in the erlang and elixir terminology, and Erlang exploits improper lists to speed up the creation of IO Lists.
 
 ## Cons cells
 
@@ -116,7 +116,7 @@ This was showcased at the start of the article, but note this time we are workin
 
 ### Cons cells vs tuples
 
-We could ask ourselves "why use cons cells when they're identical 2-tuples? Why not just have tuples?". The main difference lies in their memory layout, as explained in [BEAM VM Wisdoms](http://beam-wisdoms.clau.se/en/latest/indepth-memory-layout.htm).
+We could ask ourselves "why use cons cells when they're identical to 2-tuples?". The main difference lies in their memory layout, as explained in [BEAM VM Wisdoms](http://beam-wisdoms.clau.se/en/latest/indepth-memory-layout.htm).
 
 On one hand, cons cells in the heap use two memory words pointing to the head and the tail respectively. In the case of lists the tail points to the next cons cell, thus connecting the tail of a cons cell to an existing list and reusing existing data becomes easy. Consider the lists `a = [1 | [2 | []]]` and `b = [3 | [4 | []]]`. If we want to join them, we just need to replace inner tail in `a` with `b`, ie _connecting the tail to an existing list_. By doing this just one cons cell is "changed" and the second list is reused to create a bigger list.
 
@@ -141,9 +141,9 @@ In summary, cons cells are ordered pairs, and that's pretty much all there is to
 
 Now that we know what cons cells are, how do we build lists with them? If we use the `head` to hold an element of the list and make the `tail` point to the next cons cell, we should be able to build a linked list. If we were to write a typespec for it, it would look something like this: `list :: [term | list]`.
 
-If we have the elements `1`, `2` and `3`, then `1` would point to `2` and then to `3`. We could write that as `[1 | [2 | 3]]`, but while that indeed creates a sequence, tails are required to be cons cells. There is a problem though: a cons cell is made of two elements, but we only have one at the end: the `3`. Moreover, in the above typespec there's no way to tell when the list stops as it keeps pointing to itself, infinitely. We're missing a _terminal element_ in our definition.
+If we have the elements `1`, `2` and `3`, then `1` would point to `2` and then to `3`. We could write that as `[1 | [2 | 3]]`, but while that indeed creates a sequence, tails are required to be cons cells. There is a problem though: a cons cell is made of two elements, but we only have one at the end: the `3`. Moreover, in the above typespec there's no way to tell when the list stops as it keeps pointing to itself, infinitely. We're missing a _terminal element_ in our definition to let us know when we're done with the list.
 
-In lisp and functional programming jargon, this terminal element is usually called `nil`. Adding it to our typespec it would become `list :: nil | [term | list]`, which reads as "A list is either nil(the terminal element), or a cons cell where the head is any term and the tail is a list". In languages that make use of Algebraic Data Types like Haskell, the type signature would be `List a = Nil | Cons a (List a)` which essentially means the same thing. In Erlang syntax, `nil` would be interpreted as an atom, but since in this context `nil` is a special type and not an atom, it is represented by a pair of square brackets `[]`, which is also close to the lisp notation `()`. Therefore the spec would really look like `list :: [] | [term | list]`.
+In lisp and functional programming jargon, this terminal element is usually called `nil`. Adding it to our typespec it would become `list :: nil | [term | list]`, which reads as "A list is either nil(the terminal element), or a cons cell where the head is any term and the tail is a list". In languages that make use of Algebraic Data Types like Haskell, the type signature would be `List a = Nil | Cons a (List a)` which essentially means the same thing. In Erlang syntax, the literal `nil` is an atom. We _could_ use that in our own list-like definition, but it turns out Erlang already implements a special data type for this particular use case. It's called _nil_ too, and it's represented by a pair of square brackets `[]`, which is also close to the lisp notation `()` for the same data type. Therefore the spec would really look like `list :: [] | [term | list]`.
 
 The recursive nature of the data structure hints us to a recursive solution if we want to traverse it. For example, if we wanted to write a function to find an element that matches a predicate, it would look like this:
 
@@ -160,31 +160,30 @@ end
 
 Note that the function headers match the two possible values for a list: a cons cell or the `nil` element(`[]`).
 
-In Erlang there's no concept of `nil` like in Elixir to denote the absence of a value. Moreover, `nil` is just an atom in both languages, but Elixir gives it a special meaning. In Elixir `nil` is an atom with the special property of being, in combination with the atom `false`, the only falsy values in the language. It's also used as a convention to represent the absence of a value, but this convention does not exist in Erlang.
+### Erlang's nil vs Elixir's nil
 
-The `[]` value is normally called _empty list_, and visually it looks like one, but in reality it's a special value whose only purpose is to be the terminal element for this kind of recursive data structures. If you try to check that `[]` is a list, you would get a positive result:
+In Erlang there's no concept of `nil` like in Elixir to denote the absence of a value. `nil` is just an atom in both languages, but Elixir gives it a special meaning. In Elixir `nil` has the special property of being, in combination with the atom `false`, the only falsy values in the language. It's also used as a convention to represent the absence of a value, but this convention does not exist in Erlang.
+
+The `[]` value, normally called _empty list_, is a special value whose only purpose is to be the terminal element for this kind of recursive data structures. If you try to check that `[]` is a list, you would get a positive result:
 
 ```elixir
 iex> is_list([])
 true
 ```
 
-The reason is that `[]` is one of the two possible values for a list(remember the definition: a cons cell or nil). There's a curious fact about the way `[]` works, and we can find a hint by looking at the order of the data types when sorted.
-
-The Elixir docs tell us:
+The reason is that `[]` is one of the two possible values for a list(remember the definition: a cons cell or nil). Despite `[]` being a special data type, the Elixir docs don't regard it as one. For example, the Elixir docs on data types comparison order tell us:
 
 > The reason we can compare different data types is pragmatism. Sorting algorithms don’t need to worry about different data types in order to sort. The overall sorting order is defined below:
 >
 > `number < atom < reference < function < port < pid < tuple < map < list < bitstring`
 
-So far we don't see anything weird: `list` is the only list type mentioned, so we could think that `[]` is indeed a list, nothing seems to say the opposite.
-However, if we look at the same explanation but in the Erlang docs:
+`list` is the only list type mentioned, and we could think that `[]` is indeed a list, nothing seems to say the opposite. However, if we look at the same explanation but in the Erlang docs:
 
 > The following order is defined:
 >
 > `number < atom < reference < fun < port < pid < tuple < map < nil < list < bit string`
 
-There's a subtle difference: there's an additional type, `nil`, that's listed as a separate type from `list`. The docs further explain:
+There's a subtle difference: there's an additional type `nil` that's listed as a separate type from `list`. The docs further explain:
 
 > nil in the previous expression represents the empty list ([]), which is regarded as a separate type from list/0. That is why nil < list.
 
@@ -198,11 +197,11 @@ Let's remind ourselves the lists type: `list :: [] | [term | list]`.
 
 Based on this, our list with the elements `1`, `2` and `3` would be written as `[1 | [2 | [3 | []]]]`, and we arrived at the same expression showcased by the docs. Of course, manually writing lists as a succession of cons cells is cumbersome and prone to errors, so usually an alternative syntax is provided to build lists: `[1, 2, 3]`. This is the syntax we're used to and use every day.
 
-But since lists are a essentially nested cons cells, nothing stops us from creating `[1 | [2 | 3]]` like we did before. That's a perfectly valid data structure, it's just not a list as we defined it, it lacks the terminal element `[]` at the end of the chain, and so it receives the name of _improper_ list.
+However, since lists are a essentially nested cons cells nothing stops us from creating `[1 | [2 | 3]]` like we did before. It may not be what we want most of the time, but it's a perfectly valid data structure. It's not a list as we defined them, it lacks the terminal element `[]` at the end of the chain, so it receives the name of _improper_ list, and lists that follow our previous definition are called _proper_ lists.
 
 ### Improper lists
 
-Improper lists are just lists that lack the `[]` as a tail for their last cons cell. If we define improper lists as the opposite of a proper list, then we could say that improper lists are any combination of cons cells that are not a list. For example, `[[1 | 2] | 3]` is an improper list, but since it's just an arrangement of pairs, if we squint our eyes enough it's also a representation of the following binary tree:
+Improper lists are just lists that lack the `[]` as a tail for their last cons cell. If we define improper lists as the opposite of a proper list, then we could say that improper lists are any combination of cons cells that are not a list. For example, `[[1 | 2] | 3]` is not a list, therefore it is an improper list. That example is just an arrangement of pairs, so if we squint our eyes enough it's also a representation of a binary tree:
 
 ```
    *
@@ -212,20 +211,18 @@ Improper lists are just lists that lack the `[]` as a tail for their last cons c
 1 2
 ```
 
-`[1, 2, 3]` is the syntax for a proper list, but if we inspect `[[1 | 2] | 3]`, we will see `[1, 2 | 3]` instead. Why does this happen? Let's look at one of our first examples in the introduction: `[1, 2] ++ 3`.
+`[1, 2, 3]` is the syntax for a proper list, but if we inspect `[1 | [2 | 3]]`, we will see `[1, 2 | 3]` instead. Why does this happen? Let's look at one of our first examples in the introduction: `[1, 2] ++ 3`.
 
-When we use the `++` operator, it replaces the terminal element of the left hand side with the value of the right hand side. If we have the list `[1, 2]`, that is `[1 | [2 | []]]` written as cons cells, and we want to append `[3, 4]` to it, what happens when you do `[1, 2] ++ [3, 4]` is that the `[]` in `[2 | []]` get's replaced by `[3, 4]`, resulting in the list `[1, 2, 3, 4]`(remember how we said cons cells make it easy to connect the tail of a cons cell to an existing list?). To do this, the entire list at the left hand side needs to be traversed until the end, so appends will have a linear time complexity.
-
-If we were to write our own append function, it would look something like this:
+When we use the `++` operator, it replaces the terminal element of the left hand side with the value of the right hand side. If we have the list `[1, 2]` -that is `[1 | [2 | []]]` written as cons cells- and we want to append `[3, 4]` to it, what happens when we do `[1, 2] ++ [3, 4]` is that the `[]` in `[2 | []]` gets replaced by `[3, 4]`, resulting in the list `[1, 2, 3, 4]` (remember how we said cons cells make it easy to connect the tail of a cons cell to an existing list?). If we were to write our own append function, it would look something like this:
 
 ```elixir
 def append([head | []], list), do: [head | list]
 def append([head | tail], list), do: [head | append(tail, list)]
 ```
 
-We recurse over the list, and we replace the terminal `[]` with the list to be appended.
+We recurse over the list, and we replace the terminal `[]` with the list to be appended. The entire list at the left hand side needs to be traversed until the end, so appends will have a linear time complexity.
 
-Prepending to a list is even easier, as we just need to create a new cons cell that points to an existing list:
+Prepending to a list is easier, as we just need to create a new cons cell that points to an existing list:
 
 ```elixir
 iex> list = [1, 2, 3]
@@ -233,7 +230,7 @@ iex> [0 | list]
 [0, 1, 2, 3]
 ```
 
-Cons cells creation is done in constant time, so this is the reason why people say prepending to a linked list is faster.
+Cons cells creation is done in constant time, and this is the reason why people say prepending to a linked list is faster.
 
 If we try to append `3` to `[1, 2]`, doing `[1, 2] ++ 3` will return `[1, 2 | 3]`; the `[]` was replaced by `3`, thus turning it into an improper list, as hinted by the `|` at the end. In general, whenever you see the pipe at the end of a list it means you've done something wrong and accidentally created an improper list. In a way, it's like the language saying "I could pretty print the list until this point, but since it's no longer a proper list I will just print the cons cell as is".
 The reason why you need to wrap a value in a list before appending it to another list, ie: `[1, 2] ++ [3]` should be clearer now.
@@ -242,7 +239,7 @@ The reason why you need to wrap a value in a list before appending it to another
 
 We've already seen what makes a list(cons cells and the terminal element), and have discussed a little bit about the properties of two of their most common operations: append and prepend.
 
-We said that appending to a linked list has linear time complexity. This means that the larger the list, the more it takes to append an element to it, or to join two lists together. If we need to append a large ammount of items, one by one, to a list, we would be in trouble.
+We said that appending to a linked list has linear time complexity: the longer the list, the more time it takes to append an element to it, or to join two lists together. If we need to build a list by appending elements, we would be in trouble.
 
 Let's say we're building a large list by appending elements to it to write to a file or any other kind of IO operation. For the sake of demonstration we'll just use a sequence of strings, essentially rebuilding the list we were given as input, but in real life this would be some non trivial data, like the results of compiling a phoenix template.
 
@@ -284,22 +281,24 @@ We can also prepend to this improper list in constant time:
 ["zzz" | [[["a"] | "b"] | "c"]]
 ```
 
-When we have this kind of combination of cons cells, where the terminals are either printable ASCII codepoints or binaries, with arbitrary nesting, we have what's known as an IO List. At first they may seem like a lot of gibberish, with lots of nesting and hard to traverse. In most cases this is true, but when you need to join a large number of binaries where there may also be a lot of repetition, this technique has huge benefits. Moreover, many of the lower level erlang functions know how to handle iolists, so the nesting isn't an issue.
+This kind of arrangement is known as an IO List. It's elements are either integers from `0` to `255`, binaries, other IO Lists, or a combination of these. `[0, 15, ["hello" | "elixir"], "world" | "!!!"]` is another example of an IO List, and while IO Lists are not required to be improper lists, they are a very neat trick to quickly append elements to them. At first they may seem like a lot of gibberish, with lots of nesting and hard to traverse. In most cases this is true, but when you need to join a large number of binaries where there may also be a lot of repetition, this technique has huge benefits. Concatenating two binaries requires allocating a new space in memory to hold the new binary, and IO Lists avoid that issue too. Moreover, many of the lower level erlang functions know how to handle IO Lists, so the nesting isn't an issue.
 
-For instance the above io list can be printed as a binary by doing:
+For instance the above IO List can be printed as a binary by doing:
 
 ```elixir
 iex> :erlang.iolist_to_binary ["zzz" | [[["a"] | "b"] | "c"]]
 "zzzabc"
 ```
 
-There's an article by Evan Miller called [Elixir RAM and the Template of DOOM](https://www.evanmiller.org/elixir-ram-and-the-template-of-doom.html) that does a really good job at demonstrating the issues with concatenating lots of repeated data and how IO lists can greatly increase performance in those cases.
+There's an article by Evan Miller called [Elixir RAM and the Template of DOOM](https://www.evanmiller.org/elixir-ram-and-the-template-of-doom.html) that does a really good job at demonstrating the issues with concatenating lots of repeated data and how IO Lists can greatly increase performance in those cases.
+
+Sadly, finding more documentation about IO Lists can be hard, and that's the best explanation I could come up with.
 
 ## Summary
 
 Lists, both proper and improper, are made of two basic types in the BEAM: cons cells and nil/empty list. Proper lists are a special arrangement of these two types where the tail of the cons cells point to another cons cell or the empty list. Every other case is considered an improper list. `[a | b]` is the syntax for a cons cell, and we can use it to pattern match against lists, or to prepend elements to a list.
 
-When appending to lists with the `++` operator, we have to make sure that the right hand side is also a list, otherwise we will accidentally create an improper lists. Despite of this minor annoyance, improper lists are a very important data structure in the BEAM, and we can see them in action in the creation of IO Lists.
+When appending to lists with the `++` operator, we have to make sure that the right hand side is also a list, otherwise we will accidentally create an improper lists. Despite of this minor annoyance, improper lists are a very important data structure in the BEAM, and we can see them in action when appending new elements to IO Lists.
 
 At the end of the day, most of the details explained in this article aren't needed for your day to day Elixir coding, but I hope this knowledge will provide you with a more solid understanding of the language constructs, so the next time you see the `|` in your lists you will know how to *proper*ly read it.
 
