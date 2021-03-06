@@ -371,7 +371,7 @@ This is also expressed in the typespec for the `iolist`, but in a more cryptic w
 iolist() :: maybe_improper_list(byte() | binary() | iolist(), binary() | [])
 ```
 
-The `maybe_improper_list` type is not well documented, but it works more or less like this: in the type `maybe_improper_list(a, b)`, `a` represents the contents of the list, ie the head, and `b` represents the termination of the list, ie the contents of the tail. In the above typespec, the heads of iolists can be bytes, binaries or iolists, and the last most tails can be binaries or nil.
+The `maybe_improper_list` type is not well documented, but it works more or less like this: in the type `maybe_improper_list(a, b)`, `a` represents the contents of the list, ie the head of the cons cells, and `b` represents the termination of the list, ie the contents of the last most tails. In the above typespec, the heads of iolists can be bytes, binaries or other iolists, and the last most tails can be binaries or nil.
 
 In other words, when working with IO Lists, make sure your tails aren't numbers, or things will break in ways that can be hard de debug without a rather deep knowledge of the BEAM innards.
 
