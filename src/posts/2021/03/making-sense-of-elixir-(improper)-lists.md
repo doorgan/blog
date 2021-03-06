@@ -12,7 +12,7 @@ A deep dive into the implementation of lists in Elixir
 
 {% cover_img "improper_lists_cover.png" "[1, 2, 3, 4 | 5], wft?" %}
 
-## Introduction
+# Introduction
 
 In Elixir, we can pattern match a list with `[head | tail] = list`, where `head` is the first element, and `tail` is a list with the rest of the elements. We can prepend to a list with a similar syntax:
 
@@ -83,7 +83,7 @@ This can leave us with a bitter taste in our mouths, though. Why does Elixir all
 
 In the following paragraphs I will try to explain how lists are built from it's most basic elements, some differences in the Erlang and Elixir terminology, and how Erlang exploits improper lists to speed up the creation of IO Lists.
 
-## Cons cells
+# Cons cells
 
 Many of the Erlang developers back in the day were lisp hackers, and they drew a lot of inspiration from lisps when designing lists.
 
@@ -114,7 +114,7 @@ iex> tail
 
 This was showcased at the start of the article, but note this time we are working at a more basic level, where head and tail can be anything.
 
-### Cons cells vs tuples
+## Cons cells vs tuples
 
 We could ask ourselves "why use cons cells when they're identical to 2-tuples?". The main difference lies in their memory layout, as explained in [BEAM VM Wisdoms](https://beam-wisdoms.clau.se/en/latest/) article on [Data Types Memory Layout](https://beam-wisdoms.clau.se/en/latest/indepth-memory-layout.html).
 
@@ -137,7 +137,7 @@ iex> :erts_debug.size({:a, :b})
 
 In summary, cons cells are ordered pairs, and that's pretty much all there is to them. Things get more interesting when they're used to build more complex data structures.
 
-## Lists and the empty element
+# Lists and the empty element
 
 Now that we know what cons cells are, how do we build lists with them? If we use the `head` to hold an element of the list and make the `tail` point to the next cons cell, we should be able to build a linked list. If we were to write a typespec for it, it would look something like this: `list :: [term | list]`.
 
@@ -160,7 +160,7 @@ end
 
 Note that the function headers match the two possible values for a list: a cons cell or the `nil` element(`[]`).
 
-### Erlang's nil vs Elixir's nil
+## Erlang's nil vs Elixir's nil
 
 In Erlang there's no concept of `nil` like in Elixir to denote the absence of a value. `nil` is just an atom in both languages, but Elixir gives it a special meaning. In Elixir `nil` has the special property of being, in combination with the atom `false`, the only falsy values in the language. It's also used as a convention to represent the absence of a value, but this convention does not exist in Erlang.
 
@@ -199,7 +199,7 @@ Based on this, our list with the elements `1`, `2` and `3` would be written as `
 
 However, since lists are a essentially nested cons cells nothing stops us from creating `[1 | [2 | 3]]` like we did before. It may not be what we want most of the time, but it's a perfectly valid data structure. It's not a list as we defined them, it lacks the terminal element `[]` at the end of the chain, so it receives the name of _improper_ list, and lists that follow our previous definition are called _proper_ lists.
 
-### Improper lists
+## Improper lists
 
 Improper lists are just lists that lack the `[]` as a tail for their last cons cell. If we define improper lists as the opposite of a proper list, then we could say that improper lists are any combination of cons cells that are not a list. For example, `[[1 | 2] | 3]` is not a list, therefore it is an improper list. That example is just an arrangement of pairs, so if we squint our eyes enough it's also a representation of a binary tree:
 
@@ -260,7 +260,7 @@ Cons cells creation is done in constant time, and this is the reason why people 
 If we try to append `3` to `[1, 2]`, doing `[1, 2] ++ 3` will return `[1, 2 | 3]`; the `[]` was replaced by `3`, thus turning it into an improper list, as hinted by the `|` at the end. In general, whenever you see the pipe at the end of a list it means you've done something wrong and accidentally created an improper list. In a way, it's like the language saying "I could pretty print the list until this point, but since it's no longer a proper list I will just print the cons cell as is".
 The reason why you need to wrap a value in a list before appending it to another list, ie: `[1, 2] ++ [3]` should be clearer now.
 
-## Improper lists as an optimization technique
+# Improper lists as an optimization technique
 
 We've already seen what makes a list(cons cells and the terminal element), and have discussed a little bit about the properties of two of their most common operations: append and prepend.
 
@@ -317,7 +317,7 @@ iex> :erlang.iolist_to_binary ["zzz" | [[["a"] | "b"] | "c"]]
 
 There's an article by Evan Miller called [Elixir RAM and the Template of DOOM](https://www.evanmiller.org/elixir-ram-and-the-template-of-doom.html) that does a really good job at demonstrating the issues with concatenating lots of repeated data and how IO Lists can greatly increase performance in those cases.
 
-### The IO Lists definition
+## The IO Lists definition
 
 IO Lists are defined as follows in both Elixir and Erlang docs:
 
@@ -378,7 +378,7 @@ According to that definition, only cons cell heads can have numbers, while the t
 
 In other words, when working with IO Lists, make sure your tails aren't numbers, or things will break in ways that can be hard de debug without a rather deep knowledge of the BEAM innards.
 
-## Summary
+# Summary
 
 Lists, both proper and improper, are made of two basic types in the BEAM: cons cells and nil/empty list. Proper lists are a special arrangement of these two types where the tail of the cons cells point to another cons cell or the empty list. Every other case is considered an improper list. `[a | b]` is the syntax for a cons cell, and we can use it to pattern match against lists, or to prepend elements to a list.
 
@@ -386,14 +386,15 @@ When appending to lists with the `++` operator, we have to make sure that the ri
 
 At the end of the day, most of the details explained in this article aren't needed for your day to day Elixir coding, but I hope this knowledge will provide you with a more solid understanding of the language constructs, so the next time you see the `|` in your lists you will know how to *proper*ly read it.
 
-## References
+# References
 
 - [Elixir docs: List](https://hexdocs.pm/elixir/List.html)
 - [Cons - Wikipedia](https://en.wikipedia.org/wiki/Cons)
 - [Elixir term ordering](https://hexdocs.pm/elixir/master/operators.html#term-ordering)
 - [Erlang term comparisons](https://erlang.org/doc/reference_manual/expressions.html#term-comparisons)
-- [Data Types Memory Layout](http://beam-wisdoms.clau.se/en/latest/indepth-memory-layout.html)
+- [Data Types Memory Layout](https://beam-wisdoms.clau.se/en/latest/indepth-memory-layout.html)
 - [is_nil BEAM opcode for Elixirists](https://www.youtube.com/watch?v=nebDOqU0TJ0)
-- [BEAM Instruction codes](http://beam-wisdoms.clau.se/en/latest/indepth-beam-instructions.html)
+- [BEAM Instruction codes](https://beam-wisdoms.clau.se/en/latest/indepth-beam-instructions.html)
 - [James Edward Gray II on using improper lists to quickly append elements](https://elixirforum.com/t/weird-sasl-lists-and-can-i-rely-on-kernel-is-list/470/7)
 - [Elixir RAM and the Template of DOOM](https://www.evanmiller.org/elixir-ram-and-the-template-of-doom.html)
+- [iolist type definition in Erlang `iolist_to_buf` C function source code](https://github.com/erlang/otp/blob/26150b438fa1587506a020642ab9335ef7cd3fe2/erts/emulator/beam/utils.c#L4284-L4315)
