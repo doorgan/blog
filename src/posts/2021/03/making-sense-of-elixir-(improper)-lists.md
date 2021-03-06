@@ -222,6 +222,31 @@ def append([head | tail], list), do: [head | append(tail, list)]
 
 We recurse over the list, and we replace the terminal `[]` with the list to be appended. The entire list at the left hand side needs to be traversed until the end, so appends will have a linear time complexity.
 
+This function will break in some cases where the `++` operator would work though, which highlights some funny behaviours:
+```elixir
+iex> append([], :oops)
+** (FunctionClauseError) no function clause matching in append/2
+
+iex> [] ++ :oops
+:oops
+```
+The first case is expected, but the second one is a rather funny one, and it makes sense, too. If we were to add a clause to our function to handle the empty list case:
+```elixir
+def append([], list), do: list
+```
+We're essentially returning the right hand side, meaning that `append([], whatever)` will always return the second argument. The Erlang devs were aware of this, and the fact that you can accidentally create improper lists with this method, and wrote in the `erlang:'++'/2` function source:
+```
+Adds a list to another (LHS ++ RHS). For historical reasons this is
+implemented by copying LHS and setting its tail to RHS without checking
+that RHS is a proper list. [] ++ 'not_a_list' will therefore result in
+'not_a_list', and [1,2] ++ 3 will result in [1,2|3], and this is a bug that
+we have to live with.
+```
+
+The "without checking that RHS is a proper list" part is due to the fact that traversing the whole list to know if it's a proper one(basically check if the tail of the last most cons cell is `[]`) when constructing every list element would cost performance.
+
+---
+
 Prepending to a list is easier, as we just need to create a new cons cell that points to an existing list:
 
 ```elixir
@@ -281,7 +306,7 @@ We can also prepend to this improper list in constant time:
 ["zzz" | [[["a"] | "b"] | "c"]]
 ```
 
-This kind of arrangement is known as an IO List. It's elements are either integers from `0` to `255`, binaries, other IO Lists, or a combination of these. `[0, 15, ["hello" | "elixir"], "world" | "!!!"]` is another example of an IO List, and while IO Lists are not required to be improper lists, they are a very neat trick to quickly append elements to them. At first they may seem like a lot of gibberish, with lots of nesting and hard to traverse. In most cases this is true, but when you need to join a large number of binaries where there may also be a lot of repetition, this technique has huge benefits. Concatenating two binaries requires allocating a new space in memory to hold the new binary, and IO Lists avoid that issue too. Moreover, many of the lower level erlang functions know how to handle IO Lists, so the nesting isn't an issue.
+This kind of arrangement is known as an IO List. It's elements are either integers from `0` to `255`, binaries, other IO Lists, or a combination of these. `[0, 15, ["hello" | "elixir"], "world" | "!!!"]` is another example of an IO List, and while IO Lists are not required to be improper lists, they are a very neat trick to quickly append elements to them. At first they may seem like a lot of gibberish, with lots of nesting and hard to traverse. In most cases this is true, but when you need to join a large number of binaries where there may also be a lot of repetition, this technique has huge benefits. Concatenating two binaries requires allocating a new space in memory to hold the new binary, and IO Lists avoid that issue by deferring the creation of large binaries. Moreover, many of the lower level erlang functions know how to handle IO Lists, so the nesting isn't an issue.
 
 For instance the above IO List can be printed as a binary by doing:
 
@@ -292,7 +317,66 @@ iex> :erlang.iolist_to_binary ["zzz" | [[["a"] | "b"] | "c"]]
 
 There's an article by Evan Miller called [Elixir RAM and the Template of DOOM](https://www.evanmiller.org/elixir-ram-and-the-template-of-doom.html) that does a really good job at demonstrating the issues with concatenating lots of repeated data and how IO Lists can greatly increase performance in those cases.
 
-Sadly, finding more documentation about IO Lists can be hard, and that's the best explanation I could come up with.
+### The IO Lists definition
+
+IO Lists are defined as follows in both Elixir and Erlang docs:
+
+```elixir
+iolist() :: maybe_improper_list(byte() | binary() | iolist(), binary() | [])
+```
+Which is basically the description we used above: it's a list, maybe improper, that contains numbers from `0 to 255`(a byte), binaries, nil or other iolists. So let's try a couple of them with `:erlang.iolist_to_binary/1`:
+```elixir
+iex> :erlang.iolist_to_binary(["foo", "bar"])
+"foobar"
+
+iex> :erlang.iolist_to_binary(["hello " | "world"))
+"hello world"
+
+iex> :erlang.iolist_to_binary ["zzz" | [[["a"] | "b"] | "c"]]
+"zzzabc"
+
+iex> iex(17)> :erlang.iolist_to_binary([0, 15, ["hello" | "elixir"], "world" | "!!!"])
+<<0, 15, 104, 101, 108, 108, 111, 101, 108, 105, 120, 105, 114, 119, 111, 114, 108, 100, 33, 33, 33>>
+
+iex> :erlang.iolist_to_binary([[1 | 2] | [3 | 4])
+** (ArgumentError) argument error
+    :erlang.iolist_to_binary([[1 | 2], 3 | 4])
+```
+
+Huh. It didn't like that last one, and the error message isn't clear at all. Clearly we did something wrong, but the reason is not obvious, so let's try narrow the cause by trying with simpler lists:
+
+```elixir
+iex> :erlang.iolist_to_binary([1 | "2"])
+<<1, 50>>
+
+iex> :erlang.iolist_to_binary([1 | 2])
+** (ArgumentError) argument error
+    :erlang.iolist_to_binary([1 | 2])
+```
+It seems to break when the tails are numbers. That's weird, because by the definition we were given, it should work.
+
+It turns out that IO Lists definitions are a bit complicated. There's a comment in the [Erlang source code](https://github.com/erlang/otp/blob/26150b438fa1587506a020642ab9335ef7cd3fe2/erts/emulator/beam/utils.c#L4284-L4315) that is quite enlightening:
+
+```
+iohead ::= Binary
+       |   Byte (i.e integer in range [0..255]
+       |   iolist
+       ;
+
+iotail ::= []
+       |   Binary
+       |   iolist
+       ;
+
+iolist ::= []
+       |   Binary
+       |   [ iohead | iotail]
+       ;
+```
+
+According to that definition, only cons cell heads can have numbers, while the tails are only allowed nil, binaries and other IO Lists. This explains why lists such as `[1 | "2"]` work: the head is a number(it complies the `iohead` type) and the tail is a binary(it complies with the `iotail` type), while `[1 | 2]`fails: the tail is a number, which is not allowed in `iotail`.
+
+In other words, when working with IO Lists, make sure your tails aren't numbers, or things will break in ways that can be hard de debug without a rather deep knowledge of the BEAM innards.
 
 ## Summary
 
