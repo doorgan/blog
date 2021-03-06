@@ -325,7 +325,7 @@ iex> :erlang.iolist_to_binary(["hello " | "world"))
 iex> :erlang.iolist_to_binary ["zzz" | [[["a"] | "b"] | "c"]]
 "zzzabc"
 
-iex> iex(17)> :erlang.iolist_to_binary([0, 15, ["hello" | "elixir"], "world" | "!!!"])
+iex> :erlang.iolist_to_binary([0, 15, ["hello" | "elixir"], "world" | "!!!"])
 <<0, 15, 104, 101, 108, 108, 111, 101, 108, 105, 120, 105, 114, 119, 111, 114, 108, 100, 33, 33, 33>>
 
 iex> :erlang.iolist_to_binary([[1 | 2] | [3 | 4])
