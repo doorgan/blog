@@ -235,13 +235,8 @@ The first case is expected, but the second one is a rather funny one, and it mak
 def append([], list), do: list
 ```
 We're essentially returning the right hand side, meaning that `append([], whatever)` will always return the second argument. The Erlang devs were aware of this, and the fact that you can accidentally create improper lists with this method, and wrote in the `erlang:'++'/2` function source:
-```
-Adds a list to another (LHS ++ RHS). For historical reasons this is
-implemented by copying LHS and setting its tail to RHS without checking
-that RHS is a proper list. [] ++ 'not_a_list' will therefore result in
-'not_a_list', and [1,2] ++ 3 will result in [1,2|3], and this is a bug that
-we have to live with.
-```
+
+> Adds a list to another (LHS ++ RHS). For historical reasons this is implemented by copying LHS and setting its tail to RHS without checking that RHS is a proper list. [] ++ 'not_a_list' will therefore result in 'not_a_list', and [1,2] ++ 3 will result in [1,2|3], and this is a bug that we have to live with.
 
 The "without checking that RHS is a proper list" part is due to the fact that traversing the whole list to know if it's a proper one(basically check if the tail of the last most cons cell is `[]`) when constructing every list element would cost performance.
 
