@@ -314,12 +314,7 @@ There's an article by Evan Miller called [Elixir RAM and the Template of DOOM](h
 
 ## The IO Lists definition
 
-IO Lists are defined as follows in both Elixir and Erlang docs:
-
-```elixir
-iolist() :: maybe_improper_list(byte() | binary() | iolist(), binary() | [])
-```
-Which is basically the description we used above: it's a list, maybe improper, that contains numbers from `0 to 255`(a byte), binaries, nil or other iolists. So let's try a couple of them with `:erlang.iolist_to_binary/1`:
+IO Lists are lists, maybe improper, that contain numbers from `0 to 255`(a byte), binaries, nil or other iolists. So let's try a couple of them with `:erlang.iolist_to_binary/1`:
 ```elixir
 iex> :erlang.iolist_to_binary(["foo", "bar"])
 "foobar"
@@ -370,6 +365,13 @@ iolist ::= []
 ```
 
 According to that definition, only cons cell heads can have numbers, while the tails are only allowed nil, binaries and other IO Lists. This explains why lists such as `[1 | "2"]` work: the head is a number(it complies the `iohead` type) and the tail is a binary(it complies with the `iotail` type), while `[1 | 2]`fails: the tail is a number, which is not allowed in `iotail`.
+
+This is also expressed in the typespec for the `iolist`, but in a more cryptic way:
+```elixir
+iolist() :: maybe_improper_list(byte() | binary() | iolist(), binary() | [])
+```
+
+The `maybe_improper_list` type is not well documented, but it works more or less like this: in the type `maybe_improper_list(a, b)`, `a` represents the contents of the list, ie the head, and `b` represents the termination of the list, ie the contents of the tail. In the above typespec, the heads of iolists can be bytes, binaries or iolists, and the last most tails can be binaries or nil.
 
 In other words, when working with IO Lists, make sure your tails aren't numbers, or things will break in ways that can be hard de debug without a rather deep knowledge of the BEAM innards.
 
