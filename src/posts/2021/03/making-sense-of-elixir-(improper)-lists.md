@@ -79,9 +79,9 @@ The Elixir docs on lists provide a similar description:
 
 With this knowledge, we could say to ourselves that "If we want to append to a list, we need to make sure the last element is a list too", write something in the lines of `list ++ [5]` and call it a day. So, in a nutshell, lists are linked lists, the last element of the last cell needs to be the empty list in order to be a _proper_ list, otherwise it's an _improper_ list, and most of the time you don't want improper lists.
 
-Why does Elixir allow us to build improper lists so easily -accidentally even- if we are almost immediately told to not use them? What's their purpose?
+This can leave us with a bitter taste in our mouths, though. Why does Elixir allow us to build improper lists so easily, accidentally even, if we are almost immediately told to not use them? Most of the time we don't want them and they break our code, so what's their purpose?
 
-In the following paragraphs I will try to explain the origin of lists in Erlang from it's most basic elements, some differences in the erlang and elixir terminology, and Erlang exploits improper lists to speed up the creation of IO Lists.
+In the following paragraphs I will try to explain how lists are built from it's most basic elements, some differences in the Erlang and Elixir terminology, and how Erlang exploits improper lists to speed up the creation of IO Lists.
 
 ## Cons cells
 
