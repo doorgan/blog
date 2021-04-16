@@ -448,7 +448,7 @@ end
 ```
 Great! Now the next step is to use this data to build the code we wanted to abstract. For this we will use `quote` to create a quoted expression, and `unquote`/`unquote_splicing` to interpolate the data we just obtained.
 
-For the enforced fields list, this one is easiy, we just need the names of the fields where `enforced?` is true:
+For the enforced fields list, this one is easy, we just need the names of the fields where `enforced?` is true:
 ```elixir
 enforced_fields =
   for field <- fields_data, field.enforced? do
