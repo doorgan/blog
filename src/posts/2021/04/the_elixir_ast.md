@@ -20,7 +20,7 @@ Before I start, I want to thank GenericJam from the [Elixir Discord server](http
 
 Metaprogramming is an important feature in Elixir. It gives you the ability to write code that, when compiled, gets transformed into a different version of itself. This kind of code is called a *macro*, and is popullarily referred to as "code that writes code".
 
-For this to work, a macro function needs to have access to the language's internal representation of the source code. This is tipically a tree-shaped data structure called an *Abstract Syntax Tree*. For example, the expression `1 + 2 * 4` would be conceptually represented by this tree:
+For this to work, a macro function needs to have access to the language's internal representation of the source code. This is typically a tree-shaped data structure called an *Abstract Syntax Tree*. For example, the expression `1 + 2 * 4` would be conceptually represented by this tree:
 ```
   +
  / \
@@ -30,9 +30,9 @@ For this to work, a macro function needs to have access to the language's intern
 ```
 In many progrmaming languages the AST representation of the code is hidden from the user, but Elixir makes it available to you and it even allows you to manipulate it at will. A macro would receive that tree, process it, and output a new version, adding or removing elements from the tree, or just analyzing it. For instance, it could compute the result of the expression at compile time, and turn the previous example tree into just `9`. A real-life example of macros are the functions from the `Logger` module. The [`Logger.debug/2`](https://hexdocs.pm/logger/Logger.html#debug/2) macro will emit a debug level message during development, but it will be completely removed from your code in a production environment. To take things even further, many of Elixir's basic building blocks are implemented as macros themselves, like `defmodule`, `def`, and even `defmacro`.
 
-Being such an important aspect of the language, Elixir provides tools to work with the AST, in a way that it's not only limited to macros. There are tools to parse a string into an Elixir AST and to aid in it's traversal which, among other use cases, also enables you to perform static code analysis of Elixir source code.
+Being such an important aspect of the language, Elixir provides tools to work with the AST, in a way that it's not only limited to macros. There are tools to parse a string into an Elixir AST and to aid in its traversal which, among other use cases, also enables you to perform static code analysis of Elixir source code.
 
-Whether you want to write a macro or to analyze Elixir code, you will be working with it's AST representation. Getting comfortable with reading and writing it is vital for this kind of task, and that's where the focus of this article will be. I'm not going to focus on the process of evaluating when a macro is needed or how to design it, but in analyzing the AST they receive. I will first attempt to cover what the AST looks like, what kind of shapes and combinations are possible, and then we will apply that to build two little projects: a macro to generate typed structs, and a little code style checker.
+Whether you want to write a macro or to analyze Elixir code, you will be working with its AST representation. Getting comfortable with reading and writing it is vital for this kind of task, and that's where the focus of this article will be. I'm not going to focus on the process of evaluating when a macro is needed or how to design it, but in analyzing the AST they receive. I will first attempt to cover what the AST looks like, what kind of shapes and combinations are possible, and then we will apply that to build two little projects: a macro to generate typed structs, and a little code style checker.
 
 # The AST
 
@@ -65,7 +65,7 @@ quote do
 end
 #=> {:+, [], [1, {:*, [], [2, 4]}]}
 ```
-First, the outer tuple `{:+, [], [...]}` is the call to `+/2`, then the children are the literal `1` and a call to `*/2`, with `2` and `4` as it's children.
+First, the outer tuple `{:+, [], [...]}` is the call to `+/2`, then the children are the literal `1` and a call to `*/2`, with `2` and `4` as its children.
 
 Since `quote/2` is the primitive by which code is turned into data, Elixir calls the AST a *quoted expression*. The AST term has the advantage of familiarity among developers, so most of the time both terms are use interchangeably, even in the official Elixir documentation.
 
@@ -97,7 +97,7 @@ Every other kind of expression is represented by a 3-tuple that can represent *v
 
 ### Variables
 
-Variables are represented by a 3-tuple where the first element is an atom representing it's name, the second is the node's metadata, and the third is an atom representing the context of the variable:
+Variables are represented by a 3-tuple where the first element is an atom representing its name, the second is the node's metadata, and the third is an atom representing the context of the variable:
 ```elixir
 quote do
   foo
@@ -117,7 +117,7 @@ end
 #=> {:bar, [], Foo}
 ```
 
-When a macro is encountered by the compiler, it gets *expanded*. That is, the macro gets evaluated and it's result get's inserted into the place in the AST where the macro call happened. This happens recursively until there is no macro left to expand. During this process, macros can insert variables into the AST, and their nodes will have the macro module as their context.
+When a macro is encountered by the compiler, it gets *expanded*. That is, the macro gets evaluated and its result get's inserted into the place in the AST where the macro call happened. This happens recursively until there is no macro left to expand. During this process, macros can insert variables into the AST, and their nodes will have the macro module as their context.
 
 The context is useful to keep track what code defined which variables. For instance, consider this macro:
 ```elixir
@@ -225,7 +225,7 @@ quote do 1; 2; 3; end
 ### Left to right arrow
 
 The left to right arrow `->` is a special kind of node. It is represented as a call like an operator, but it can only exist in a list, which suggests that it can only be used as an argument for another call, like clauses for an anonymous function or in a `do` block.
-The first argument must always be a list representing it's left hand side arguments, and the second one is an expression.
+The first argument must always be a list representing its left hand side arguments, and the second one is an expression.
 
 ```elixir
 quote do
@@ -365,7 +365,7 @@ defmodule Report do
   defstruct [:description, :message, type: :refactoring]
 end
 ```
-This is fairly standard Elixir code for defining a struct, enforcing some of it's keys, and defining an accompanying typespec. It is, however, quite verbose and hard to follow, since we have to make some jumps between the type, the defstruct and the enforce_keys attribute to check what it looks like and if everything is alright.
+This is fairly standard Elixir code for defining a struct, enforcing some of its keys, and defining an accompanying typespec. It is, however, quite verbose and hard to follow, since we have to make some jumps between the type, the defstruct and the enforce_keys attribute to check what it looks like and if everything is alright.
 We can use a macro so simplify it a bit, and make the syntax closer to that of Ecto schemas. The macro we'll be writing will allow us to write the above code like this:
 ```elixir
 defmodule Report do
@@ -389,7 +389,7 @@ defmodule TypedStruct do
 end
 ```
 
-Now we need to look at the received AST and look for `:field` calls. The intended usage of the macro is in with a `do` block. This syntax is sugar for the case when the last element for a function is a keyword list, and it's last element has the `:do` key.
+Now we need to look at the received AST and look for `:field` calls. The intended usage of the macro is in with a `do` block. This syntax is sugar for the case when the last element for a function is a keyword list, and its last element has the `:do` key.
 If we look at this example:
 ```elixir
 typedstruct do
@@ -615,7 +615,7 @@ defmodule Creed do
 end
 ```
 First we define a `Checker` behaviour for our checkers, this way we can ensure that they all implement a `run/1` function that returns a list of issues.
-The `Creed.run/1` function will take a file path, read it's content, and parse them to an Elixir AST with `Code.string_to_quoted/2`. We mentioned earlier that the AST metadata contains information like the line number, and now we will need them to tell the user where the issue was found. By default, the parser won't include the column numbers in the metadata, so we need to pass the `columns: true` option.
+The `Creed.run/1` function will take a file path, read its content, and parse them to an Elixir AST with `Code.string_to_quoted/2`. We mentioned earlier that the AST metadata contains information like the line number, and now we will need them to tell the user where the issue was found. By default, the parser won't include the column numbers in the metadata, so we need to pass the `columns: true` option.
 After parsing the code, the resulting AST is then fed to the checkers. Since checkers return a list of issues, we end up with a list of lists, so we flatten it.
 Finally, we pass each issue through a function that prints them using ANSI coloring.
 
@@ -668,7 +668,7 @@ quote do
 end
 #=> {{:., [], [{:__aliases__, [], [:String]}, :to_atom]}, [], []}
 ```
-If that pattern matches, then we extract the line and column numbers from the call metadata and build an issue map that gets added to the accumulator(ie: the issues list). If it doesn't match, then it's a node we're not interested in so we do nothing. Notice that we need to return both the node and the accumulator in a tuple, since `postwalk` allows us to modify the AST.
+If that pattern matches, then we extract the line and column numbers from the call metadata and build an issue map that gets added to the accumulator(ie: the issues list). If it doesn't match, then it is a node we're not interested in so we do nothing. Notice that we need to return both the node and the accumulator in a tuple, since `postwalk` allows us to modify the AST.
 
 Now we need to tell `Creed` that we want to use this check by adding it to the `@checkers` attribute:
 ```elixir
@@ -790,6 +790,6 @@ Credo checks work in a very similar way, the difference being that it also provi
 
 # Final words
 
-We have learned quite a bit through this article. The Elixir AST itself is quite simple when you look at it's basic shapes, but it can get quite complex for larger programs. Isolating little bits of syntax makes it much easier to see what's going on and to develop a general sense of what it's representing. We learned most(all?) of the possible shapes an AST node can take and how they are combined to create meaningful programs, and we leveraged this knowledge to create useful tools for our day to day programming work.
+We have learned quite a bit through this article. The Elixir AST itself is quite simple when you look at its basic shapes, but it can get quite complex for larger programs. Isolating little bits of syntax makes it much easier to see what's going on and to develop a general sense of what it is representing. We learned most(all?) of the possible shapes an AST node can take and how they are combined to create meaningful programs, and we leveraged this knowledge to create useful tools for our day to day programming work.
 
 I had lots of fun digging into this topic and finding examples to bring all those concepts to a more tangible shape. I hope this was informative and that it helps you to build your own tools and understand other people's AST manipulation code.
