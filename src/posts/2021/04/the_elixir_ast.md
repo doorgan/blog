@@ -43,7 +43,7 @@ quote do
 end
 #=> "Hello world!"
 ```
-In this example the expression was just a string literal, which is represented by itself in the AST. This is usually the case for the *leaf* nodes in the AST, and I will expand on this later. For now, lets try with a slightly more complicated example:
+In this example the expression was just a string literal, which is represented by itself in the AST. This is usually the case for the *leaf* nodes in the AST, and I will expand on this later. For now, let's try with a slightly more complicated example:
 ```elixir
 quote do
   1 + 2
@@ -117,7 +117,7 @@ end
 #=> {:bar, [], Foo}
 ```
 
-When a macro is encountered by the compiler, it gets *expanded*. That is, the macro gets evaluated and its result get's inserted into the place in the AST where the macro call happened. This happens recursively until there is no macro left to expand. During this process, macros can insert variables into the AST, and their nodes will have the macro module as their context.
+When a macro is encountered by the compiler, it gets *expanded*. That is, the macro gets evaluated and its result gets inserted into the place in the AST where the macro call happened. This happens recursively until there is no macro left to expand. During this process, macros can insert variables into the AST, and their nodes will have the macro module as their context.
 
 The context is useful to keep track what code defined which variables. For instance, consider this macro:
 ```elixir
@@ -164,7 +164,7 @@ quote do
 end
 #=> {:+, [], [1, 2]}
 ```
-The main characteritic of operators is that Elixir can't parse any arbitrary operator. There is a list of supported operators and their associativities in the [Operators](https://hexdocs.pm/elixir/operators.html) section of the Elixir documentation.
+The main characteristic of operators is that Elixir can't parse any arbitrary operator. There is a list of supported operators and their associativities in the [Operators](https://hexdocs.pm/elixir/operators.html) section of the Elixir documentation.
 
 Data structures like maps, tuples and bitstrings are represented with a call where the type is the atom name of their respective special form constructor, and the arguments are their elements.
 For example, the following map:
@@ -192,7 +192,7 @@ end
 
 ### Aliases and blocks
 
-Some types have a special meaning. For example, module names are atoms, but they are represented in the AST by a call with the `:__aliases` type:
+Some types have a special meaning. For example, module names are atoms, but they are represented in the AST by a call with the `:__aliases__` type:
 ```elixir
 quote do
   Foo
@@ -267,7 +267,7 @@ Earlier I mentioned that there are some cases where a call type can be another 3
 - With the `.` operator
 
 The first situation occurs in cases like `foo()()`. Such syntax is invalid in most cases and will fail to compile, but it is possible to use it inside of `quote`, where it is commonly used to compose quoted expressions to generate functions with `unquote`.
-Lets look at this example:
+Let's look at this example:
 ```elixir
 quote unquote: false do
   unquote(:foo)()
@@ -694,7 +694,7 @@ checker_test.exs:3:11
 It works!
 
 Now we'll try with a slightly more complicated check. We will now look for multi alias syntax, and recommend using multiple aliases in individual lines instead.
-Lets remind ourselves what the multi alias syntax looks like as AST:
+Let's remind ourselves what the multi alias syntax looks like as AST:
 ```
 quote do
   Foo.{Bar, Baz}
