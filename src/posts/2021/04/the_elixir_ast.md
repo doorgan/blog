@@ -306,7 +306,7 @@ end
 }
 ```
 
-Another case of the dot operator call is the multi alias syntax: `Foo.{Bar, Baz}`. This syntax is most often used when aliasing multiple modules. It's represented in the AST as a `{:., [], [alias, :{}]}` call:
+Another case of the dot operator call is the qualified tuples syntax: `Foo.{Bar, Baz}`. This syntax is most often used when aliasing multiple modules. It's represented in the AST as a `{:., [], [alias, :{}]}` call:
 ```elixir
 quote do
   Foo.{Bar, Baz}
