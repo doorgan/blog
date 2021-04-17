@@ -139,7 +139,7 @@ The `A.demo()` call will get expanded to something like:
 ```elixir
 {:foo, [counter: -576460752303422751], A}
 ```
-The variable AST's context is the module of the macro that defined that variable, and additionally a counter number is inserted into the metadata, which prevents the variable from interfering with variables of the same name defined outside of the scope of the macro once it's evaluated. This is one of the mechanisms by which Elixir achieves hygienic macros: the compiler recognizes variables by `name` and `metadata[:counter]`, or `name` and `context`. The `var!/2` macro [removes this counter](https://github.com/elixir-lang/elixir/blob/98485daab0a9f3ac2d7809d38f5e57cd73cb22ac/lib/elixir/lib/kernel.ex#L3654) from a variable node to mark that it shouldn't he hygienized.
+The variable AST's context is the module of the macro that defined that variable, and additionally a counter number is inserted into the metadata, which prevents the variable from interfering with variables of the same name defined outside of the scope of the macro once it's evaluated. This is one of the mechanisms by which Elixir achieves hygienic macros: the compiler recognizes variables by `name` and `metadata[:counter]`, or `name` and `context`. The `var!/2` macro [removes this counter](https://github.com/elixir-lang/elixir/blob/98485daab0a9f3ac2d7809d38f5e57cd73cb22ac/lib/elixir/lib/kernel.ex#L3654) from a variable node to mark that it shouldn't be hygienized.
 
 ### Calls
 
