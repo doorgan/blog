@@ -154,8 +154,6 @@ And they are represented by a 3-tuple:
 ```
 Here the first element is the call *type*, the second one is again metadata, and the third one is a list of *arguments*(or *children*). Most of the time the type is an atom but, as we'll see later, there are some special bits of syntax in which the type can be another 3-tuple.
 
-
-
 ### Operators and constructors
 Operators like `+` are also represented as calls:
 ```elixir
@@ -341,6 +339,7 @@ Macro.to_string({{:., [], [Access, :get]}, [], [{:foo, [], Elixir}, :bar, :baz]}
 Macro.to_string({{:., [], [Access, :get]}, [], [{:foo, [], Elixir}, :bar, :baz, :qux]})
 #=> "Access.get(foo, :bar, :baz, :quz)" <-- this will fail
 ```
+Or, more precisely, because `foo[:foo]` is *syntactic sugar* for a call to `Access.get/2`.
 
 ---
 That should cover most, if not all, of the possible constructs that conform an Elixir AST. Any kind of AST you find will be made of a composition of the nodes mentioned before, and knowing them makes reading it and identifying patterns much more easier.
