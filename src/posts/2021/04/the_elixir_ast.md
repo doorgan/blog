@@ -534,7 +534,7 @@ defmodule TypedStruct do
         {name, default}
       end
     
-    quote do
+    quote location: :keep do
       @type t :: %__MODULE__{unquote_splicing(typespecs)}
       @enforce_keys unquote(enforced_fields)
       defstruct unquote(fields)
