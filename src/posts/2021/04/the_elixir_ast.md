@@ -104,7 +104,7 @@ quote do
 end
 #=> {:foo, [], Elixir}
 ```
-If this code is run in IEx, the context will be `Elixir`. However, if `Code.string_to_quoted!` is used instead, the context will be `nil`, as there was no environment in which the expression was resolved:
+`quote` will always include the module in which it was called as the variable context. If this code is run in IEx, the context will be `Elixir`. However, if `Code.string_to_quoted!` is used instead, the context will be `nil`, as there was no environment in which the expression was resolved:
 ```elixir
 Code.string_to_quoted!("foo")
 #=> {:foo, [line: 1], nil}
@@ -139,7 +139,7 @@ The `A.demo()` call will get expanded to something like:
 ```elixir
 {:foo, [counter: -576460752303422751], A}
 ```
-The variable AST's context is the module of the macro that defined that variable, and additionally a counter number is inserted into the metadata, which prevents the variable from interfering with variables defined outside of the scope of the macro (this is what is meant by "hygienic macros") once it's evaluated.
+The variable AST's context is the module of the macro that defined that variable, and additionally a counter number is inserted into the metadata, which prevents the variable from interfering with variables of the same name defined outside of the scope of the macro once it's evaluated. This is one of the mechanisms by which Elixir achieves hygienic macros: the compiler recognizes variables by `name` and `metadata[:counter]`, or `name` and `context`. The `var!/2` macro [removes this counter](https://github.com/elixir-lang/elixir/blob/98485daab0a9f3ac2d7809d38f5e57cd73cb22ac/lib/elixir/lib/kernel.ex#L3654) from a variable node to mark that it shouldn't he hygienized.
 
 ### Calls
 
@@ -492,12 +492,14 @@ fields =
 
 Now that we have everything we need, we can generate the code:
 ```elixir
-quote do
+quote location: :keep do
   @type t :: %__MODULE__{unquote_splicing(typespecs)}
   @enforce_keys unquote(enforced_fields)
   defstruct unquote(fields)
 end
 ```
+The `location: :keep` option will add a `keep: {source, line}` field to the nodes metadata. This AST will be inserted in the place the macro was called. If any error happens, the error message will have the line numbers of the *expanded* code, which makes it difficult to find where exactly the error happened as those numbers don't always correspond to the ones in the original source code. The `:keep` data is used to solve this problem.
+
 And that's it! We now have a macro to easily define typespec-ed structs.
 
 The final code:
@@ -614,7 +616,8 @@ defmodule Creed do
 end
 ```
 First we define a `Checker` behaviour for our checkers, this way we can ensure that they all implement a `run/1` function that returns a list of issues.
-The `Creed.run/1` function will take a file path, read its content, and parse them to an Elixir AST with `Code.string_to_quoted/2`. We mentioned earlier that the AST metadata contains information like the line number, and now we will need them to tell the user where the issue was found. By default, the parser won't include the column numbers in the metadata, so we need to pass the `columns: true` option.
+The `Creed.run/1` function will take a file path, read its content, and parse them to an Elixir AST with `Code.string_to_quoted/2`. We mentioned earlier that the AST metadata contains information like the line number, and now we will need them to tell the user where the issue was found. By default, the parser won't include the column numbers in the metadata, so we need to pass the `columns: true` option. There's an additional `:token_metadata` option that we can set to `true` to collect even more data about a node, like `do`/`end` positions, sigils delimiters, or the position where a function call's parenthesis are closed. A complete reference of metadata added by Elixir in different contexts is available at the [Macro.metadata](https://hexdocs.pm/elixir/Macro.html#t:metadata/0) type docs.
+
 After parsing the code, the resulting AST is then fed to the checkers. Since checkers return a list of issues, we end up with a list of lists, so we flatten it.
 Finally, we pass each issue through a function that prints them using ANSI coloring.
 
