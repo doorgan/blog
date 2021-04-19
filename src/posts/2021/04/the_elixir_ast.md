@@ -631,7 +631,7 @@ quote do
 end
 #=> {{:., [], [{:__aliases__, [], [:String]}, :to_atom]}, [], []}
 ```
-So we will need to traverse the AST looking for such pattern. Elixir provides a straightforward way to perform traversals through the AST via the `prewalk`, `postwalk` and `traverse` functions from the `Macro` module. These functions perform depth-first traversals, which means it will go as deep as it can into the tree, and then calling your callback function as it backtracks, until it visits all nodes in the tree. The callback function allows you to modify the visited node, and it also lets you pass an accumulator in a similar fashion to `Enum.reduce`. For this code analyzer we will just use `Macro.postwalk` the accumulator to store the issues as we find them.
+So we will need to traverse the AST looking for such pattern. Elixir provides a straightforward way to perform traversals through the AST via the `prewalk`, `postwalk` and `traverse` functions from the `Macro` module. These functions perform depth-first traversals, which means it will go as deep as it can into the tree, and then calling your callback function as it backtracks, until it visits all nodes in the tree. The callback function allows you to modify the visited node, and it also lets you pass an accumulator in a similar fashion to `Enum.reduce`. For this code analyzer we will just use `Macro.postwalk`, and the accumulator to store the issues as we find them.
 
 Great, now that we have all we need, let's look at the code:
 ```elixir
@@ -646,10 +646,8 @@ defmodule UnsafeToAtomCheck do
     issues
   end
 
-  defp traverse({
-    {:., _, [{:__aliases__, _, [:String]}, :to_atom]},
-    meta, _args
-  } = node, acc) when is_atom(module) do
+  defp traverse({{:., _, [{:__aliases__, _, [:String]}, :to_atom]},
+    meta, _args} = node, acc) do
     issue = %{
       message: @message,
       line: meta[:line],
