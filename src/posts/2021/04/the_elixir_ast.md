@@ -14,13 +14,13 @@ Exploring in detail the Elixir AST, and then using it to build a macro and a sta
 
 {% cover_img "a_deep_dive_into_the_elixir_ast_cover.png" "iex> quote do: sum(1, 2, 3); {:sum, [], [1, 2, 3]" %}
 
-Before I start, I want to thank GenericJam from the [Elixir Discord server](https://discord.com/invite/elixir) for motivating me to write this article, and to Łukasz Jan Niemier (aka @hauleth) for pointing me to the missing pieces I needed to have a complete picture of the AST shape.
+Before I start, I want to thank GenericJam from the [Elixir Discord server](https://discord.com/invite/elixir) for motivating me to write this article, and Łukasz Jan Niemier (aka @hauleth) for pointing me to the missing pieces I needed to have a complete picture of the AST shape.
 
 ---
 
 Metaprogramming is an important feature in Elixir. It gives you the ability to write code that, when compiled, gets transformed into a different version of itself. This kind of code is called a *macro*, and is popullarily referred to as "code that writes code".
 
-For this to work, a macro function needs to have access to the language's internal representation of the source code. This is typically a tree-shaped data structure called an *Abstract Syntax Tree*. For example, the expression `1 + 2 * 4` would be conceptually represented by this tree:
+For this to work, a macro needs to have access to the language's internal representation of the source code. This is typically a tree-shaped data structure called an *Abstract Syntax Tree*. For example, the expression `1 + 2 * 4` would be conceptually represented by this tree:
 ```
   +
  / \
@@ -58,7 +58,7 @@ That 3-tuple is representing this AST node:
 ```
 What can be inferred here is that non-leaf AST nodes are represented as three element tuples, where the first element is an expression identifying the node type, and the last element is a list of children. The middle element is a list with *metadata* about the node, like the line number and column. We'll see more examples of metadata through the article, but for now it can be ignored. In most examples the metadata will be an empty list for the sake of brevity, but I will actually use it later in the code style checker section.
 
-With those two examples, it should be possible to understand the `1 + 2 * 4` expression's AST means:
+With those two examples, it should be possible to understand the `1 + 2 * 4` expression's AST:
 ```elixir
 quote do
   1 + 2 * 4
@@ -69,7 +69,7 @@ First, the outer tuple `{:+, [], [...]}` is the call to `+/2`, then the children
 
 Since `quote/2` is the primitive by which code is turned into data, Elixir calls the AST a *quoted expression*. The AST term has the advantage of familiarity among developers, so most of the time both terms are use interchangeably, even in the official Elixir documentation.
 
-One thing to note so far is that some literals are expressed by themselves. In many languages, literals would have their own representation, for instance in JavaScript the literal `1` would be expressed by the object `{type: 'Literal', value: 1}`. This is not the case in Elixir, and one explanation for this is that it makes it easier to work with them in macros, as matching on literals is much less verbose than matching against nested 3-tuples. However, one of the downsides of this is that information about the position or context of a literal is lost.
+One thing to note so far is that some literals are expressed by themselves. In many languages, literals would have their own representation, for instance in JavaScript the literal `1` would be expressed by the object `{type: 'Literal', value: 1}`, or the `{integer, LineNumber, 1}` tuple in Erlang. This is not the case in Elixir, and one explanation for this is that it makes it easier to work with them in macros, as matching on literals is much less verbose than matching against nested 3-tuples. However, one of the downsides of this is that information about the position or context of a literal is lost.
 
 ## What makes an AST
 
@@ -83,7 +83,7 @@ As shown above, some Elixir terms can be represented by themselves. To be precis
 
 <small>Note: This listing is borrowed from the Elixir AST section in the [Elixir syntax reference](https://hexdocs.pm/elixir/master/syntax-reference.html#the-elixir-ast)</small>
 
-This means that trying to quote any of those expressions will result in a no-op:
+This means that trying to quote any of those expressions will result in the expression itself:
 ```elixir
 quote do
   {:foo, :bar}
@@ -91,7 +91,7 @@ end
 #=> {:foo, :bar}
 ```
 
-The reason 2-tuples are a special case, is that it allows keyword lists to be expressed as literals. It makes it easier to pass options to macros, and it makes it also easier to identify `do`/`end` blocks by pattern matching against `[do: block]`.
+The reason 2-tuples are a special case is that it allows keyword lists to be expressed as literals. It makes it easier to pass options to macros, and it makes it also easier to identify `do`/`end` blocks by pattern matching against `[do: block]`.
 
 Every other kind of expression is represented by a 3-tuple that can represent *variables* or *calls*.
 
@@ -117,7 +117,7 @@ end
 #=> {:bar, [], Foo}
 ```
 
-When a macro is encountered by the compiler, it gets *expanded*. That is, the macro gets evaluated and its result gets inserted into the place in the AST where the macro call happened. This happens recursively until there is no macro left to expand. During this process, macros can insert variables into the AST, and their nodes will have the macro module as their context.
+When a macro is encountered by the compiler, it gets *expanded*. That is, the macro gets evaluated and its result gets inserted into the place in the AST where the macro call happened. This happens recursively until there is no macro left to expand. During this process, macros can insert variables into the AST, and their nodes will have the macro module as their context. This context can also be present in the `context` key of some nodes metadata.
 
 The context is useful to keep track what code defined which variables. For instance, consider this macro:
 ```elixir
@@ -152,10 +152,10 @@ And they are represented by a 3-tuple:
 ```elixir
 {:sum, [], [1, 2, 3]}
 ```
-Here the first element is the call *type*, the second one is again metadata, and the third one is a list of *arguments*(or *children*). Most of the time the type is an atom but, as we'll see later, there are some special bits of syntax in which the type can be another 3-tuple.
+Here the first element is an atom in the case of non-qualified calls like this example, or a tuple representing a call to the `.` operator in the case of qualified calls like `String.downcase("HELLO")`. The second element is again metadata, and the third one is a list of *arguments*.
 
 ### Operators and constructors
-Operators like `+` are also represented as calls:
+Operators like `+` are also represented as non-qualified calls:
 ```elixir
 quote do
   1 + 2
@@ -190,7 +190,7 @@ end
 
 ### Aliases and blocks
 
-Some types have a special meaning. For example, module names are atoms, but they are represented in the AST by a call with the `:__aliases__` type:
+Some calls have a special meaning. For example, module names are atoms: `Enum` is actually `:"Elixir.Enum"` under the hood, but they are represented in the AST as an `:__aliases__` call:
 ```elixir
 quote do
   Foo
@@ -205,7 +205,7 @@ end
 #=> {:__aliases__, [], [:Foo, :Bar, :Baz]}
 ```
 
-Another special case is blocks of code. A block is a sequence of two or more "self-contained" expressions, each defined in a different line. It is represented as a `__block__` call, where each line is a separate argument:
+Another special case is blocks of code. A block is a sequence of two or more expressions, each defined in a different line. It is represented as a `__block__` call, where each line is a separate argument:
 ```elixir
 quote do
   1
@@ -222,7 +222,7 @@ quote do 1; 2; 3; end
 
 ### Left to right arrow
 
-The left to right arrow `->` is a special kind of node. It is represented as a call like an operator, but it can only exist in a list, which suggests that it can only be used as an argument for another call, like clauses for an anonymous function or in a `do` block.
+The left to right arrow `->` is a special kind of node. It is represented as non-qualified call, but it can only exist in a list, which suggests that it can only be used as an argument for another call, like clauses for an anonymous function or in a `do` block.
 The first argument must always be a list representing its left hand side arguments, and the second one is an expression.
 
 ```elixir
@@ -257,9 +257,9 @@ end
 ```
 <small>Examples borrowed from the Elixir syntax reference</small>
 
-### Calls as call types
+### Qualified calls
 
-Earlier I mentioned that there are some cases where a call type can be another 3-tuple. This happens when there is a call on the left hand side of the `()` (call) operator. There are two of these situations:
+So far we've seen examples of non-qualified calls, where the first element is an atom. Qualified calls, on the other hand, have a call to the `.` operator as their first element. This kind of call is found when there is a call on the left hand side of the `()` (call) operator. There are two of these situations:
 
 - When the left hand side is another call
 - With the `.` operator
@@ -273,7 +273,7 @@ end
 #=> {{:unquote, [], [:foo]}, [], []}
 ```
 The `unquote: false` option forces `quote` to interpret `unquote` as a normal call, preventing it from injecting code into our expression, so we can see how it is represented in the AST.
-We can see that the type here is the call `{:unquote, [], [:foo]}` instead of an atom.
+We can see that the first element here is the non-qualified call `{:unquote, [], [:foo]}` instead of an atom.
 
 The second situation is more interesting, and is where things start to get funky. Let's consider the following syntax:
 ```elixir
@@ -284,11 +284,11 @@ If we quote it, we get the following AST:
 {{:., [], [{:foo, [], Elixir}, :bar]}, [no_parens: true], []}
 ```
 There's quite a bit to unpack here.
-The type of the node is a dot operator call, where the left hand side is a variable, and the right hand side is an atom:
+The first element is a dot operator call, where the left hand side is a variable, and the right hand side is an atom:
 ```elixir
 {:., [], [{:foo, [], Elixir}, :bar]}
 ```
-The outer node is a call with no arguments, but it contains the `no_parens: true` metadata. What this suggests is that every use of the `.` operator will be represented as a call where the parenthesis may be omitted, and the type will be a dot operator call.
+The outer node is a call with no arguments, but it contains the `no_parens: true` metadata. What this suggests is that every use of the `.` operator will be represented as a call where the parenthesis may be omitted, and the first element will be a dot operator call.
 
 It's not hard to also prove that the dot operator call can be arbitratily nested:
 ```elixir
@@ -304,7 +304,7 @@ end
 }
 ```
 
-Another case of the dot operator call is the qualified tuples syntax: `Foo.{Bar, Baz}`. This syntax is most often used when aliasing multiple modules. It's represented in the AST as a `{:., [], [alias, :{}]}` call:
+Another case for qualified calls is the qualified tuples syntax: `Foo.{Bar, Baz}`. This syntax is most often used when aliasing multiple modules. It's represented in the AST as a `{:., [], [alias, :{}]}` call:
 ```elixir
 quote do
   Foo.{Bar, Baz}
@@ -316,16 +316,16 @@ end
   [{:__aliases__, [], [:Bar]}, {:__aliases__, [], [:Baz]}]
 }
 ```
-The interesting bits here are the arguments to the dot call: the `[alias, :{}]` arguments are the way Elixir uses to recognize multiple aliasing as something different from `Foo.{}(Bar, Baz)`.
+The interesting bits here are the arguments to the dot call: the `[alias, :{}]` arguments are the way Elixir uses to recognize qualified tuples as something different from `Foo.{}(Bar, Baz)`.
 
-There's a last case for the dot operator call, and this one striked me as odd the first time, because it's not obvious at all that we're dealing with a dot operator. Let's look at the following quoted expression:
+There's a last case for qualified calls, and this one striked me as odd the first time, because it's not obvious at all that we're dealing with a qualified operator. Let's look at the following quoted expression:
 ```elixir
 quote do
   foo[:bar]
 end
 #=> {{:., [], [Access, :get]}, [], [{:foo, [], Elixir}, :bar]}
 ```
-It turns out the access syntax is, under the hood, a dot operator call! The way Elixir recognizes it in the AST is by the `[Access, :get]` arguments for the inner dot call, and it only allows as many arguments as `Access.get`. The reason being that it gets evaluated to a call to that function:
+What happens here is that the access syntax gets desugared into a qualified call to `Access.get`. The way Elixir recognizes it in the AST is by the `[Access, :get]` arguments for the inner dot call, and it only makes sense to have as many arguments as `Access.get` allows:
 ```elixir
 Macro.to_string({{:., [], [Access, :get]}, [], [{:foo, [], Elixir}]})
 #=> "Access.get(foo)"
@@ -339,7 +339,6 @@ Macro.to_string({{:., [], [Access, :get]}, [], [{:foo, [], Elixir}, :bar, :baz]}
 Macro.to_string({{:., [], [Access, :get]}, [], [{:foo, [], Elixir}, :bar, :baz, :qux]})
 #=> "Access.get(foo, :bar, :baz, :quz)" <-- this will fail
 ```
-Or, more precisely, because `foo[:foo]` is *syntactic sugar* for a call to `Access.get/2`.
 
 ---
 That should cover most, if not all, of the possible constructs that conform an Elixir AST. Any kind of AST you find will be made of a composition of the nodes mentioned before, and knowing them makes reading it and identifying patterns much more easier.
@@ -388,14 +387,14 @@ defmodule TypedStruct do
 end
 ```
 
-Now we need to look at the received AST and look for `:field` calls. The intended usage of the macro is in with a `do` block. This syntax is sugar for the case when the last element for a function is a keyword list, and its last element has the `:do` key.
+Now we need to look at the received AST and look for `:field` calls. The intended usage of the macro is with a `do` block. This syntax is sugar for the case when the last element for a function is a keyword list, and its last element has the `:do` key.
 If we look at this example:
 ```elixir
 typedstruct do
   field :message, String.t
 end
 ```
-The argument passed to `typedstruct` will be `[do: ...]`. What comes after the `do` can be a single expression if it's just one line, or a `:__block__` if it's two or more, as we saw earlier. We'll need to consider this when we extract the fields from the AST.
+The argument passed to `typedstruct` will be `[do: ...]`. What comes after the `do` can be a single expression if it's just one line, or a `:__block__` call if it's two or more, as we saw earlier. We'll need to consider this when we extract the fields from the AST.
 A simple way to do it is to ensure we always have a list of lines:
 ```elixir
 # The macro will always be used with a do block, so we match against that
@@ -407,7 +406,7 @@ defmacro typedstruct(do: ast) do
     end
 end
 ```
-Now the next step is to get the information out of the field calls. Each line shoul be a field definition like this one:
+Now the next step is to get the information out of the field calls. Each line should be a field definition like this one:
 ```elixir
 field :description, String.t, enforced?: true
 ```
@@ -558,6 +557,8 @@ defmodule TypedStruct do
 end
 ```
 
+You can now try it yourself. Define a struct using this macro, and then try to create a struct with a missing enforced field, or using `t MyStruct.t` in IEx to check that the generated typespec is correct.
+
 # Building a code style checker
 
 The most common use case for working with the AST are macros, but there is some other cool stuff we can do with it. There is a popular tool called [credo](https://github.com/rrrene/credo), which describes itself as "A static code analysis tool for the Elixir language with a focus on code consistency and teaching". At a high level, when you run it, it scans you project, parses your source files, and emits warnings if it detects "antipatterns", like unsafe conversion from strings to atoms.
@@ -705,14 +706,14 @@ end
    {:__aliases__, [], [:Baz]}
  ]}
 ```
-The important bit here is the `{:., [], [{:__aliases__, [], [:Foo]}, :{}]}` call, since it's what indicates us that we're in a multi alias call.
+The important bit here is the `{:., [], [{:__aliases__, [], [:Foo]}, :{}]}` call, since it's what indicates us that we're in a qualified tuple call, which is what the multi alias syntax uses.
 Additionally, we want to check if that happens in the context of a module alias, like this:
 ```elixir
 alias Foo.{Bar, Baz}
 ```
-This is quite simple to spot, since it's just a regular `{:alias, [], [args]}` call, where args will be the multi alias call.
+This is quite simple to spot, since it's just a non-qualified `{:alias, [], [args]}` call, where args will be the multi alias call.
 
-Now the idea is the same as the previous check: we traverse the AST, and if we match that pattern we build an issue:
+Now the idea is the same as in the previous check: we traverse the AST, and we build an issue if we find that pattern:
 ```elixir
 defmodule MultiAliasCheck do
   @behaviour Creed.Checker
@@ -756,7 +757,7 @@ Now we add it to `Creed`'s checkers list:
 @checkers [UnsafeToAtomCheck, MultiAliasCheck]
 ```
 
-Let's also modify out testing file and add a multi alias:
+Let's also modify our testing file and add a multi alias:
 ```elixir
 # creed_test.ex
 defmodule Foo do
@@ -791,5 +792,7 @@ Credo checks work in a very similar way, the difference being that it also provi
 # Final words
 
 We have learned quite a bit through this article. The Elixir AST itself is quite simple when you look at its basic shapes, but it can get quite complex for larger programs. Isolating little bits of syntax makes it much easier to see what's going on and to develop a general sense of what it is representing. We learned most(all?) of the possible shapes an AST node can take and how they are combined to create meaningful programs, and we leveraged this knowledge to create useful tools for our day to day programming work.
+
+I originally intended to also consider the AST from the perspective of a code formatter, but the Elixir parser discards a lot of useful information that makes this task a bit harder to achieve. The Elixir formatter passes some options to both the Elixir tokenizer and parser, and uses some other language escape hatches(like the process dictionary) to preserve comments and other useful information. It then builds an algebra document based on the method described in the Strictly Pretty paper by Christian Lindig, which is used to finally pretty print the source code. This in itself deserves a separate article to discuss it in detail, and escapes the scope of this one, which is studying the Elixir AST.
 
 I had lots of fun digging into this topic and finding examples to bring all those concepts to a more tangible shape. I hope this was informative and that it helps you to build your own tools and understand other people's AST manipulation code.
