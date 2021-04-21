@@ -376,7 +376,7 @@ defmodule Report do
   end
 end
 ```
-The plan is the following: we will define a `typedstruct` macro, and extract the struct data from the received AST to finally generate the the struct definition, typespec, and enforcing options. There are other ways to achieve this, but they involve the definition of more macros and, while they can improve error reporting and are generally ore easily extensible, they are too complex for the purposes of this exercise.
+The plan is the following: we will define a `typedstruct` macro, and extract the struct data from the received AST to finally generate the struct definition, typespec, and enforcing options. There are other ways to achieve this, but they involve the definition of more macros and, while they can improve error reporting and are generally more easily extensible, they are too complex for the purposes of this exercise.
 
 Let's start by creating the macro:
 ```elixir
@@ -387,7 +387,7 @@ defmodule TypedStruct do
 end
 ```
 
-Now we need to look at the received AST and look for `:field` calls. The intended usage of the macro is with a `do` block. This syntax is sugar for the case when the last element for a function is a keyword list, and its last element has the `:do` key.
+The intended usage of the macro is with a `do` block. This syntax is sugar for the case when the last element for a function is a keyword list, and its last element has the `:do` key.
 If we look at this example:
 ```elixir
 typedstruct do
@@ -406,7 +406,7 @@ defmacro typedstruct(do: ast) do
     end
 end
 ```
-Now the next step is to get the information out of the field calls. Each line should be a field definition like this one:
+Now we need to look at the received AST and look for `:field` calls. Each line should be a field definition like this one:
 ```elixir
 field :description, String.t, enforced?: true
 ```
