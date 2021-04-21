@@ -696,7 +696,7 @@ It works!
 
 Now we'll try with a slightly more complicated check. We will now look for multi alias syntax, and recommend using multiple aliases in individual lines instead.
 Let's remind ourselves what the multi alias syntax looks like as AST:
-```
+```elixir
 quote do
   Foo.{Bar, Baz}
 end
