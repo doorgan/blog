@@ -171,7 +171,7 @@ For example, the following map:
 ```
 Is represented by the call:
 ```elixir
-{:%{}, [], [foo, :bar]}
+{:%{}, [], [foo: :bar]}
 ```
 The same goes for tuples of sizes other than 2:
 ```elixir
