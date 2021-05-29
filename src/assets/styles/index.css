@@ -23,3 +23,7 @@ html.dark {
 .prose code::after {
   content: "";
 }
+
+.giscus iframe {
+  width: 100%;
+}
