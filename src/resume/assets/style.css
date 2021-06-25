@@ -1,21 +1,104 @@
 @import "milligram";
 
+:root {
+  --background: #fff;
+  --text: #49525a;
+  --link: #a127ce;
+
+  --border-color: #ccc;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --background: #0d0d0d;
+    --text: #ccc;
+    --link: #cb7ee7;
+
+    --code-bg: #333;
+    --code-fg: var(--text);
+
+    --border-color: #333;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
+nav {
+  height: 5.2rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5em;
+}
+
+nav > .container {
+  padding-top: 0;
+  padding-bottom: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+a {
+  color: var(--link);
+}
+
+@media not print {
+  a[target="_blank"]:after {
+    content: "↗";
+    margin-left: 0.25em;
+  }
+}
+
+dl > div {
+  break-inside: avoid-column;
+}
+
 dt {
   font-weight: bold;
+  margin-bottom: 0.25em;
 }
 
 dd {
   margin-left: 0;
 }
 
-.columns {
-  display: grid;
-  grid-gap: 2em;
+code {
+  background: var(--code-bg);
+  color: var(--code-fg);
 }
 
-@media (min-width: 80rem) {
-  .columns {
-    grid-template-columns: repeat(2, 1fr);
+#profile-pic {
+  display: block;
+  width: 8em;
+  height: 8em;
+  border-radius: 50%;
+}
+
+@media (min-width: 60rem), print {
+  .about-and-contact {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-gap: 2em;
+  }
+}
+
+#contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  margin-bottom: 2.5em;
+}
+
+@media (min-width: 40rem) and (max-width: 60rem) {
+  #contact {
+    flex-direction: row;
+    align-items: flex-start;
   }
 }
 
@@ -23,7 +106,45 @@ dd {
   list-style: none;
 }
 
-a[target="_blank"]:after {
-  content: "↗";
-  margin-left: 0.25em;
+@media (min-width: 60rem) {
+  .columns {
+    display: grid;
+    grid-gap: 2.5em;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media print {
+  nav {
+    display: none;
+  }
+
+  p {
+    text-align: justify;
+  }
+
+  .container {
+    max-width: 100%;
+  }
+
+  .columns > section > dl {
+    columns: 2;
+    gap: 2em;
+  }
+}
+
+#open-source-work {
+  page-break-after: always;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
