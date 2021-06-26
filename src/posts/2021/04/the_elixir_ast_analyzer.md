@@ -8,7 +8,7 @@ tags:
   - macros
 ---
 
-Part 2 of The Elixir AST series. Analyzing the AST to build a static code analyzer.
+Part 3 of The Elixir AST series. Analyzing the AST to build a static code analyzer.
 
 <!-- excerpt -->
 
