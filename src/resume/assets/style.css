@@ -1,12 +1,9 @@
-@import "milligram";
-
+/** Theming **/
 :root {
   --background: #fff;
   --text: #49525a;
-
   --link: #a127ce;
   --link-hover: #3c0750;
-
   --border-color: #ccc;
 }
 
@@ -14,43 +11,27 @@
   body {
     --background: #0d0d0d;
     --text: #ccc;
-
     --link: #cb7ee7;
     --link-hover: #eed4f7;
-
     --code-bg: #333;
     --code-fg: var(--text);
-
     --border-color: #333;
   }
 }
 
+/** Base **/
 body {
   background: var(--background);
   color: var(--text);
   font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
 
-nav {
-  height: 5.2rem;
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 1.5em;
-}
-
-nav > .container {
-  padding-top: 0;
-  padding-bottom: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
 a {
   color: var(--link);
 }
 
-a:hover, a:focus {
+a:hover,
+a:focus {
   color: var(--link-hover);
 }
 
@@ -79,17 +60,79 @@ code {
   color: var(--code-fg);
 }
 
-#profile-pic {
-  display: block;
-  width: 8em;
-  height: 8em;
-  border-radius: 50%;
+@media print {
+  p {
+    text-align: justify;
+  }
+}
+
+/** Icons **/
+.icon {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: text-bottom;
+  display: inline-block;
+}
+
+/** Buttons **/
+.button.button-clear {
+  color: var(--link);
+}
+
+.button.button-clear:hover,
+.button.button-clear:focus {
+  color: var(--link-hover);
+}
+
+.button:focus {
+  outline: 1px dotted var(--link-hover);
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
+/** Navigation **/
+nav {
+  height: 5.2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+nav > .container {
+  padding-top: 0;
+  padding-bottom: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+nav .button {
+  margin-bottom: 0;
+}
+
+@media print {
+  nav {
+    display: none;
+  }
+}
+
+/*** COMPOSITION ***/
+
+/** Abount and contact **/
+.about-and-contact {
+  display: flex;
+  flex-direction: column-reverse;
+  padding-top: 1.5em;
+}
+
+@media print {
+  .about-and-contact {
+    padding-top: 0;
+  }
 }
 
 @media (min-width: 60rem), print {
   .about-and-contact {
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 3fr 1fr;
     grid-gap: 2em;
   }
 }
@@ -108,16 +151,34 @@ code {
   flex-direction: column;
 }
 
-@media (min-width: 40rem) and (max-width: 60rem) {
-  #contact {
-    flex-direction: row;
-  }
+#contact a[target="_blank"] {
+  display: inline-flex;
 }
 
 #contact > ul {
   list-style: none;
 }
 
+#profile-pic {
+  display: block;
+  width: 8em;
+  height: 8em;
+  border-radius: 50%;
+}
+
+@media (min-width: 40rem) {
+  #contact {
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 60rem) {
+  #contact {
+    flex-direction: column;
+  }
+}
+
+/** Main content **/
 @media (min-width: 60rem) {
   .columns {
     display: grid;
@@ -127,18 +188,9 @@ code {
 }
 
 @media print {
-  nav {
-    display: none;
-  }
-
-  p {
-    text-align: justify;
-  }
-
   .container {
     max-width: 100%;
   }
-
   .columns > section > dl {
     columns: 2;
     gap: 2em;
@@ -149,6 +201,7 @@ code {
   page-break-after: always;
 }
 
+/** Utilities **/
 .sr-only {
   position: absolute;
   width: 1px;
@@ -159,4 +212,8 @@ code {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+.flex-spacer {
+  flex-grow: 1;
 }

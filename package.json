@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "build": "npx @11ty/eleventy & postcss ./tailwind.css --o _site/assets/styles/tailwind.css"
+    "build": "npx @11ty/eleventy & postcss ./tailwind.css --o _site/assets/styles/tailwind.css & postcss _site/resume/assets/style.css --o _site/resume/assets/style.css"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
     "@11ty/eleventy": "^0.11.1",
     "@11ty/eleventy-plugin-rss": "^1.1.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "^3.0.4",
+    "cssnano": "^5.0.6",
     "eslint": "^7.12.1"
   },
   "dependencies": {
