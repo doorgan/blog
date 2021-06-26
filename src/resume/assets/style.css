@@ -95,10 +95,14 @@ code {
   margin-bottom: 2.5em;
 }
 
+#contact > address {
+  display: flex;
+  flex-direction: column;
+}
+
 @media (min-width: 40rem) and (max-width: 60rem) {
   #contact {
     flex-direction: row;
-    align-items: flex-start;
   }
 }
 
