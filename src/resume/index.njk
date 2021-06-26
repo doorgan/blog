@@ -11,6 +11,7 @@
 
     <!-- SEO metadata -->
     <meta property="og:title" content="Lucas San Román"/>
+    <meta name="description" content="Optician and Elixir enthusiast, looking forward to improve the Elixir ecosystem."/>
     <meta property="og:description" content="Optician and Elixir enthusiast, looking forward to improve the Elixir ecosystem."/>
     <meta property="og:url" content="{{ site.url }}/resume"/>
 
@@ -50,19 +51,19 @@
         <section id="about-me">
           <h1>Lucas San Román</h1>
           <p>
-            I'm an Optician graduated from the University of Buenos Aires with
+            I'm an optician who graduated from the University of Buenos Aires with
             lots of interest in software development and the Elixir programming
-            language in particular. I'm self taught, have good adaptability, and
-            I'm always keen to learn more about technology, functional
-            programming and computer science.
+            language in particular. I'm self taught, have good adaptability and
+            problem solving abilities, and I'm always keen to learn more about
+            technology, functional programming and computer science.
           </p>
           <p>
             I volunteer as a moderator for the
             <a href="https://discord.gg/elixir" target="_blank" rel="noopener noreferrer">Elixir Discord server</a>, where
             we provide assistance to other members of the Elixir
-            community, and I'm the author of the
-            <a href="https://github.com/doorgan/sourceror" target="_blank" rel="noopener noreferrer">Sourceror</a>
-            library for AST-based Elixir source code manipulation.
+            community ranging from beginners to experts working on large scale projects.
+            I'm the author of the <a href="https://github.com/doorgan/sourceror" target="_blank" rel="noopener noreferrer">Sourceror</a> library for AST-based Elixir source code manipulation, which helps to solve the
+            long lasting issue of the lack of refactoring tools in the Elixir ecosystem.
           </p>
         </section>
         <aside id="contact" itemscope itemtype="https://schema.org/Person">
@@ -89,74 +90,47 @@
           <h2>Open Source work</h2>
 
           <dl>
-            <div>
-              <dt>Sourceror</dt>
-              <dd>
-                <aside>
-                  <a href="https://github.com/doorgan/sourceror" target="_blank" rel="noopener noreferrer"
+            <dt>Sourceror</dt>
+            <dd>
+              <aside>
+                <a href="https://github.com/doorgan/sourceror" target="_blank" rel="noopener noreferrer"
                   aria-label="Sourceror Github repository">https://github.com/doorgan/sourceror</a>
-                </aside>
+              </aside>
 
-                <p>
-                Sourceror is a toolkit to work with the Elixir source code,
-                the first library in the Elixir ecosystem that empowers
-                Elixirists and tool authors to build refactoring tools and
-                migration scripts, similar to what jscodeshift has to offer
-                for the JavaScript world.
-              </p>
-              </dd>
-            </div>
-
-            <div>
-              <dt>Contributions to the Elixir language</dt>
-              <dd>
-                <p>
-                I contributed a series of Pull Requests to expose
-                functionality from the Elixir formatter to the users. In
-                particular, the PR
-                <a href="https://github.com/elixir-lang/elixir/pull/10990" target="_blank"
-                  rel="noopener noreferrer">#10990</a>
-                exposes the comments representation, and the PR
-                <a href="https://github.com/elixir-lang/elixir/pull/10988" target="_blank"
-                  rel="noopener noreferrer">#10988</a>
-                implements a normalizer that is able to translate the regular
-                elixir Abstract Syntax Tree into the extended, annotated AST
-                used by the Elixir formatter.
-              </p>
-              </dd>
-            </div>
-
-            <div>
-              <dt>YarnParser</dt>
-              <dd>
-                <aside>
-                  <a href="https://github.com/doorgan/yarn_parser" target="_blank" rel="noopener noreferrer"
-                  aria-label="Yarn Parser Github repository">https://github.com/doorgan/yarn_parser</a>
-                </aside>
-                <p>
-                A library to parse Yarn lockfiles, built with the NimbleParsec
-                parser combinator library and
-                <a href="https://github.com/doorgan/yarn_parser/issues/1#issue-696359986" target="_blank"
-                  rel="noopener noreferrer">used for a project in Georgia Tech Research Institute</a>.
-              </p>
-              </dd>
-            </div>
-
-            <div>
-              <dt>The Embers Social Network project</dt>
-              <dd>
-                <aside>
-                  <a href="https://github.com/EmbersPlatform/embers" target="_blank" rel="noopener noreferrer"
+              <p>
+                  Sourceror is a toolkit to work with the Elixir source code. It's
+                  the first library in the Elixir ecosystem that empowers
+                  Elixirists and tool authors to build refactoring tools and
+                  migration scripts, similar to what jscodeshift has to offer
+                  for the JavaScript world. It provides an annotated Abstract
+                  Syntax Tree for the Elixir language, and a fork of the Elixir
+                  parser to backport features I contributed to Elixir 1.13 to
+                  older Elixir versions.
+                </p>
+            </dd>
+            <dt>Contributions to the Elixir language</dt>
+            <dd>
+              <p>
+                  I contributed a series of pull requests to core Elixir to enable programmatic manipulation
+                  of the source code. Through PRs
+                  <a href="https://github.com/elixir-lang/elixir/pull/10990" target="_blank" rel="noopener noreferrer" title="Expose internal representation of comments">#10990</a> and <a href="https://github.com/elixir-lang/elixir/pull/10988" target="_blank" rel="noopener noreferrer" title="Implement a normalizer that translates regular AST to a special, annotated version of the AST">#10988</a> I helped solve the lack of the primitives required to build refactoring tools, an issue that was affecting the whole community since the early days of the language, in an incremental an backwards compatible way.
+                </p>
+            </dd>
+            <dt>The Embers Social Network project</dt>
+            <dd>
+              <aside>
+                <a href="https://github.com/EmbersPlatform/embers" target="_blank" rel="noopener noreferrer"
                   aria-label="Embers Github repository">https://github.com/EmbersPlatform/embers</a>
-                </aside>
-                <p>
-                Embers was an exploratory project to build a social network
-                platform with Elixir and the Phoenix framework. It used
-                Phoenix Channels for a private chat and real time events, and
-                Presence for an asymmetric list of online friends.
-              </p>
-              </dd>
-            </div>
+              </aside>
+              <p>
+                  Embers was an exploratory project to build a social network
+                  platform built from the ground up with Elixir and the Phoenix
+                  Framework, where users could share a variety of multimedia content
+                  with their followers. Some of its features included a personal feed
+                  updated in real time, a private messaging system, real-time
+                  notifications, and asymmetric tracking of online presences.
+                </p>
+            </dd>
           </dl>
         </section>
 
@@ -168,19 +142,17 @@
               <dt>Elixir</dt>
               <dd>
                 <p>
-                  I have been using the Elixir language since 2018. I have a
-                  solid understanding of it's sequential features like project
-                  structure, protocols, behaviours, releases and standard
-                  library. I have a strong understanding of the AST
-                  representation of the Elixir code and how to use it to build
-                  macros and tools, and I understand the fundamentals of the OTP
-                  like GenServers, supervision trees and single node
-                  concurrency.
-                </p>
-                <p>
-                  I also have experience using the Phoenix framework to create
-                  multiple page applications with realtime features, and with
-                  Ecto to build both queries and custom validations.
+                  I have been using the Elixir language since 2018, and I volunteer
+                  teaching and helping solve problems to other members of the Elixir
+                  community. I have a solid understanding of Elixir's sequential
+                  features like protocols, behaviours, releases and standard library.
+                  I have a very solid understanding of the AST representation of
+                  the Elixir code and how to use it to build macros and tools, which
+                  is the area I'm currently working on in the Open Source space.
+                  I understand the fundamentals of the OTP like GenServers,
+                  supervision trees and single node concurrency, which are the
+                  features of the language that I leveraged to keep my projects
+                  stack simple and manageable.
                 </p>
               </dd>
             </div>
@@ -197,6 +169,20 @@
                   management patterns like Meiosis, which I used to build my
                   personal library
                   <a href="https://github.com/doorgan/untitled" target="_blank" rel="noopener noreferrer">untitled</a>.
+                </p>
+              </dd>
+            </div>
+
+            <div>
+              <dt>HTML, CSS and web accessibility</dt>
+              <dd>
+                <p>
+                  I have experience working with modern CSS features like
+                  flexbox, grid and custom properties, pre-processors like SASS
+                  and post-css as well. I have experience creating responsive
+                  and accessible web experiences, and I prefer to use progressive
+                  enhancement techniques whenever possible. The present resume is
+                  built with these technologies and with accessibility in mind.
                 </p>
               </dd>
             </div>
@@ -234,19 +220,6 @@
                   I used PHP for my web projects until I discovered Elixir in
                   2018. The previous version of the Embers project was built
                   using the Laravel framework v5.6.
-                </p>
-              </dd>
-            </div>
-
-            <div>
-              <dt>Other web technologies</dt>
-              <dd>
-                <p>
-                  I have experience working with modern CSS features like
-                  flexbox, grid and custom properties, pre-processors like SASS
-                  and post-css as well as responsive designs with media queries.
-                  I also have experience writing semantic HTML, and I prefer to
-                  use progressive enhancement techniques whenever possible.
                 </p>
               </dd>
             </div>
