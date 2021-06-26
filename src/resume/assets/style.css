@@ -3,7 +3,9 @@
 :root {
   --background: #fff;
   --text: #49525a;
+
   --link: #a127ce;
+  --link-hover: #3c0750;
 
   --border-color: #ccc;
 }
@@ -12,7 +14,9 @@
   body {
     --background: #0d0d0d;
     --text: #ccc;
+
     --link: #cb7ee7;
+    --link-hover: #eed4f7;
 
     --code-bg: #333;
     --code-fg: var(--text);
@@ -46,10 +50,14 @@ a {
   color: var(--link);
 }
 
+a:hover, a:focus {
+  color: var(--link-hover);
+}
+
 @media not print {
   a[target="_blank"]:after {
-    content: "↗";
-    margin-left: 0.25em;
+    content: " ↗";
+    margin: 0;
   }
 }
 
@@ -92,7 +100,7 @@ code {
   align-items: center;
   justify-content: center;
   gap: 1em;
-  margin-bottom: 2.5em;
+  margin-bottom: 3.5em;
 }
 
 #contact > address {
