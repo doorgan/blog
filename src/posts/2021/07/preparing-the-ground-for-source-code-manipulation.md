@@ -221,11 +221,11 @@ So there's actually two issues we need to address: merging AST and comments, and
 
 # Enter the Sourceror
 
-What we covered so far is the process I followed when trying to answer the "how can I programatically modify the source code?". The two new functions I mentioned earlier are the result of a couple contributions I made to core Elixir so I could get started with the rest of the work. As a bonus, `Macro.to_string` uses the new `Code.quoted_to_algebra` under the hood, so it produces the same prettified output as the formatter. Before doing this, I forked the Elixir code and started making some changes and prototypes to understand how all of this would work, and what heuristics would be needed to construct an AST with comments. The result of all this experimentation is [Sourceror](https://github.com/doorgan/sourceror), a library that takes care of passing the correct options to the Elixir parser, and of merging and handling the AST and comments for you. All of the changes that were required in Elixir itself are also **backported by Sourceror to Elixir versions down to 1.10**, so you can try it out today!
+What we covered so far is the process I followed when trying to answer the "how can I programatically modify the source code?" question. The two new functions I mentioned earlier are the result of a couple contributions I made to core Elixir so I could get started with the rest of the work. As a bonus, `Macro.to_string` now uses the new `Code.quoted_to_algebra` under the hood, so it produces the same prettified output as the formatter. Before doing this, I forked the Elixir code and started making some changes and prototypes to understand how all of this would work, and what heuristics would be needed to construct an AST with comments. The result of all this experimentation is [Sourceror](https://github.com/doorgan/sourceror), a library that takes care of passing the correct options to the Elixir parser, and of merging and handling the AST and comments for you. All of the changes that were required in Elixir itself are also **backported by Sourceror to Elixir versions down to 1.10**, so you can try it out today!
 
 The rules used to merge the AST and comments are quite simple:
 
-- If a comment is places before or in the same line as a node, then it's considered a "leading" comment.
+- If a comment is placed before or in the same line as a node, then it's considered a "leading" comment.
 - If a comment is inside of a block(like a `do` block, or the top level scope) and is not leading any other node, then it's considered a "trailing" comment.
 
 With these rules, the code from the previous section would be parsed as the following tree:
