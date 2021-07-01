@@ -1,6 +1,7 @@
 ---
 title: "Preparing the ground for source code manipulation"
 date: "2021-07-01"
+image: "/assets/img/posts/preparing_the_ground_for_source_code_manipulation.png"
 tags:
   - elixir
   - ast
@@ -161,7 +162,7 @@ So, now we solved the issue of the AST not being regular and literals not having
 
 The Elixir parser works with tokens, and at that stage the comments were already discarded, so we need to put our attention to the tokenizer. It is at this tokenizing step that comments get lost, but there is a way to retrieve them anyways. The tokenizer accepts an option called `preserve_comments`, but it's not as convenient as it sounds. It can receive a function of arity 5 that receives the comment information as well as the rest of the unparsed source code.
 
-This function is not meant to change the tokenizer output and wont let you use an "accumulator" to store stuff. It forces you to use side effects if you want to take something out of it. We could use an agent, if the overhead of having to send potentially hundreds of messages all at once to the same agent, or do what the Formatter does and temporarily store them in the process dictionary. Now, besides this inconvenience, the major issue of this option is that it is a _private_ API, and we are not meant to use it. We'll now see a better way to get the same functionality.
+This function is not meant to change the tokenizer output and wont let you use an "accumulator" to store stuff. It forces you to use side effects if you want to take something out of it. We could use an agent, if the overhead of having to send potentially hundreds of messages all at once to the same agent is not an issue, or do what the Formatter does and temporarily store them in the process dictionary. Now, besides this inconvenience, the major issue of this option is that it is a _private_ API, and we are not meant to use it. We'll now see a better way to get the same functionality.
 
 The upcoming 1.13 Elixir version will introduce a `Code.string_to_quoted_with_comments/2` function, that does exactly what the name suggests. It parses the code just like the regular `Code.string_to_quoted/2` function does, but returns both the parsed AST and a list with the comments found in the source code, either as an `{:ok, ast, comments}` tuple or an `{ast, comments}` for the bang version.
 
