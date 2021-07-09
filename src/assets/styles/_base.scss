@@ -1,0 +1,102 @@
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+}
+
+main {
+  padding-bottom: get-size("800");
+}
+
+a {
+  color: var(--color-text-link);
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-text-primary);
+  }
+}
+
+p,
+li,
+blockquote {
+  max-width: var(--size-prose);
+}
+
+time {
+  font-size: get-size("500");
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 3rem 0 1.38rem;
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  line-height: 1.3;
+
+  & > small {
+    font-weight: 400;
+    font-size: 0.68em;
+  }
+
+  & > a {
+    color: var(--color-text-primary);
+
+    &:hover,
+    &:focus {
+      color: var(--color-text-link);
+    }
+  }
+}
+
+h1 {
+  font-size: get-size("800");
+}
+
+h2 {
+  font-size: get-size("700");
+}
+
+h3 {
+  font-size: get-size("600");
+}
+
+h4 {
+  font-size: get-size("500");
+}
+
+code {
+  background: var(--color-bg-code);
+  color: var(--color-text-code);
+  border-radius: 2px;
+  padding: 0.2em 0.35em;
+}
+
+code::before,
+code::after {
+  content: "";
+}
+
+picture > img {
+  max-width: 100%;
+}
+
+a[aria-disabled="true"] {
+  pointer-events: none;
+  filter: saturate(0);
+}
+
+.icon {
+  display: inline-block;
+  vertical-align: text-top;
+  fill: currentColor;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+}
+
+@import "base/buttons";

@@ -1,0 +1,10 @@
+---
+layout: default
+title: Tags
+---
+
+<div class="wrapper pad-top-500">
+  {% for tag in collections.tagList %}
+    <a href="/tags/{{ tag }}" class="tag">{{ tag }}</a>
+  {% endfor %}
+</div>

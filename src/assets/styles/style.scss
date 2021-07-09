@@ -1,0 +1,58 @@
+@import "reset";
+// Theming
+@import "themes/dark";
+@import "themes/light";
+[data-color-mode] {
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-canvas);
+}
+
+:root {
+  --size-prose: 65ch;
+}
+
+// Globals
+@import "support/sizes";
+@import "base";
+
+.header-anchor {
+  color: grey !important;
+  text-decoration: none !important;
+}
+
+.giscus iframe {
+  width: 100%;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"],
+pre:not([class*="language-"]) > code {
+  background: var(--color-bg-code);
+  color: var(--color-text-code);
+  max-width: Min(44rem, 100%);
+  border: 1px solid var(--color-border-secondary);
+  padding: get-size("300") get-size("400");
+  margin: revert;
+  & > code {
+    padding: 0;
+  }
+}
+
+pre:not([class*="language-"]) > code {
+  display: block;
+  overflow: auto;
+  border-radius: 0.3em;
+}
+
+// Utilities
+@import "utilities/flow";
+@import "utilities/gaps";
+@import "utilities/pads";
+@import "utilities/prose";
+@import "utilities/wrapper";
+// Blocks
+@import "blocks/article";
+@import "blocks/article-preview";
+@import "blocks/pagination";
+@import "blocks/site-nav";
+@import "blocks/tag";

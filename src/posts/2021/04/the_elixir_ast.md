@@ -44,7 +44,7 @@ Being such an important aspect of the language, Elixir provides tools to work wi
 
 Whether you want to write a macro or to analyze Elixir code, you will be working with its AST representation. Getting comfortable with reading and writing it is vital for this kind of task, and that's where the focus of this article will be. I'm not going to focus on the process of evaluating when a macro is needed or how to design it, but in analyzing the AST they receive. I will first attempt to cover what the AST looks like, what kind of shapes and combinations are possible, and then we will apply that to build two little projects: a macro to generate typed structs, and a little code style checker.
 
-# The AST
+## The AST
 
 To know what is the AST representation of some Elixir code, we can use the [quote/2](https://hexdocs.pm/elixir/Kernel.SpecialForms.html#quote/2) macro:
 
@@ -88,7 +88,7 @@ Since `quote/2` is the primitive by which code is turned into data, Elixir calls
 
 One thing to note so far is that some literals are expressed by themselves. In many languages, literals would have their own representation, for instance in JavaScript the literal `1` would be expressed by the object `{type: 'Literal', value: 1}`, or the `{integer, LineNumber, 1}` tuple in Erlang. This is not the case in Elixir, and one explanation for this is that it makes it easier to work with them in macros, as matching on literals is much less verbose than matching against nested 3-tuples. However, one of the downsides of this is that information about the position or context of a literal is lost.
 
-## What makes an AST
+### What makes an AST
 
 As shown above, some Elixir terms can be represented by themselves. To be precise, these cases are:
 
@@ -114,7 +114,7 @@ The reason 2-tuples are a special case is that it allows keyword lists to be exp
 
 Every other kind of expression is represented by a 3-tuple that can represent _variables_ or _calls_.
 
-### Variables
+#### Variables
 
 Variables are represented by a 3-tuple where the first element is an atom representing its name, the second is the node's metadata, and the third is an atom representing the context of the variable:
 
@@ -171,7 +171,7 @@ The `A.demo()` call will get expanded to something like:
 
 The variable AST's context is the module of the macro that defined that variable, and additionally a counter number is inserted into the metadata, which prevents the variable from interfering with variables of the same name defined outside of the scope of the macro once it's evaluated. This is one of the mechanisms by which Elixir achieves hygienic macros: the compiler recognizes variables by `name` and `metadata[:counter]`, or `name` and `context`. The `var!/2` macro [removes this counter](https://github.com/elixir-lang/elixir/blob/98485daab0a9f3ac2d7809d38f5e57cd73cb22ac/lib/elixir/lib/kernel.ex#L3654) from a variable node to mark that it shouldn't be hygienized.
 
-### Calls
+#### Calls
 
 What we saw so far in this section were the _leaf_ nodes of the syntax tree. They represent individual pieces of data that can't be reduced any more to produce a meaningful piece of syntax. We still need to combine them to represent a useful program, and this is achieved with _calls_.
 Calls are the basic building block with wich other nodes are combined to build a proper AST. In their most basic form, they look like this:
@@ -188,7 +188,7 @@ And they are represented by a 3-tuple:
 
 Here the first element is an atom in the case of non-qualified calls like this example, or a tuple representing a call to the `.` operator in the case of qualified calls like `String.downcase("HELLO")`. The second element is again metadata, and the third one is a list of _arguments_.
 
-### Operators and constructors
+#### Operators and constructors
 
 Operators like `+` are also represented as non-qualified calls:
 
@@ -232,7 +232,7 @@ end
 #=> {:<<>>, [], [1, 2, 3]}
 ```
 
-### Aliases and blocks
+#### Aliases and blocks
 
 Some calls have a special meaning. For example, module names are atoms: `Enum` is actually `:"Elixir.Enum"` under the hood, but they are represented in the AST as an `:__aliases__` call:
 
@@ -270,7 +270,7 @@ quote do 1; 2; 3; end
 #=> {:__block__, [], [1, 2, 3]}
 ```
 
-### Left to right arrow
+#### Left to right arrow
 
 The left to right arrow `->` is a special kind of node. It is represented as non-qualified call, but it can only exist in a list, which suggests that it can only be used as an argument for another call, like clauses for an anonymous function or in a `do` block.
 The first argument must always be a list representing its left hand side arguments, and the second one is an expression.
@@ -308,7 +308,7 @@ end
 
 <small>Examples borrowed from the Elixir syntax reference</small>
 
-### Qualified calls
+#### Qualified calls
 
 So far we've seen examples of non-qualified calls, where the first element is an atom. Qualified calls, on the other hand, have a call to the `.` operator as their first element. This kind of call is found when there is a call on the left hand side of the `()` (call) operator. There are two of these situations:
 

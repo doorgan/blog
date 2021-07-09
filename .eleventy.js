@@ -11,7 +11,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.setDataDeepMerge(true);
 
   // Copy these static files to _site folder
-  eleventyConfig.addPassthroughCopy("src/assets");
+  eleventyConfig.addPassthroughCopy("src/assets/**/*");
   eleventyConfig.addPassthroughCopy("src/manifest.json");
   eleventyConfig.addPassthroughCopy("src/resume/assets");
 
@@ -28,6 +28,11 @@ module.exports = function (eleventyConfig) {
     const textOnly = content.replace(/(<([^>]+)>)/gi, "");
     const readingSpeedPerMin = 450;
     return Math.max(1, Math.floor(textOnly.length / readingSpeedPerMin));
+  });
+
+  eleventyConfig.addFilter("formatDate", (value) => {
+    const date = new Date(value);
+    return date.toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })
   });
 
   // Enable us to iterate over all the tags, excluding posts and all
@@ -49,15 +54,16 @@ module.exports = function (eleventyConfig) {
     permalinkBefore: false,
     permalinkSymbol: "#",
   });
+
   eleventyConfig.setLibrary("md", md);
 
   // asset_img shortcode
   eleventyConfig.addLiquidShortcode("asset_img", (filename, alt) => {
-    return `<img class="my-4" src="/assets/img/posts/${filename}" alt="${alt}" />`;
+    return `<img src="/assets/img/posts/${filename}" alt="${alt}" />`;
   });
 
   eleventyConfig.addLiquidShortcode("cover_img", (filename, alt) => {
-    return `<img class="w-full" src="/assets/img/posts/${filename}" alt="${alt}" />`;
+    return `<picture><img class="article__cover" src="/assets/img/posts/${filename}" alt="${alt}" /></picture>`;
   });
 
   eleventyConfig.addLiquidFilter("dateToRfc3339", pluginRss.dateRfc3339);

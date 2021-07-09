@@ -14,8 +14,6 @@ Part 2 of The Elixir AST series. Analyzing the AST to build a typed struct macro
 
 {% cover_img "a_deep_dive_into_the_elixir_ast_cover.png" "iex> quote do: sum(1, 2, 3); {:sum, [], [1, 2, 3]" %}
 
----
-
 This article was split into three parts:
 
 - [Part one: The Elixir AST](/posts/2021/04/the_elixir_ast/)
@@ -149,7 +147,7 @@ enforced_fields =
 
 The typespec for a struct would look like this:
 
-```
+```elixir
 @type t :: %__MODULE__{
   name: typespec
 }

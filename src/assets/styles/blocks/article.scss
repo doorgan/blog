@@ -1,0 +1,24 @@
+.article__content {
+  p,
+  ul,
+  ol,
+  dd {
+    font-size: get-size("500");
+    max-width: var(--size-prose);
+  }
+}
+
+.article__content > p:first-child {
+  font-style: italic;
+}
+
+.article__cover {
+  width: 100%;
+}
+
+.article__improve {
+  padding: get-size("500") 0;
+  margin-top: get-size("500");
+  border-top: 2px dashed var(--color-border-primary);
+  border-bottom: 2px dashed var(--color-border-primary);
+}

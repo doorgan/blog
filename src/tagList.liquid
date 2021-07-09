@@ -1,0 +1,32 @@
+---
+layout: default
+pagination:
+  data: collections
+  size: 1
+  alias: tag
+permalink: /tags/{{ tag }}/
+eleventyComputed:
+  title: "{{ tag }}"
+---  
+
+<div class="wrapper flow">
+  {% for post in collections[tag] %}
+    <article class="article-preview | flow">
+      <h2>
+        <a href="{{ post.url }}">{{ post.data.title }}</a>
+      </h2>
+      <time datetime="{{} post.date | date: " %Y-%m-%d" }}">{{ post.date | formatDate }}</time>
+      <p>{{ post.data.post_excerpt }}</p>
+
+      <div>
+        {% for tag in post.data.tags %} {% if tag != "posts" %}
+        <a href="/tags/{{ tag }}" class="tag">{{ tag }}</a>
+        {% endif %} {% endfor %}
+      </div>
+
+      <div>
+        <a href="{{ post.url }}">Read this post →</a>
+      </div>
+    </article>
+  {% endfor %}
+</div>

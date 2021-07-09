@@ -1,0 +1,21 @@
+@mixin custom-properties-map($map, $current: null) {
+  @each $prop,
+  $value in $map {
+    $name: if($current, $current + '-' + $prop, $prop);
+    @if (type-of($value)=='map') {
+      @include custom-properties-map($value, $current: $name);
+    }
+    @else {
+      #{'--' + $name}: $value;
+    }
+  }
+}
+
+@mixin custom-properties($name, $value: null) {
+  @if (type-of($name)=='map') {
+    @include custom-properties-map($name);
+  }
+  @else {
+    #{'--' + $name}: $value;
+  }
+}

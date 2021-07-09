@@ -1,0 +1,16 @@
+$base-size: 1em !default;
+$size-scale: (
+  "100": $base-size * 0.512,
+  "200": $base-size * 0.64,
+  "300": $base-size * 0.8,
+  "400": $base-size,
+  "500": $base-size * 1.25,
+  "600": $base-size * 1.6,
+  "700": $base-size * 2,
+  "800": $base-size * 3,
+  "900": $base-size * 3.81,
+  "1000": $base-size * 4.76,
+);
+@function get-size($size) {
+  @return map-get($size-scale, $size);
+}

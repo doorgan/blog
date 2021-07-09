@@ -1,0 +1,9 @@
+$directions: "left", "right", "top", "bottom";
+
+@each $size, $value in $size-scale {
+  @each $direction in $directions {
+    .pad-#{$direction}-#{$size} {
+      padding-#{$direction}: get-size($size);
+    }
+  }
+}

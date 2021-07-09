@@ -277,7 +277,7 @@ checker_test.exs:5:11
 Awesome! We have a fully functional checker!
 Credo checks work in a very similar way, the difference being that it also provides a lot of tools to aid you, like helpers for generating issues, and some more ergonomic traversal functions. If you made it this far, you should be able to get comfortable writing your own credo checks.
 
-# Final words
+## Final words
 
 We have learned quite a bit through this article. The Elixir AST itself is quite simple when you look at its basic shapes, but it can get quite complex for larger programs. Isolating little bits of syntax makes it much easier to see what's going on and to develop a general sense of what it is representing. We learned most(all?) of the possible shapes an AST node can take and how they are combined to create meaningful programs, and we leveraged this knowledge to create useful tools for our day to day programming work.
 

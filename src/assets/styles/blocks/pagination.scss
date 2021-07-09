@@ -1,0 +1,6 @@
+.pagination ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: get-size("500");
+}

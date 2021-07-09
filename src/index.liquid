@@ -1,0 +1,33 @@
+---
+layout: default
+title: Dorgan's blog
+pagination:
+  data: collections.posts
+  size: 10
+  reverse: true
+  alias: posts
+---
+
+<div class="wrapper flow pad-top-500">
+  {% for post in pagination.items %}
+  {% if post.data.published %}
+  <article class="article-preview | flow">
+    <h2>
+      <a href="{{ post.url }}">{{ post.data.title }}</a>
+      <small>{{ post.templateContent | readTime }} min read</small>
+    </h2>
+    <time datetime="{{ post.date | date: " %Y-%m-%d" }}">{{ post.date | formatDate }}</time> {% for tag in post.data.tags %} {% if tag != "posts" %}
+    <a href="/tags/{{ tag }}" class="tag">{{ tag }}</a>
+    {% endif %} {% endfor %}
+
+    <p>{{ post.data.post_excerpt }}</p>
+
+    <div>
+      <a href="{{ post.url }}">Read this post →</a>
+    </div>
+  </article>
+  {% endif %}
+  {% endfor %}
+
+  {% include paginator %}
+</div>

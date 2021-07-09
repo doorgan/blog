@@ -1,0 +1,9 @@
+$directions: "left", "right", "top", "bottom";
+
+@each $size, $value in $size-scale {
+  @each $direction in $directions {
+    .gap-#{$direction}-#{$size} {
+      margin-#{$direction}: get-size($size);
+    }
+  }
+}

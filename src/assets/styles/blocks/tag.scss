@@ -1,0 +1,26 @@
+.tag {
+  display: inline-block;
+  padding: 0.3rem 0.4rem 0.2rem;
+  border-radius: 0.5rem;
+  border: 2px solid var(--color-tag-text);
+  background: var(--color-tag-bg);
+  color: var(--color-tag-text);
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none !important;
+  text-transform: capitalize;
+}
+
+.tag:active,
+.tag:focus,
+.tag:hover {
+  transition: 150ms, color 150ms;
+  transition-property: background, border-color, color;
+}
+
+.tag:focus,
+.tag:hover {
+  background-color: var(--color-tag-bg-hover);
+  border-color: var(--color-tag-border-hover);
+  color: var(--color-tag-text-hover);
+}

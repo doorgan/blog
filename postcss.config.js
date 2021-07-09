@@ -1,6 +1,9 @@
 module.exports = {
+  syntax: 'postcss-scss',
   plugins: [
-    require(`tailwindcss`)(`./tailwind.config.js`),
+    require('postcss-node-sass')({
+      outputStyle: 'compressed'
+    }),
     require(`autoprefixer`),
     require('cssnano')({
       preset: 'default',

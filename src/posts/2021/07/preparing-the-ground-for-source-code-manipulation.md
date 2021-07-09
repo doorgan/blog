@@ -14,9 +14,9 @@ Taking a look at the issues faced when trying to modify your source code and how
 
 <!-- excerpt -->
 
-<img class="w-full" src="/assets/img/posts/preparing_the_ground_for_source_code_manipulation.png" aria-hidden="true" />
+<picture><img class="article__cover" src="/assets/img/posts/preparing_the_ground_for_source_code_manipulation.png" aria-hidden="true" /></picture>
 
-# Introduction
+## Introduction
 
 In 2019, [Arjan Scherpenisse did a talk](https://www.youtube.com/watch?v=aM0BLWgr0g4) about the limitations of Elixir when it comes to programmatic manipulation of the source code. I highly recommend checking it out, as it gives some important context to this story. The most important issues are that the Elixir AST does not contain enough information to reconstruct the original source code, which makes this task almost impossible. Let's see why.
 
@@ -128,7 +128,7 @@ And you can imagine how more complex macros would explode in verbosity. This is 
 
 To summarize, the Elixir AST doesn't contain enough information to reconstruct the original source code, and we can't expect it to change to accomodate for this use case due to the massive impact such change would have in the language. The question now is: how can we work around this limitation?
 
-# Using an alternative AST
+## Using an alternative AST
 
 If the AST used by Elixir is insufficient for our needs, then one answer to that issue would be to use an alternative AST. At first we may think that we need to build a custom parser so we can have our own custom AST, but there is a simpler solution.
 
@@ -219,7 +219,7 @@ And we add more lines after the `:a`, but don't change the line number of the co
 
 So there's actually two issues we need to address: merging AST and comments, and making sure the line numbers make sense to the formatter.
 
-# Enter the Sourceror
+## Enter the Sourceror
 
 What we covered so far is the process I followed when trying to answer the "how can I programatically modify the source code?" question. The two new functions I mentioned earlier are the result of a couple contributions I made to core Elixir so I could get started with the rest of the work. As a bonus, `Macro.to_string` now uses the new `Code.quoted_to_algebra` under the hood, so it produces the same prettified output as the formatter. Before doing this, I forked the Elixir code and started making some changes and prototypes to understand how all of this would work, and what heuristics would be needed to construct an AST with comments. The result of all this experimentation is [Sourceror](https://github.com/doorgan/sourceror), a library that takes care of passing the correct options to the Elixir parser, and of merging and handling the AST and comments for you. All of the changes that were required in Elixir itself are also **backported by Sourceror to Elixir versions down to 1.10**, so you can try it out today!
 
@@ -313,7 +313,7 @@ Of course, if we wanted to target literals then we would need to match against s
 
 Sourceror also provides other utilities, like being able to map a specific node to a range in the original source file, to perform changes to specific ranges of text, and an API to perform complicated and arbitrary navigations and transformations over the AST, and we will explore them in upcoming articles. In the meantime, you can check the [Expanding the multi alias syntax](https://github.com/doorgan/sourceror/blob/main/notebooks/expand_multi_alias.livemd) livebook in the Sourceror repository.
 
-# Final words
+## Final words
 
 We've seen what are the complications when it comes to modify your source code in Elixir, what are the possible solutions, what has been tried and what's new in Elixir. We've also seen what is Sourceror, and how it solves these issue. The key takeaway here is that we no longer have the obstacles that were preventing the community to start building source manipulation tools.
 

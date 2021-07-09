@@ -1,0 +1,41 @@
+@import "../support/mixins/color_mode";
+@import "../support/mixins/custom_properties";
+@include color-mode-theme(dark, dark, true) {
+  @include custom_properties(
+    (
+      color: (
+        text: (
+          primary: #ccc,
+          secondary: #ececec,
+          link: #cb7ee7,
+          code: #f8f8f2,
+          inverted: #191c1f,
+        ),
+        bg: (
+          primary: #191c1f,
+          secondary: #292929,
+          code: #1f2937,
+        ),
+        border: (
+          primary: #333,
+          secondary: #000,
+        ),
+        state: (
+          hover-link: #c46de3,
+        ),
+        button: (
+          text: var(--color-text-primary),
+          bg: var(--color-bg-secondary),
+          hover-text: var(--color-text-hover-link),
+          hover-bg: #3d0e4e,
+        ),
+        tag: (
+          text: var(--color-text-primary),
+          bg-hover: var(--color-text-link),
+          text-hover: #191c1f,
+          border-hover: #b13eda,
+        ),
+      ),
+    )
+  );
+}

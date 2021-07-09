@@ -1,8 +1,24 @@
-<nav>
-  <ul class="flex py-2 border-b-2 mb-6">
-    <li class="mr-6"><a href="/">Home</a></li>
-    <li class="mr-6"><a href="/tags">Tags</a></li>
-    <li class="mr-6"><a href="/resume">About me</a></li>
-    <li class="mr-6"><span class="cursor-pointer" id="toggleDarkMode">Dark mode</spam></li>
-  </ul>
+<nav class="site-nav">
+  <div class="contents | wrapper">
+    <ul role="list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/tags">Tags</a></li>
+      <li><a href="/resume">About me</a></li>
+    </ul>
+    <ul role="list">
+      <li><a href="/feed.xml">RSS</a></li>
+
+      {% if site.github != "" %}
+        <li><a href={{ site.github }}>Github</a></li>
+      {% endif %}
+
+      {% if site.linkedin != "" %}
+        <li><a href={{ site.linkedin }}>LinkedIn</a></li>
+      {% endif %}
+
+      {% if site.twitter != "" %}
+        <li><a href={{ site.twitter }}>Twitter</a></li>
+      {% endif %}
+    </ul>
+  </div>
 </nav>
