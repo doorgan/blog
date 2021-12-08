@@ -242,7 +242,7 @@ defmodule TypedStruct do
   end
 
   defp get_field_data({:field, _meta, [name, typespec]}) do
-    get_field_data({:field, _meta, [name, typespec, []]})
+    get_field_data({:field, [], [name, typespec, []]})
   end
   defp get_field_data({:field, _meta, [name, typespec, opts]}) do
     default = Keyword.get(opts, :default)
