@@ -115,13 +115,13 @@ defmacro typedstruct(do: ast) do
   fields_data = Enum.map(fields_ast, &get_field_data/1)
 end
 
-defp get_field_data({:field, [], [name, typespec]}) do
+defp get_field_data({:field, _meta, [name, typespec]}) do
   # In this case the options were not provided,
   # so we set them to the empty list and process
   # it again
   get_field_data({:field, [], [name, typespec, []]})
 end
-defp get_field_data({:field, [], [name, typespec, opts]}) do
+defp get_field_data({:field, _meta, [name, typespec, opts]}) do
   default = Keyword.get(opts, :default)
   enforced? = Keyword.get(opts, :enforced?, false)
 
@@ -241,10 +241,10 @@ defmodule TypedStruct do
     end
   end
 
-  defp get_field_data({:field, [], [name, typespec]}) do
-    get_field_data({:field, [], [name, typespec, []]})
+  defp get_field_data({:field, _meta, [name, typespec]}) do
+    get_field_data({:field, _meta, [name, typespec, []]})
   end
-  defp get_field_data({:field, [], [name, typespec, opts]}) do
+  defp get_field_data({:field, _meta, [name, typespec, opts]}) do
     default = Keyword.get(opts, :default)
     enforced? = Keyword.get(opts, :enforced?, false)
 
