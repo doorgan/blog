@@ -67,7 +67,8 @@ end
 That 3-tuple is representing this AST node:
 
 ```md
-- / \
+   +
+  / \
   1 2
 ```
 
