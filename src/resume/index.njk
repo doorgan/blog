@@ -1,234 +1,272 @@
 <!DOCTYPE html>
 <html lang="en" data-color-mode="auto" data-light-theme="light" data-dark-theme="dark">
-  <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Lucas San Román</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
-    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lucas San Román</title>
 
-    <link rel="stylesheet" href="./assets/style.css"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png">
 
-    <!-- SEO metadata -->
-    <meta property="og:title" content="Lucas San Román"/>
-    <meta name="description" content="Optician and Elixir enthusiast, looking forward to improve the Elixir ecosystem."/>
-    <meta property="og:description" content="Optician and Elixir enthusiast, looking forward to improve the Elixir ecosystem."/>
-    <meta property="og:url" content="{{ site.url }}/resume"/>
+  <link rel="stylesheet" href="./assets/style.css" />
 
-    <meta name="author" content="Lucas San Román"/>
+  <!-- SEO metadata -->
+  <meta property="og:title" content="Lucas San Román" />
+  <meta name="description" content="Optician and Elixir enthusiast, looking forward to improve the Elixir ecosystem." />
+  <meta property="og:description"
+    content="Optician and Elixir enthusiast, looking forward to improve the Elixir ecosystem." />
+  <meta property="og:url" content="{{ site.url }}/resume" />
 
-    <meta property="og:locale" content="en_US">
+  <meta name="author" content="Lucas San Román" />
 
-    <meta property="og:image" content="{{ site.url }}/resume/assets/images/profile.jpg"/>
-    <meta property="og:image:type" content="image/jpg">
-    <meta property="og:image:width" content="165"/>
-    <meta property="og:image:height" content="165"/>
+  <meta property="og:locale" content="en_US">
 
-    <meta property="og:type" content="profile"/>
-    <meta property="profile:first_name" content="Lucas"/>
-    <meta property="profile:last_name" content="San Román"/>
-    <meta property="profile:gender" content="male"/>
+  <meta property="og:image" content="{{ site.url }}/resume/assets/images/profile.jpg" />
+  <meta property="og:image:type" content="image/jpg">
+  <meta property="og:image:width" content="165" />
+  <meta property="og:image:height" content="165" />
 
-    <meta name="twitter:card" content="summary"/>
-    <meta name="twitter:site" content="@dorgandash1"/>
-    <meta name="twitter:creator" content="@dorgandash1"/>
-  </head>
+  <meta property="og:type" content="profile" />
+  <meta property="profile:first_name" content="Lucas" />
+  <meta property="profile:last_name" content="San Román" />
+  <meta property="profile:gender" content="male" />
 
-  <body>
-    <nav id="navigation" class="site-nav">
-      <div class="contents | wrapper">
-        <a href="/">
-          <span aria-hidden="true">←</span> Return to the blog</a>
-        <button class="button button-clear" onclick="print()">Print a copy <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon">
-            <path fill="currentColor" d="M432 192h-16v-82.75c0-8.49-3.37-16.62-9.37-22.63L329.37 9.37c-6-6-14.14-9.37-22.63-9.37H126.48C109.64 0 96 14.33 96 32v160H80c-44.18 0-80 35.82-80 80v96c0 8.84 7.16 16 16 16h80v112c0 8.84 7.16 16 16 16h288c8.84 0 16-7.16 16-16V384h80c8.84 0 16-7.16 16-16v-96c0-44.18-35.82-80-80-80zM320 45.25L370.75 96H320V45.25zM128.12 32H288v64c0 17.67 14.33 32 32 32h64v64H128.02l.1-160zM384 480H128v-96h256v96zm96-128H32v-80c0-26.47 21.53-48 48-48h352c26.47 0 48 21.53 48 48v80zm-80-88c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24z"></path>
-          </svg>
-        </button>
-      </div>
-    </nav>
-    <main class="wrapper">
-      <div class="about-and-contact">
-        <section id="about-me">
-          <h1>Lucas San Román</h1>
-          <p>
-            I'm a Software Engineer currently working at <a href="https://packlane.com/" target="_blank" rel="noopener noreferrer">Packlane</a>.
-            I'm very interested in the Elixir programming language and functional
-            programming in general. I'm self taught, have good adaptability and
-            problem solving abilities, and I'm always keen to learn more about
-            computer science and programming languages.
-          </p>
-          <p>
-            I volunteer as a moderator for the
-            <a href="https://discord.gg/elixir" target="_blank" rel="noopener noreferrer">Elixir Discord server</a>, where
-            we provide assistance to other members of the Elixir
-            community ranging from beginners to experts working on large scale projects.
-            I'm the author of the <a href="https://github.com/doorgan/sourceror" target="_blank" rel="noopener noreferrer">Sourceror</a> library for AST-based Elixir
-            source code manipulation, which helps to solve the long lasting issue
-            of the lack of refactoring tools in the Elixir ecosystem.
-          </p>
-        </section>
-        <aside id="contact" itemscope itemtype="https://schema.org/Person">
-          <img id="profile-pic" src="./assets/images/profile.jpg" alt="Profile picture" aria-hidden="true"/>
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dorgandash1" />
+  <meta name="twitter:creator" content="@dorgandash1" />
+</head>
 
-          <address>
-            <h2 class="sr-only">Contact</h2>
-            <span>
-              <span class="sr-only">Address: </span>
-              <span itemprop="address">Lobos, Argentina</span>
-            </span>
-            <a href="mailto:lucassanroman97@gmail.com" target="_blank" rel="noopener noreferrer"
+<body>
+  <nav id="navigation" class="site-nav">
+    <div class="contents | wrapper">
+      <a href="/">
+        <span aria-hidden="true">←</span> Return to the blog</a>
+      <button class="button button-clear" onclick="print()">Print a copy <svg aria-hidden="true" focusable="false"
+          role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon">
+          <path fill="currentColor"
+            d="M432 192h-16v-82.75c0-8.49-3.37-16.62-9.37-22.63L329.37 9.37c-6-6-14.14-9.37-22.63-9.37H126.48C109.64 0 96 14.33 96 32v160H80c-44.18 0-80 35.82-80 80v96c0 8.84 7.16 16 16 16h80v112c0 8.84 7.16 16 16 16h288c8.84 0 16-7.16 16-16V384h80c8.84 0 16-7.16 16-16v-96c0-44.18-35.82-80-80-80zM320 45.25L370.75 96H320V45.25zM128.12 32H288v64c0 17.67 14.33 32 32 32h64v64H128.02l.1-160zM384 480H128v-96h256v96zm96-128H32v-80c0-26.47 21.53-48 48-48h352c26.47 0 48 21.53 48 48v80zm-80-88c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24z">
+          </path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+  <main class="wrapper">
+    <div class="about-and-contact">
+      <section id="about-me">
+        <h1>Lucas San Román</h1>
+        <p>
+          I'm a Senior Software Engineer currently working at <a href="https://packlane.com/" target="_blank" rel="noopener
+          noreferrer">Packlane</a>. I'm very interested in the Elixir
+          programming language and functional programming in general. I have
+          good adaptability and problem solving abilities, as well as the
+          ability to communicate complex technical concepts clearly.
+        </p>
+        <p>
+          I volunteer as a moderator for the
+          <a href="https://discord.gg/elixir" target="_blank" rel="noopener
+          noreferrer">Elixir Discord server</a>, where we provide assistance to
+          other members of the Elixir community ranging from beginners to
+          experts working on large scale projects. I'm the author of the <a href="https://github.com/doorgan/sourceror"
+            target="_blank" rel="noopener noreferrer">Sourceror</a> library for AST-based Elixir
+          source code manipulation, which helps to solve the long lasting issue
+          of the lack of refactoring tools in the Elixir ecosystem.
+        </p>
+      </section>
+      <aside id="contact" itemscope itemtype="https://schema.org/Person">
+        <img id="profile-pic" src="./assets/images/profile.jpg" alt="Profile picture" aria-hidden="true" />
+
+        <address>
+          <h2 class="sr-only">Contact</h2>
+          <span>
+            <span class="sr-only">Address: </span>
+            <span itemprop="address">Lobos, Argentina</span>
+          </span>
+          <a href="mailto:lucassanroman97@gmail.com" target="_blank" rel="noopener noreferrer"
             aria-label="Email address lucassanroman97@gmail.com" itemprop="email">lucassanroman97@gmail.com</a>
-            <a href="https://github.com/doorgan" target="_blank" rel="noopener noreferrer"
+          <a href="https://github.com/doorgan" target="_blank" rel="noopener noreferrer"
             aria-label="Github profile">github.com/doorgan</a>
-            <a href="https://twitter.com/dorgandash1" target="_blank" rel="noopener noreferrer"
-            aria-label="Twitter profile">twitter.com/dorgandash1</a>
-          </address>
-        </aside>
-      </div>
+          <a href="https://twitter.com/dorgan_" target="_blank" rel="noopener noreferrer"
+            aria-label="Twitter profile">twitter.com/dorgan_</a>
+        </address>
+      </aside>
+    </div>
 
-      <div class="columns">
-        <section id="open-source-work" class="column">
-          <h2>Open Source work</h2>
+    <div class="columns">
+      <section class="column experience-section">
+        <h2>Professional experience</h2>
 
-          <dl>
-            <dt>Sourceror</dt>
+        <dl>
+          <dt>
+            Packlane<br>
+            <em>Senior Software Engineer</em><br>
+            <small>July 2021 - Today</small>
+          </dt>
+          <dd>
+            <aside>
+              <a href="https://packlane.com" target="_blank" rel="noopener noreferrer"
+                aria-label="Packlane website">packlane.com</a>
+            </aside>
+
+            <p>
+              I maintained and improved a legacy Elixir and JavaScript/React
+              codebase for the coordination of manufacturing and logistics of
+              custom packaging solutions. I participated in all stages of
+              product and feature development, from idea, to design, to
+              implementation and deployment. I also regularly engaged in several
+              investigations about complex domain problems and urgent/critical
+              bug fixing. My work also involved the constant evaluation of
+              access patterns to optimize our usage of the PostgreSQL database.
+            </p>
+          </dd>
+        </dl>
+
+        <h2>Open Source work</h2>
+
+        <dl>
+          <dt>Sourceror</dt>
+          <dd>
+            <aside>
+              <a href="https://github.com/doorgan/sourceror" target="_blank" rel="noopener noreferrer"
+                aria-label="Sourceror Github repository">https://github.com/doorgan/sourceror</a>
+            </aside>
+
+            <p>
+              Sourceror is a toolkit to work with the Elixir source code. It's
+              the first library in the Elixir ecosystem that empowers
+              Elixirists and tool authors to build refactoring tools and
+              migration scripts, similar to what jscodeshift has to offer
+              for the JavaScript world. It provides an annotated Abstract
+              Syntax Tree for the Elixir language, and a fork of the Elixir
+              parser to backport features I contributed to Elixir 1.13 to
+              older Elixir versions.
+            </p>
+          </dd>
+          <dt>Contributions to the Elixir language</dt>
+          <dd>
+            <p>
+              I contributed a series of pull requests to core Elixir to enable programmatic manipulation
+              of the source code. Through PRs
+              <a href="https://github.com/elixir-lang/elixir/pull/10990" target="_blank" rel="noopener noreferrer"
+                title="Expose internal representation of comments">#10990</a> and <a
+                href="https://github.com/elixir-lang/elixir/pull/10988" target="_blank" rel="noopener noreferrer"
+                title="Implement a normalizer that translates regular AST to a special, annotated version of the AST">#10988</a>
+              I helped solve the lack of the primitives required to build refactoring tools, an issue that was affecting
+              the whole community since the early days of the language, in an incremental an backwards compatible way.
+            </p>
+          </dd>
+          <dt>The Embers Social Network project</dt>
+          <dd>
+            <aside>
+              <a href="https://github.com/EmbersPlatform/embers" target="_blank" rel="noopener noreferrer"
+                aria-label="Embers Github repository">https://github.com/EmbersPlatform/embers</a>
+            </aside>
+            <p>
+              Embers was an exploratory project to build a social network
+              platform built from the ground up with Elixir and the Phoenix
+              Framework, where users could share a variety of multimedia content
+              with their followers. Some of its features included a personal feed
+              updated in real time, a private messaging system, real-time
+              notifications, and asymmetric tracking of online presences.
+            </p>
+          </dd>
+        </dl>
+      </section>
+
+      <section class="column experience-section">
+        <h2>Technical skills</h2>
+
+        <dl>
+          <div>
+            <dt>Elixir</dt>
             <dd>
-              <aside>
-                <a href="https://github.com/doorgan/sourceror" target="_blank" rel="noopener noreferrer"
-                  aria-label="Sourceror Github repository">https://github.com/doorgan/sourceror</a>
-              </aside>
-
               <p>
-                  Sourceror is a toolkit to work with the Elixir source code. It's
-                  the first library in the Elixir ecosystem that empowers
-                  Elixirists and tool authors to build refactoring tools and
-                  migration scripts, similar to what jscodeshift has to offer
-                  for the JavaScript world. It provides an annotated Abstract
-                  Syntax Tree for the Elixir language, and a fork of the Elixir
-                  parser to backport features I contributed to Elixir 1.13 to
-                  older Elixir versions.
-                </p>
+                I have been using the Elixir language since 2018, and I volunteer
+                teaching and helping solve problems to other members of the Elixir
+                community. I have a solid understanding of Elixir's sequential
+                features like protocols, behaviours, releases and standard library.
+                I have a very solid understanding of the AST representation of
+                the Elixir code and how to use it to build macros and tools, which
+                is the area I'm currently working on in the Open Source space.
+                I understand the fundamentals of the OTP like GenServers,
+                supervision trees and single node concurrency, which are the
+                features of the language that I leveraged to keep my projects
+                stack simple and manageable.
+              </p>
             </dd>
-            <dt>Contributions to the Elixir language</dt>
+          </div>
+
+          <div>
+            <dt>JavaScript</dt>
             <dd>
               <p>
-                  I contributed a series of pull requests to core Elixir to enable programmatic manipulation
-                  of the source code. Through PRs
-                  <a href="https://github.com/elixir-lang/elixir/pull/10990" target="_blank" rel="noopener noreferrer" title="Expose internal representation of comments">#10990</a> and <a href="https://github.com/elixir-lang/elixir/pull/10988" target="_blank" rel="noopener noreferrer" title="Implement a normalizer that translates regular AST to a special, annotated version of the AST">#10988</a> I helped solve the lack of the primitives required to build refactoring tools, an issue that was affecting the whole community since the early days of the language, in an incremental an backwards compatible way.
-                </p>
+                I have been using JavaScript for 5+ years for personal
+                projects. I have good understanding of ES6+ features,
+                Promises, and event loop macro/micro tasks. I have experience
+                with Parcel and Snowpack build tools, Vue 2, Solid and Svelte
+                frameworks, React hooks inspired libraries, and state
+                management patterns like Meiosis, which I used to build my
+                personal library
+                <a href="https://github.com/doorgan/untitled" target="_blank" rel="noopener noreferrer">untitled</a>.
+              </p>
             </dd>
-            <dt>The Embers Social Network project</dt>
+          </div>
+
+          <div>
+            <dt>PostgreSQL</dt>
             <dd>
-              <aside>
-                <a href="https://github.com/EmbersPlatform/embers" target="_blank" rel="noopener noreferrer"
-                  aria-label="Embers Github repository">https://github.com/EmbersPlatform/embers</a>
-              </aside>
               <p>
-                  Embers was an exploratory project to build a social network
-                  platform built from the ground up with Elixir and the Phoenix
-                  Framework, where users could share a variety of multimedia content
-                  with their followers. Some of its features included a personal feed
-                  updated in real time, a private messaging system, real-time
-                  notifications, and asymmetric tracking of online presences.
-                </p>
+                I've been using PostgreSQL since 2018, when I migrated away
+                from MySQL. I have experience setting up indexes to speed up
+                queries, on setting up constraints at the database level
+                instead of relying on application level validations, and I
+                have basic knowledge of
+                <code>EXPLAIN</code> queries to find inefficiencies in query
+                plans.
+              </p>
             </dd>
-          </dl>
-        </section>
+          </div>
 
-        <section id="technical-skills" class="column">
-          <h2>Technical skills</h2>
+          <div>
+            <dt>HTML, CSS and web accessibility</dt>
+            <dd>
+              <p>
+                I have experience working with modern CSS features like
+                flexbox, grid and custom properties, pre-processors like SASS
+                and post-css as well. I have experience creating responsive
+                and accessible web experiences, and I prefer to use progressive
+                enhancement techniques whenever possible. The present resume is
+                built with these technologies and with accessibility in mind.
+              </p>
+            </dd>
+          </div>
 
-          <dl>
-            <div>
-              <dt>Elixir</dt>
-              <dd>
-                <p>
-                  I have been using the Elixir language since 2018, and I volunteer
-                  teaching and helping solve problems to other members of the Elixir
-                  community. I have a solid understanding of Elixir's sequential
-                  features like protocols, behaviours, releases and standard library.
-                  I have a very solid understanding of the AST representation of
-                  the Elixir code and how to use it to build macros and tools, which
-                  is the area I'm currently working on in the Open Source space.
-                  I understand the fundamentals of the OTP like GenServers,
-                  supervision trees and single node concurrency, which are the
-                  features of the language that I leveraged to keep my projects
-                  stack simple and manageable.
-                </p>
-              </dd>
-            </div>
+          <div>
+            <dt>PHP</dt>
+            <dd>
+              <p>
+                I used PHP for my web projects until I discovered Elixir in
+                2018. The previous version of the Embers project was built
+                using the Laravel framework v5.6.
+              </p>
+            </dd>
+          </div>
 
-            <div>
-              <dt>JavaScript</dt>
-              <dd>
-                <p>
-                  I have been using JavaScript for 5+ years for personal
-                  projects. I have good understanding of ES6+ features,
-                  Promises, and event loop macro/micro tasks. I have experience
-                  with Parcel and Snowpack build tools, Vue 2 and Svelte
-                  frameworks, React hooks inspired libraries, and state
-                  management patterns like Meiosis, which I used to build my
-                  personal library
-                  <a href="https://github.com/doorgan/untitled" target="_blank" rel="noopener noreferrer">untitled</a>.
-                </p>
-              </dd>
-            </div>
-
-            <div>
-              <dt>HTML, CSS and web accessibility</dt>
-              <dd>
-                <p>
-                  I have experience working with modern CSS features like
-                  flexbox, grid and custom properties, pre-processors like SASS
-                  and post-css as well. I have experience creating responsive
-                  and accessible web experiences, and I prefer to use progressive
-                  enhancement techniques whenever possible. The present resume is
-                  built with these technologies and with accessibility in mind.
-                </p>
-              </dd>
-            </div>
-
-            <div>
-              <dt>PostgreSQL</dt>
-              <dd>
-                <p>
-                  I've been using PostgreSQL since 2018, when I migrated away
-                  from MySQL. I have experience setting up indexes to speed up
-                  queries, on setting up constraints at the database level
-                  instead of relying on application level validations, and I
-                  have basic knowledge of
-                  <code>EXPLAIN</code> queries to find inefficiencies in query
-                  plans.
-                </p>
-              </dd>
-            </div>
-
-            <div>
-              <dt>Docker</dt>
-              <dd>
-                <p>
-                  I have basic understanding of Docker, which I used to build
-                  Elixir releases, and also to set up development environments
-                  with docker-compose.
-                </p>
-              </dd>
-            </div>
-
-            <div>
-              <dt>PHP</dt>
-              <dd>
-                <p>
-                  I used PHP for my web projects until I discovered Elixir in
-                  2018. The previous version of the Embers project was built
-                  using the Laravel framework v5.6.
-                </p>
-              </dd>
-            </div>
-          </dl>
-        </section>
-      </div>
-    </main>
-  </body>
+          <div>
+            <dt>Docker</dt>
+            <dd>
+              <p>
+                I have basic understanding of Docker, which I used to build
+                Elixir releases, and also to set up development environments
+                with docker-compose.
+              </p>
+            </dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+  </main>
+</body>
 
 </html>

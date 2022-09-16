@@ -174,12 +174,12 @@ nav .button {
 
 @media print {
     .columns > section > dl {
-        columns: 2;
+        columns: 1;
         gap: 2em;
     }
 }
 
-#open-source-work {
+.experience-section > dl {
     page-break-after: always;
 }
 
