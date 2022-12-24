@@ -2,7 +2,7 @@
 title: "Retrospective"
 date: "2022-12-23"
 tags:
--none
+  - none
 ---
 
 Raw thoughs about the last year or so.
