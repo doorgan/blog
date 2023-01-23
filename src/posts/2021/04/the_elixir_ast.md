@@ -175,7 +175,7 @@ The variable AST's context is the module of the macro that defined that variable
 #### Calls
 
 What we saw so far in this section were the _leaf_ nodes of the syntax tree. They represent individual pieces of data that can't be reduced any more to produce a meaningful piece of syntax. We still need to combine them to represent a useful program, and this is achieved with _calls_.
-Calls are the basic building block with wich other nodes are combined to build a proper AST. In their most basic form, they look like this:
+Calls are the basic building block with which other nodes are combined to build a proper AST. In their most basic form, they look like this:
 
 ```elixir
 sum(1, 2, 3)
