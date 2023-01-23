@@ -410,7 +410,7 @@ Macro.to_string({{:., [], [Access, :get]}, [], [{:foo, [], Elixir}, :bar, :baz, 
 
 That should cover most, if not all, of the possible constructs that conform an Elixir AST. Any kind of AST you find will be made of a composition of the nodes mentioned before, and knowing them makes reading it and identifying patterns much more easier.
 
-While knowing the AST structure is very useful for this kind of work, as the code gets more complex it can be hard to guess to which AST construct a piece of syntax will get parsed to. I will try to approach the following sections by destructuring the AST and looking at smaller pieces of it at a time to reinforce ideas, but what I highly recommend is to open an IEx session and start playing around with `quote`, or using the [AST Ninja](https://ast.ninja/) tool by [Arjan Scherpenisse](https://github.com/arjan/ast_ninja).
+While knowing the AST structure is very useful for this kind of work, as the code gets more complex it can be hard to guess to which AST construct a piece of syntax will get parsed. I will try to approach the following sections by destructuring the AST and looking at smaller pieces of it at a time to reinforce ideas, but what I highly recommend is to open an IEx session and start playing around with `quote`, or using the [AST Ninja](https://ast.ninja/) tool by [Arjan Scherpenisse](https://github.com/arjan/ast_ninja).
 
 In the next chapter we will put this knowledge to practice by building a macro that analyzes a piece of syntax to generate typespecs for a struct.
 
