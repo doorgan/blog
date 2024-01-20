@@ -1,15 +1,15 @@
 {
-    "name": "Dorgan",
-    "url": "https://dorgan.netlify.app",
-    "title": "Dorgan's blog",
-    "description": "Welcome to my blog",
-    "image": "/assets/img/favicon/favicon-192x192.png",
-    "github": "https://github.com/doorgan",
-    "twitter": "",
-    "linkedin": "",
-    "author": {
-        "bio": "I live in a small town in Argentina. I write Elixir for fun :)",
-        "twitterHandle": "dorgandash1"
-    },
-    "google_verification": "nzTHySE0OrTT835vavbNOzhAO7KIguYf-h75eYMvVUw"
+  "name": "Dorgan",
+  "url": "https://dorgan.ar",
+  "title": "Dorgan's blog",
+  "description": "Welcome to my blog",
+  "image": "/assets/img/favicon/favicon-192x192.png",
+  "github": "https://github.com/doorgan",
+  "twitter": "",
+  "linkedin": "",
+  "author": {
+    "bio": "I live in a small town in Argentina. I write Elixir for fun :)",
+    "twitterHandle": "dorgan_"
+  },
+  "google_verification": "nzTHySE0OrTT835vavbNOzhAO7KIguYf-h75eYMvVUw"
 }

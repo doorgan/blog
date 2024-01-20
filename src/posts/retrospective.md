@@ -1,8 +1,10 @@
 ---
 title: "Retrospective"
 date: "2022-12-23"
+permalink: "/posts/2022/12/retrospective/"
 tags:
   - none
+  - unlisted
 ---
 
 Raw thoughs about the last year or so.
@@ -32,7 +34,7 @@ community. I guess it's something I should be proud of, I finally did something,
 and that something is useful.
 
 A few months after the blog creation I wrote Sourceror, which is what I consider
-*the* piece of work that put me on the radar for a bunch of people besides the
+_the_ piece of work that put me on the radar for a bunch of people besides the
 Elixir Discord, where I'm the most active. But after that my activity here
 stalled. My last post here is from July 2021, shortly after I released that
 library. A bunch of things happened in that time period. I got featured in the
@@ -184,7 +186,7 @@ She was hospitalized again. They already made the choice to ease her pain
 instead of using some invasive operation. I knew this was going to happen, and
 I knew it was going to happen soon, but I always thought I would have more time.
 But no, all of a sudden, just when for the first time I try to do something for
-myself, the day finally comes. It was almost like the *Toki wo Kakeru Shoujo*
+myself, the day finally comes. It was almost like the _Toki wo Kakeru Shoujo_
 movie, in which the phrase "time waits for no one" constantly foreshadows what's
 about to happen, but you don't realize until it's already too late. Casually, I
 watched that movie a few days before, so that resonates with me all the more
@@ -192,7 +194,7 @@ today.
 
 I was not only completely broken by the news, it was also invaded by the
 feeling that the last image she would have of myself would be that of a mentally
-broken son leaving the house because he could no longer stand to live with them. 
+broken son leaving the house because he could no longer stand to live with them.
 I asked my friend to get me a ticket for the first bus to the hospital and went
 there to spent her last moments with her. It was the last chance to speak with
 her, and I think nobody can ever be prepared for such moment. One of the topics

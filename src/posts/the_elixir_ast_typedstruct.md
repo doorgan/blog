@@ -1,6 +1,7 @@
 ---
 title: "A deep dive into the Elixir AST: Building a typed struct macro"
 date: "2021-04-16"
+permalink: "/posts/2021/04/the_elixir_ast_typedstruct/"
 image: "/assets/img/posts/a_deep_dive_into_the_elixir_ast_cover.png"
 tags:
   - elixir

@@ -1,6 +1,7 @@
 ---
 title: "A deep dive into the Elixir AST: Building a static code analyzer"
 date: "2021-04-16"
+permalink: "/posts/2021/04/the_elixir_ast_analyzer/"
 image: "/assets/img/posts/a_deep_dive_into_the_elixir_ast_cover.png"
 tags:
   - elixir
@@ -92,6 +93,8 @@ Now that we have our little framework in place, we can start writing our first c
 This check will look for any call to `String.to_atom` and warn us about an unsafe conversion from strings to atoms.
 The AST for such call will be a dot operator call with the `String` alias and `:to_atom` arguments:
 
+{% raw %}
+
 ```elixir
 quote do
   String.to_atom()
@@ -99,9 +102,13 @@ end
 #=> {{:., [], [{:__aliases__, [], [:String]}, :to_atom]}, [], []}
 ```
 
+{% endraw %}
+
 So we will need to traverse the AST looking for such pattern. Elixir provides a straightforward way to perform traversals through the AST via the `prewalk`, `postwalk` and `traverse` functions from the `Macro` module. These functions perform depth-first traversals, which means it will go as deep as it can into the tree, and then calling your callback function as it backtracks, until it visits all nodes in the tree. The callback function allows you to modify the visited node, and it also lets you pass an accumulator in a similar fashion to `Enum.reduce`. For this code analyzer we will just use `Macro.postwalk`, and the accumulator to store the issues as we find them.
 
 Great, now that we have all we need, let's look at the code:
+
+{% raw %}
 
 ```elixir
 defmodule UnsafeToAtomCheck do
@@ -129,9 +136,13 @@ defmodule UnsafeToAtomCheck do
 end
 ```
 
+{% endraw %}
+
 We define the `run/1` function that will be called by `Creed` with the AST, and then we use `Macro.postwalk/3` to traverse it with a `traverse/2` function. This traverse function is the one that does the heavy work.
 
 The first clause matches against a call to `String.to_atom` with the pattern we saw earlier:
+
+{% raw %}
 
 ```elixir
 quote do
@@ -139,6 +150,8 @@ quote do
 end
 #=> {{:., [], [{:__aliases__, [], [:String]}, :to_atom]}, [], []}
 ```
+
+{% endraw %}
 
 If that pattern matches, then we extract the line and column numbers from the call metadata and build an issue map that gets added to the accumulator(ie: the issues list). If it doesn't match, then it is a node we're not interested in so we do nothing. Notice that we need to return both the node and the accumulator in a tuple, since `postwalk` allows us to modify the AST.
 
@@ -174,6 +187,8 @@ It works!
 Now we'll try with a slightly more complicated check. We will now look for multi alias syntax, and recommend using multiple aliases in individual lines instead.
 Let's remind ourselves what the multi alias syntax looks like as AST:
 
+{% raw %}
+
 ```elixir
 quote do
   Foo.{Bar, Baz}
@@ -185,6 +200,8 @@ end
  ]}
 ```
 
+{% endraw %}
+
 The important bit here is the `{:., [], [{:__aliases__, [], [:Foo]}, :{}]}` call, since it's what indicates us that we're in a qualified tuple call, which is what the multi alias syntax uses.
 Additionally, we want to check if that happens in the context of a module alias, like this:
 
@@ -195,6 +212,8 @@ alias Foo.{Bar, Baz}
 This is quite simple to spot, since it's just a non-qualified `{:alias, [], [args]}` call, where args will be the multi alias call.
 
 Now the idea is the same as in the previous check: we traverse the AST, and we build an issue if we find that pattern:
+
+{% raw %}
 
 ```elixir
 defmodule MultiAliasCheck do
@@ -234,6 +253,8 @@ defmodule MultiAliasCheck do
   defp traverse(node, acc), do: {node, acc}
 end
 ```
+
+{% endraw %}
 
 Now we add it to `Creed`'s checkers list:
 

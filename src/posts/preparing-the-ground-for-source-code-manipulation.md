@@ -1,6 +1,7 @@
 ---
 title: "Preparing the ground for source code manipulation"
 date: "2021-07-01"
+permalink: "/posts/2021/07/preparing-the-ground-for-source-code-manipulation/"
 image: "/assets/img/posts/preparing_the_ground_for_source_code_manipulation.png"
 tags:
   - elixir
