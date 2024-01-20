@@ -1,12 +1,15 @@
 ---
-layout: main
+layout: main.liquid
 ---
 
-{% include nav %}
+{% include "nav.liquid" %}
+
+
+
 
 <div class="wrapper">
   <article class="article flow">
-    <h1>{{ title}}</h1>
+    <h1>{{ title }}</h1>
 
     <div class="flow">
       <aside>
@@ -17,9 +20,9 @@ layout: main
 
         <div class="article-tags | gap-top-200">
           {% for tag in tags %}
-          {% if tag != "posts" %}
-          <a href="/tags/{{ tag }}" class="tag">{{ tag }}</a>
-          {% endif %}
+            {% if tag != "posts" %}
+              <a href="/tags/{{ tag }}" class="tag">{{ tag }}</a>
+            {% endif %}
           {% endfor %}
         </div>
       </aside>
@@ -28,11 +31,11 @@ layout: main
         {{ content }}
         <aside class="article__improve">
           <p>Want to improve this article? You can propose an edit <a
-              href="https://github.com/doorgan/blog/blob/master/src{{ page.url | slice: 0, -1 }}.md">here</a>.</p>
+              href="https://github.com/doorgan/blog/blob/master/src{{ url }}.md">here</a>.</p>
         </aside>
       </section>
 
-      {% include author %}
+      {% include "author.liquid" %}
 
       <section class="comments gap-top-600">
         <script src="https://giscus.app/client.js" data-repo="doorgan/blog"

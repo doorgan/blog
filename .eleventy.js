@@ -32,7 +32,11 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addFilter("formatDate", (value) => {
     const date = new Date(value);
-    return date.toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   });
 
   // Enable us to iterate over all the tags, excluding posts and all

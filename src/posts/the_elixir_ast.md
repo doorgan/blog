@@ -1,6 +1,7 @@
 ---
 title: "A deep dive into the Elixir AST"
 date: "2021-04-16"
+permalink: "/posts/2021/04/the_elixir_ast/"
 image: "/assets/img/posts/a_deep_dive_into_the_elixir_ast_cover.png"
 tags:
   - elixir
@@ -67,8 +68,7 @@ end
 That 3-tuple is representing this AST node:
 
 ```md
-   +
-  / \
+- / \
   1 2
 ```
 
@@ -319,12 +319,16 @@ So far we've seen examples of non-qualified calls, where the first element is an
 The first situation occurs in cases like `foo()()`. Such syntax is invalid in most cases and will fail to compile, but it is possible to use it inside of `quote`, where it is commonly used to compose quoted expressions to generate functions with `unquote`.
 Let's look at this example:
 
+{% raw %}
+
 ```elixir
 quote unquote: false do
   unquote(:foo)()
 end
 #=> {{:unquote, [], [:foo]}, [], []}
 ```
+
+{% endraw %}
 
 The `unquote: false` option forces `quote` to interpret `unquote` as a normal call, preventing it from injecting code into our expression, so we can see how it is represented in the AST.
 We can see that the first element here is the non-qualified call `{:unquote, [], [:foo]}` instead of an atom.
@@ -337,9 +341,13 @@ foo.bar
 
 If we quote it, we get the following AST:
 
+{% raw %}
+
 ```elixir
 {{:., [], [{:foo, [], Elixir}, :bar]}, [no_parens: true], []}
 ```
+
+{% endraw %}
 
 There's quite a bit to unpack here.
 The first element is a dot operator call, where the left hand side is a variable, and the right hand side is an atom:
@@ -383,6 +391,8 @@ The interesting bits here are the arguments to the dot call: the `[alias, :{}]` 
 
 There's a last case for qualified calls, and this one striked me as odd the first time, because it's not obvious at all that we're dealing with a qualified operator. Let's look at the following quoted expression:
 
+{% raw %}
+
 ```elixir
 quote do
   foo[:bar]
@@ -390,7 +400,11 @@ end
 #=> {{:., [], [Access, :get]}, [], [{:foo, [], Elixir}, :bar]}
 ```
 
+{% endraw %}
+
 What happens here is that the access syntax gets desugared into a qualified call to `Access.get`. The way Elixir recognizes it in the AST is by the `[Access, :get]` arguments for the inner dot call, and it only makes sense to have as many arguments as `Access.get` allows:
+
+{% raw %}
 
 ```elixir
 Macro.to_string({{:., [], [Access, :get]}, [], [{:foo, [], Elixir}]})
@@ -405,6 +419,8 @@ Macro.to_string({{:., [], [Access, :get]}, [], [{:foo, [], Elixir}, :bar, :baz]}
 Macro.to_string({{:., [], [Access, :get]}, [], [{:foo, [], Elixir}, :bar, :baz, :qux]})
 #=> "Access.get(foo, :bar, :baz, :quz)" <-- this will fail
 ```
+
+{% endraw %}
 
 ---
 

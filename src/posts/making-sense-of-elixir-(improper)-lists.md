@@ -1,6 +1,7 @@
 ---
 title: "Making sense of Elixir (improper) lists"
 date: "2021-03-03"
+permalink: "/posts/2021/03/making-sense-of-elixir-(improper)-lists/"
 image: "/assets/img/posts/improper_lists_cover.png"
 tags:
   - elixir
