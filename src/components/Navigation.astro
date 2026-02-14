@@ -1,0 +1,81 @@
+<div class="lcd-nav-bar pointer-events-auto">
+  <div class="ep-row">
+    <div class="flex min-w-0 items-center justify-between gap-2 w-full px-4">
+      <a href="/" class="flex min-w-0 items-baseline gap-2 font-mono">
+        <span class="text-base font-bold tracking-widest text-[#e6e6e6]"
+          >DORGAN</span
+        >
+      </a>
+      <div class="lcd-nav shrink-0">
+        <a href="/posts" class="lcd-tab">Posts</a>
+        <a href="/tags" class="lcd-tab">Tags</a>
+        <a href="/about" class="lcd-tab">About</a>
+        <button
+          id="theme-toggle"
+          class="lcd-tab lcd-tab-icon"
+          aria-label="Toggle theme"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="dark:hidden"
+          >
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="hidden dark:block"
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const themeToggle = document.getElementById("theme-toggle");
+
+  function applyTheme(theme: "dark" | "light") {
+    const isDark = theme === "dark";
+    document.documentElement.classList.toggle("dark", isDark);
+    document.documentElement.dataset.theme = theme;
+
+    try {
+      localStorage.setItem("theme", theme);
+    } catch (error) {}
+
+    window.dispatchEvent(
+      new CustomEvent("blog:theme-change", { detail: { theme } }),
+    );
+  }
+
+  themeToggle?.addEventListener("click", () => {
+    const isDark = document.documentElement.classList.contains("dark");
+    applyTheme(isDark ? "light" : "dark");
+  });
+</script>

@@ -1,0 +1,28 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/feed.xml"
+  to = "/rss.xml"
+  status = 301
+
+[[redirects]]
+  from = "/resume/"
+  to = "/about/"
+  status = 301
+
+[[redirects]]
+  from = "/posts/2022/12/retrospective/"
+  to = "/posts/"
+  status = 301
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

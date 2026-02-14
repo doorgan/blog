@@ -1,0 +1,253 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+const { headings = [] } = Astro.props as { headings: Heading[] };
+const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+const listItems = filteredHeadings.map((heading, index) => ({
+  id: heading.slug,
+  number: (index + 1).toString().padStart(2, '0'),
+  title: heading.text,
+  url: `#${heading.slug}`,
+}));
+
+// Add Comments as the last item
+listItems.push({
+  id: 'comments',
+  number: (listItems.length + 1).toString().padStart(2, '0'),
+  title: 'Comments',
+  url: '#comments',
+});
+
+const headerSubtitle = `${listItems.length} ITEMS`;
+const initialArrowTop = listItems.length > 0 ? 10 : null;
+---
+
+<div data-toc-root>
+<!-- Desktop Sidebar TOC -->
+<div class="hidden lg:block">
+  <div class="relative mb-8" data-toc-container>
+    <!-- Stacked paper shadows - right side only -->
+    <div class="absolute border border-[hsl(var(--border))] border-l-[30px] border-l-[hsl(var(--border))] top-[12px] right-[-12px] w-full h-full bg-[hsl(var(--card))]" style="z-index: -2;"></div>
+    <div class="absolute border border-[hsl(var(--border))] border-l-[30px] border-l-[hsl(var(--border))] top-[8px] right-[-8px] w-full h-full bg-[hsl(var(--secondary))]" style="z-index: -1;"></div>
+    <div class="absolute border border-[hsl(var(--border))] border-l-[30px] border-l-[hsl(var(--border))] top-[4px] right-[-4px] w-full h-full bg-[hsl(var(--muted))]" style="z-index: 0;"></div>
+
+    <!-- Main container with thick left border -->
+    <div class="relative border border-[hsl(var(--border))] bg-[hsl(var(--card))]" style="z-index: 1; border-left: 30px solid hsl(var(--primary));">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b border-[hsl(var(--border))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] h-[42px]">
+        <div class="flex items-center gap-1 px-3 h-full">
+          <span class="text-sm font-bold uppercase tracking-wider font-mono">Contents</span>
+        </div>
+        <div class="flex items-center h-full">
+          <span class="text-sm font-mono opacity-75 pr-3">{headerSubtitle}</span>
+        </div>
+      </div>
+
+      {listItems.length > 0 ? (
+        <div class="relative">
+          {initialArrowTop !== null && (
+            <div
+              class="toc-caret"
+              data-toc-caret
+              style={`top: ${initialArrowTop}px;`}
+            >
+              <svg width="20" height="18" viewBox="0 0 18 18">
+                <polygon
+                  points="1,2 7,2 16,9 7,16 1,16"
+                  fill="#f2f2f2"
+                  stroke="hsl(var(--muted-foreground))"
+                  stroke-width="1"
+                  stroke-linejoin="miter"
+                />
+              </svg>
+            </div>
+          )}
+          <div class="flex flex-col">
+            {listItems.map((item) => (
+              <a
+                href={item.url}
+                data-toc-item
+                data-target={item.id}
+                data-title={item.title}
+                class="toc-item grid items-center border-b border-[hsl(var(--border))] last:border-b-0 transition-colors uppercase tracking-wide font-mono text-sm h-[40px] leading-none grid-cols-[40px_1fr]"
+              >
+                <div class="flex items-center justify-center h-full border-r border-[hsl(var(--border))]">
+                  <span class="text-sm font-mono">{item.number}</span>
+                </div>
+                <div class="flex items-center h-full pl-3">
+                  <span class="line-clamp-1 pr-2">{item.title}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div class="flex items-center justify-center h-[80px] border-b border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+          <span class="text-sm font-mono text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Nothing to show</span>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
+<!-- Mobile TOC (no JS) -->
+<details class="lg:hidden toc-mobile-bar border-y-2 border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+  <summary class="w-full flex min-w-0 items-center justify-between gap-3 px-4 py-3 text-sm font-medium cursor-pointer">
+    <span class="px-2 py-1 text-sm font-bold uppercase tracking-wider bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-mono">TOC</span>
+    <span class="min-w-0 flex-1 truncate text-left text-sm font-mono uppercase" data-toc-current>Contents</span>
+    <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  </summary>
+  <nav class="border-t-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] max-h-[50vh] overflow-y-auto">
+    {listItems.map((item) => (
+      <a
+        href={item.url}
+        class="grid min-w-0 grid-cols-[40px_minmax(0,1fr)] items-center text-sm border-b border-[hsl(var(--border))] last:border-b-0 transition-colors uppercase tracking-wide font-mono min-h-[40px] leading-none text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]"
+      >
+        <div class="flex items-center justify-center h-full border-r border-[hsl(var(--border))]">
+          <span class="text-sm font-mono">{item.number}</span>
+        </div>
+        <div class="flex min-w-0 items-center h-full py-2 pl-3">
+          <span class="min-w-0 truncate pr-2">{item.title}</span>
+        </div>
+      </a>
+    ))}
+  </nav>
+</details>
+
+<style>
+  .toc-item {
+    color: hsl(var(--muted-foreground));
+    background: hsl(var(--card));
+  }
+
+  .toc-item:hover {
+    background: hsl(var(--muted));
+  }
+
+  .toc-item.is-active {
+    color: hsl(var(--foreground));
+    background: hsl(var(--muted));
+  }
+
+  .toc-caret {
+    position: absolute;
+    left: -30px;
+    width: 30px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+    transition: top 150ms ease;
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    function initRoot(root) {
+      var container = root.querySelector('[data-toc-container]');
+      if (!container) return;
+      var items = Array.prototype.slice.call(container.querySelectorAll('[data-toc-item]'));
+      if (!items.length) return;
+      var caret = container.querySelector('[data-toc-caret]');
+      var currentLabel = root.querySelector('[data-toc-current]');
+      var indexById = {};
+
+      items.forEach(function(item, index) {
+        var target = item.getAttribute('data-target');
+        if (target) indexById[target] = index;
+      });
+
+      function setActive(index) {
+        if (index == null || index < 0 || index >= items.length) return;
+        items.forEach(function(item, i) {
+          if (i === index) {
+            item.classList.add('is-active');
+            item.setAttribute('aria-current', 'true');
+          } else {
+            item.classList.remove('is-active');
+            item.removeAttribute('aria-current');
+          }
+        });
+        if (caret) caret.style.top = (index * 40 + 10) + 'px';
+        if (currentLabel) {
+          currentLabel.textContent = items[index].getAttribute('data-title') || 'Contents';
+        }
+      }
+
+      function observeHeadings() {
+        if (!('IntersectionObserver' in window)) return false;
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (!entry.isIntersecting) return;
+            var id = entry.target.id;
+            if (id && indexById[id] != null) {
+              setActive(indexById[id]);
+            }
+          });
+        }, {
+          rootMargin: '-20% 0px -60% 0px',
+          threshold: 0
+        });
+
+        var observed = 0;
+        items.forEach(function(item) {
+          var target = item.getAttribute('data-target');
+          if (!target) return;
+          var heading = document.getElementById(target);
+          if (heading) {
+            observer.observe(heading);
+            observed += 1;
+          }
+        });
+
+        return observed > 0;
+      }
+
+      var initialHash = window.location.hash ? window.location.hash.slice(1) : '';
+      if (initialHash && indexById[initialHash] != null) {
+        setActive(indexById[initialHash]);
+      } else {
+        setActive(0);
+      }
+
+      var observed = observeHeadings();
+      if (!observed) {
+        var tries = 0;
+        var retry = setInterval(function() {
+          tries += 1;
+          if (observeHeadings() || tries > 10) {
+            clearInterval(retry);
+          }
+        }, 200);
+      }
+
+      window.addEventListener('hashchange', function() {
+        var hash = window.location.hash ? window.location.hash.slice(1) : '';
+        if (hash && indexById[hash] != null) {
+          setActive(indexById[hash]);
+        }
+      });
+    }
+
+    function init() {
+      var roots = Array.prototype.slice.call(document.querySelectorAll('[data-toc-root]'));
+      if (!roots.length) return;
+      roots.forEach(initRoot);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+</div>

@@ -1,0 +1,498 @@
+---
+import Layout from "./Layout.astro";
+import LcdStrip from "../components/LcdStrip.astro";
+import TableOfContents from "../components/TableOfContents.astro";
+import ChapterNavigation from "../components/ChapterNavigation.astro";
+import Giscus from "../components/Giscus.astro";
+import { formatDate } from "../lib/dates";
+import { getTagUrl } from "../lib/tags";
+
+interface Chapter {
+  slug: string;
+  title: string;
+  chapter: number;
+  url: string;
+}
+
+interface Props {
+  title: string;
+  date: Date;
+  tags: string[];
+  headings: { depth: number; slug: string; text: string }[];
+  slug: string;
+  image?: string;
+  series?: string;
+  seriesSlug?: string;
+  chapter?: number;
+  seriesChapters?: Chapter[];
+  editPath: string;
+}
+
+const {
+  title,
+  date,
+  tags,
+  headings,
+  slug,
+  image,
+  series,
+  seriesSlug,
+  chapter,
+  seriesChapters = [],
+  editPath,
+} = Astro.props;
+
+const formattedDate = formatDate(date);
+
+const readingTime = Math.max(
+  1,
+  Math.ceil(
+    (await Astro.slots.render("default"))
+      .replace(/<[^>]*>/g, "")
+      .split(/\s+/)
+      .filter((w) => w.length > 0).length / 200,
+  ),
+);
+---
+
+<Layout title={((series && series + ": ") || "") + title} image={image}>
+  <LcdStrip title={title} titleSize="md" className="lcd-strip--toc">
+    <div
+      class="flex max-w-full flex-wrap items-center gap-x-3 gap-y-2 mt-2 text-sm text-[#e6e6e6] font-mono uppercase tracking-wide sm:tracking-wider"
+    >
+      <span class="shrink-0">{formattedDate}</span>
+      <span aria-hidden="true">//</span>
+      <span class="shrink-0">{readingTime} MIN</span>
+      {
+        tags.length > 0 && (
+          <>
+            <span aria-hidden="true">{"//"}</span>
+            <span class="flex min-w-0 flex-wrap gap-2">
+              {tags.map((tag) => (
+                <a
+                  href={getTagUrl(tag)}
+                  class="break-all hover:text-[hsl(var(--primary))] transition-colors"
+                >
+                  [{tag.toUpperCase()}]
+                </a>
+              ))}
+            </span>
+          </>
+        )
+      }
+    </div>
+  </LcdStrip>
+
+  <div class="ep-row annotation-layout" id="annotation-layout">
+    <aside class="hidden lg:block ep-left py-8 min-h-[100%]">
+      <div class="sticky top-16">
+        <TableOfContents headings={headings} />
+      </div>
+    </aside>
+
+    <main class="w-full px-4 py-8" id="main-content">
+      <!-- Mobile TOC -->
+      <div class="sticky top-[var(--nav-height)] z-50 lg:hidden -mx-4 mb-6">
+        <TableOfContents headings={headings} />
+      </div>
+
+      <!-- Article Body -->
+      <article id="article-content">
+        {
+          series && chapter && seriesChapters.length > 1 && (
+            <ChapterNavigation
+              series={series}
+              seriesSlug={seriesSlug || ""}
+              currentChapter={chapter}
+              currentSlug={slug}
+              chapters={seriesChapters}
+            />
+          )
+        }
+
+        <div class="prose prose-lg dark:prose-invert max-w-none mb-6">
+          <slot />
+        </div>
+
+        {
+          series && chapter && seriesChapters.length > 1 && (
+            <ChapterNavigation
+              series={series}
+              seriesSlug={seriesSlug || ""}
+              currentChapter={chapter}
+              currentSlug={slug}
+              chapters={seriesChapters}
+            />
+          )
+        }
+
+        <div class="mt-12 pt-8 border-t-2 border-border">
+          <p class="text-sm text-muted-foreground">
+            Want to improve this article? You can propose an edit
+            <a
+              href={`https://github.com/doorgan/blog/edit/main/${editPath}`}
+              class="underline hover:text-foreground"
+              target="_blank"
+              rel="noopener noreferrer">here</a
+            >.
+          </p>
+        </div>
+
+        <Giscus />
+      </article>
+
+      <script is:inline>
+        (function () {
+          function linkifyHeadings() {
+            document
+              .querySelectorAll(
+                ".prose h2, .prose h3, .prose h4, .prose h5, .prose h6",
+              )
+              .forEach((heading) => {
+                if (!heading.id) return;
+                if (heading.querySelector("a.heading-link")) return;
+
+                const link = document.createElement("a");
+                link.href = `#${heading.id}`;
+                link.className = "heading-link";
+                const level = Math.max(
+                  1,
+                  parseInt(heading.tagName.replace("H", ""), 10) - 1,
+                );
+                const hash = "#".repeat(level);
+                const text = heading.textContent
+                  ? heading.textContent.trim()
+                  : "";
+                link.setAttribute(
+                  "aria-label",
+                  text ? `Link to ${text}` : "Link to section",
+                );
+
+                const hashSpan = document.createElement("span");
+                hashSpan.className = "heading-hash";
+                hashSpan.textContent = hash;
+                link.appendChild(hashSpan);
+
+                while (heading.firstChild) {
+                  link.appendChild(heading.firstChild);
+                }
+
+                heading.appendChild(link);
+              });
+          }
+
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", linkifyHeadings);
+          } else {
+            linkifyHeadings();
+          }
+        })();
+      </script>
+    </main>
+
+    <!-- Desktop Annotations Sidebar (1280px+) -->
+    <aside class="hidden lg:block ep-right" id="annotations-area">
+      <div class="annotations-container" id="annotations-container">
+        <!-- Annotations positioned here by JS -->
+      </div>
+    </aside>
+  </div>
+
+  <!-- Mobile Annotation Popup Overlay -->
+  <div
+    id="mobile-annotation-popup"
+    class="mobile-annotation-popup"
+    role="dialog"
+    aria-live="polite"
+    style="display: none;"
+  >
+    <div class="mobile-annotation-popup-content">
+      <span class="mobile-annotation-popup-num"></span>
+      <span class="mobile-annotation-popup-note"></span>
+    </div>
+  </div>
+
+  <!-- Annotation Script -->
+  <script is:inline>
+    (function () {
+      // Configuration
+      var ANNOTATION_BREAKPOINT = 1280; // When sidebar disappears
+      var GAP = 12;
+      var MIN_TOP_OFFSET = 20;
+
+      // State
+      var activeMobilePopup = null;
+      var annotationsData = [];
+      var isSidebarVisible = false;
+
+      // Format number as "01", "02", etc
+      function formatNum(n) {
+        return n < 10 ? "0" + n : String(n);
+      }
+
+      // Check if sidebar is visible based on viewport
+      function checkSidebarVisibility() {
+        return window.innerWidth >= ANNOTATION_BREAKPOINT;
+      }
+
+      // Get viewport rect
+      function viewportRect(el) {
+        var r = el.getBoundingClientRect();
+        return {
+          top: r.top,
+          bottom: r.bottom,
+          left: r.left,
+          right: r.right,
+          width: r.width,
+          height: r.height,
+          cx: r.left + r.width / 2,
+          cy: r.top + r.height / 2,
+        };
+      }
+
+      function init() {
+        var article = document.getElementById("article-content");
+        var container = document.getElementById("annotations-container");
+        var area = document.getElementById("annotations-area");
+        var main = document.getElementById("main-content");
+        var popup = document.getElementById("mobile-annotation-popup");
+
+        if (!article || !main) return;
+
+        var marks = article.querySelectorAll(".annotation-mark");
+        if (marks.length === 0) {
+          if (area) area.style.display = "none";
+          return;
+        }
+
+        // Check initial sidebar visibility
+        isSidebarVisible = checkSidebarVisibility();
+
+        // Store annotation data
+        annotationsData = [];
+        for (var i = 0; i < marks.length; i++) {
+          var mark = marks[i];
+          var id = i + 1;
+          var note = mark.getAttribute("data-note") || "";
+          var numStr = formatNum(id);
+
+          // Add superscript reference to text
+          if (!mark.querySelector(".annotation-ref")) {
+            var sup = document.createElement("sup");
+            sup.className = "annotation-ref";
+            sup.textContent = numStr;
+            sup.setAttribute("data-id", id);
+            mark.appendChild(sup);
+          }
+
+          // Store data
+          mark.setAttribute("role", "button");
+          mark.setAttribute("tabindex", "0");
+          mark.setAttribute("aria-label", "Show annotation " + numStr);
+          mark.setAttribute("data-annotation-id", String(id));
+
+          annotationsData.push({
+            id: id,
+            mark: mark,
+            refEl: mark.querySelector(".annotation-ref"),
+            numStr: numStr,
+            note: note,
+          });
+
+          // Mobile: add click handler for popup
+          mark.addEventListener("click", function (e) {
+            if (isSidebarVisible) return; // Desktop: do nothing
+            e.preventDefault();
+            e.stopPropagation();
+            showMobilePopup(this, popup);
+          });
+
+          mark.addEventListener("keydown", function (e) {
+            if (isSidebarVisible) return;
+            if (e.key !== "Enter" && e.key !== " ") return;
+            e.preventDefault();
+            e.stopPropagation();
+            showMobilePopup(this, popup);
+          });
+        }
+
+        // Setup desktop annotations if sidebar visible
+        if (container && area && isSidebarVisible) {
+          setupDesktopAnnotations(container, area, main);
+        }
+
+        // Listen for resize to switch modes
+        var resizeTimeout;
+        window.addEventListener("resize", function () {
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(function () {
+            var newVisibility = checkSidebarVisibility();
+            if (newVisibility !== isSidebarVisible) {
+              isSidebarVisible = newVisibility;
+              handleModeSwitch(container, area, main, popup);
+            }
+          }, 100);
+        });
+
+        // Close popup when clicking outside
+        document.addEventListener("click", function (e) {
+          if (
+            !isSidebarVisible &&
+            activeMobilePopup &&
+            !e.target.closest(".annotation-mark") &&
+            !e.target.closest(".mobile-annotation-popup")
+          ) {
+            hideMobilePopup(popup);
+          }
+        });
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && activeMobilePopup) {
+            hideMobilePopup(popup);
+          }
+        });
+      }
+
+      function setupDesktopAnnotations(container, area, main) {
+        if (!container || !area) return;
+        container.innerHTML = "";
+
+        // Create annotation boxes
+        for (var i = 0; i < annotationsData.length; i++) {
+          var anno = annotationsData[i];
+          var box = document.createElement("div");
+          var number = document.createElement("span");
+          var note = document.createElement("span");
+
+          box.className = "annotation-box";
+          box.id = "annotation-box-" + anno.id;
+          number.className = "annotation-num";
+          number.textContent = anno.numStr;
+          note.className = "annotation-note";
+          note.textContent = anno.note;
+          box.append(number, note);
+          container.appendChild(box);
+          anno.box = box;
+          anno.boxH = box.offsetHeight;
+        }
+
+        positionAnnotations(container, main);
+      }
+
+      function handleModeSwitch(container, area, main, popup) {
+        if (isSidebarVisible) {
+          // Show desktop annotations
+          if (area) area.style.display = "";
+          if (container && area) {
+            setupDesktopAnnotations(container, area, main);
+          }
+          hideMobilePopup(popup);
+        } else {
+          // Hide desktop, enable mobile
+          if (container) container.innerHTML = "";
+          if (area) area.style.display = "none";
+        }
+      }
+
+      function positionAnnotations(container, main) {
+        var mainVp = viewportRect(main);
+        var containerVp = viewportRect(container);
+        var minTop = mainVp.top + MIN_TOP_OFFSET;
+        var maxBottom = mainVp.bottom;
+
+        // Sort by text position
+        var sorted = annotationsData.slice().sort(function (a, b) {
+          return viewportRect(a.mark).top - viewportRect(b.mark).top;
+        });
+
+        var placed = [];
+
+        for (var i = 0; i < sorted.length; i++) {
+          var anno = sorted[i];
+          var refR = viewportRect(anno.refEl);
+          var boxH = anno.boxH;
+
+          var textY = refR.cy;
+          var targetTop = textY - boxH / 2;
+
+          if (targetTop < minTop) targetTop = minTop;
+          if (targetTop + boxH > maxBottom) targetTop = maxBottom - boxH;
+
+          // Check collisions
+          var annoTop = targetTop;
+          var collided = true;
+          var tries = 0;
+
+          while (collided && tries < 100) {
+            collided = false;
+            for (var p = 0; p < placed.length; p++) {
+              if (
+                annoTop < placed[p].bottom + GAP &&
+                annoTop + boxH > placed[p].top - GAP
+              ) {
+                annoTop = placed[p].bottom + GAP;
+                collided = true;
+                break;
+              }
+            }
+            tries++;
+          }
+
+          anno.box.style.top = annoTop - containerVp.top + "px";
+          anno.box.style.left = "0";
+          anno.box.style.right = "0";
+
+          placed.push({ top: annoTop, bottom: annoTop + boxH });
+        }
+      }
+
+      function showMobilePopup(mark, popup) {
+        if (!popup) return;
+        hideMobilePopup(popup);
+
+        // Find the annotation data for this mark
+        var anno = annotationsData.find(function (a) {
+          return a.mark === mark;
+        });
+        if (!anno) return;
+
+        popup.querySelector(".mobile-annotation-popup-num").textContent =
+          anno.numStr;
+        popup.querySelector(".mobile-annotation-popup-note").textContent =
+          anno.note;
+        popup.setAttribute("aria-label", "Annotation " + anno.numStr);
+
+        var markRect = mark.getBoundingClientRect();
+        var popupHeight = popup.offsetHeight || 60;
+        var top = markRect.top - popupHeight - 8;
+
+        if (top < 10) {
+          top = markRect.bottom + 8;
+        }
+
+        popup.style.top = top + "px";
+        popup.style.left = "16px";
+        popup.style.right = "16px";
+        popup.style.display = "block";
+
+        activeMobilePopup = mark;
+        mark.classList.add("annotation-highlight");
+      }
+
+      function hideMobilePopup(popup) {
+        if (!popup) return;
+        popup.style.display = "none";
+        document.querySelectorAll(".annotation-mark").forEach(function (mark) {
+          mark.classList.remove("annotation-highlight");
+        });
+        activeMobilePopup = null;
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</Layout>

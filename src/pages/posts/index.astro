@@ -1,0 +1,28 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import LcdStrip from "../../components/LcdStrip.astro";
+import PostList from "../../components/PostList.astro";
+
+const posts = await getCollection("posts", ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const sortedPosts = posts.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Layout title="All Posts | Dorgan's Blog">
+  <LcdStrip
+    title="ALL POSTS"
+    subtitle={`${posts.length} ${posts.length === 1 ? "POST" : "POSTS"} LOADED`}
+  />
+
+  <div class="ep-row">
+    <main class="w-full px-4 py-12">
+      <!-- All Posts -->
+      <PostList posts={sortedPosts} showNumber={true} numberStart={1} />
+    </main>
+  </div>
+</Layout>

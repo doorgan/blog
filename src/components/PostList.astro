@@ -1,0 +1,92 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDate } from "../lib/dates";
+import { getPostUrl } from "../lib/posts";
+import { getTagUrl } from "../lib/tags";
+
+interface Props {
+  posts: CollectionEntry<"posts">[];
+  showNumber?: boolean;
+  numberStart?: number;
+}
+
+const { posts, showNumber = false, numberStart = 1 } = Astro.props;
+---
+
+<div class="relative border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+  <!-- Stacked paper shadows - right side only -->
+  <div
+    class="absolute border border-[hsl(var(--border))] top-[12px] right-[-12px] w-full h-full bg-[hsl(var(--muted))]"
+    style="z-index: -2;"
+  >
+  </div>
+  <div
+    class="absolute border border-[hsl(var(--border))] top-[8px] right-[-8px] w-full h-full bg-[hsl(var(--secondary))]"
+    style="z-index: -2;"
+  >
+  </div>
+  <div
+    class="absolute border border-[hsl(var(--border))] top-[4px] right-[-4px] w-full h-full bg-[hsl(var(--card))]"
+    style="z-index: -1;"
+  >
+  </div>
+
+  {
+    posts.map((post, index) => {
+      const number = showNumber
+        ? (numberStart + index).toString().padStart(2, "0")
+        : null;
+      return (
+        <article class="relative bg-[hsl(var(--card))] border-b border-[hsl(var(--border))] last:border-b-0">
+          <div class="flex items-stretch">
+            {/* Number indicator - table cell style */}
+            {showNumber && (
+              <div class="flex items-center justify-center w-16 shrink-0">
+                <span class="text-sm font-mono font-bold text-[hsl(var(--muted-foreground))]">
+                  {number}
+                </span>
+              </div>
+            )}
+
+            {/* Main content area */}
+            <div class="flex-1 min-w-0 p-4">
+              <h2 class="text-xl font-bold tracking-tight mb-3 break-words">
+                <a
+                  href={getPostUrl(post)}
+                  class="text-[hsl(var(--foreground))] hover:text-[hsl(var(--primary))] transition-colors"
+                >
+                  {post.data.series && post.data.series + ": "}
+                  {post.data.title}
+                </a>
+              </h2>
+
+              <div class="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[hsl(var(--muted-foreground))] mb-3">
+                <span class="shrink-0 font-mono">
+                  {formatDate(post.data.date)}
+                </span>
+                {post.data.tags && post.data.tags.length > 0 && (
+                  <div class="flex min-w-0 flex-wrap gap-2">
+                    {post.data.tags.slice(0, 3).map((tag: string) => (
+                      <a
+                        href={getTagUrl(tag)}
+                        class="text-xs text-[hsl(var(--primary))] hover:underline"
+                      >
+                        [{tag}]
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {post.data.description && (
+                <p class="text-sm text-[hsl(var(--muted-foreground))] line-clamp-2">
+                  {post.data.description}
+                </p>
+              )}
+            </div>
+          </div>
+        </article>
+      );
+    })
+  }
+</div>

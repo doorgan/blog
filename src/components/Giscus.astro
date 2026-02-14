@@ -1,0 +1,81 @@
+<div class="mt-12" id="comments">
+  <!-- Header outside the card -->
+  <div class="mb-4">
+    <h2 class="text-xl font-bold tracking-tight">Comments</h2>
+  </div>
+
+  <!-- Card container matching post list style -->
+  <div class="relative border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+    <!-- Stacked paper shadows -->
+    <div class="absolute border border-[hsl(var(--border))] top-[12px] right-[-12px] w-full h-full bg-[hsl(var(--muted))]" style="z-index: -2;"></div>
+    <div class="absolute border border-[hsl(var(--border))] top-[8px] right-[-8px] w-full h-full bg-[hsl(var(--secondary))]" style="z-index: -2;"></div>
+    <div class="absolute border border-[hsl(var(--border))] top-[4px] right-[-4px] w-full h-full bg-[hsl(var(--card))]" style="z-index: -1;"></div>
+
+    <!-- Giscus content -->
+    <div
+      id="giscus-thread"
+      class="relative p-2.5"
+      style="z-index: 1;"
+      data-theme-light="/giscus-theme-light.css"
+      data-theme-dark="/giscus-theme-dark.css"
+    >
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var container = document.getElementById('giscus-thread');
+    if (!container || container.dataset.loaded === 'true') return;
+    container.dataset.loaded = 'true';
+
+    function currentTheme() {
+      var isDark = document.documentElement.classList.contains('dark');
+
+      if (window.location.protocol !== 'https:') {
+        return isDark ? 'dark' : 'light';
+      }
+
+      var path = isDark ? container.dataset.themeDark : container.dataset.themeLight;
+
+      return new URL(path || '/giscus-theme-light.css', window.location.origin).toString();
+    }
+
+    function setGiscusTheme() {
+      var iframe = container.querySelector('iframe.giscus-frame');
+      if (!iframe || !iframe.contentWindow) return;
+
+      iframe.contentWindow.postMessage(
+        {
+          giscus: {
+            setConfig: {
+              theme: currentTheme(),
+            },
+          },
+        },
+        'https://giscus.app'
+      );
+    }
+
+    var script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    script.setAttribute('data-repo', 'doorgan/blog');
+    script.setAttribute('data-repo-id', 'MDEwOlJlcG9zaXRvcnkzNDQwMDYxNjg=');
+    script.setAttribute('data-category', 'General');
+    script.setAttribute('data-category-id', 'MDE4OkRpc2N1c3Npb25DYXRlZ29yeTMyOTczODM5');
+    script.setAttribute('data-mapping', 'og:title');
+    script.setAttribute('data-strict', '0');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-emit-metadata', '0');
+    script.setAttribute('data-input-position', 'bottom');
+    script.setAttribute('data-theme', currentTheme());
+    script.setAttribute('data-lang', 'en');
+    container.appendChild(script);
+
+    var observer = new MutationObserver(setGiscusTheme);
+    observer.observe(container, { childList: true, subtree: true });
+    window.addEventListener('blog:theme-change', setGiscusTheme);
+  })();
+</script>

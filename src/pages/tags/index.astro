@@ -1,0 +1,81 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import LcdStrip from '../../components/LcdStrip.astro';
+import { getTagUrl } from '../../lib/tags';
+
+const posts = await getCollection('posts', ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+// Get all tags with their counts
+const tagCounts = new Map<string, number>();
+posts.forEach(post => {
+  post.data.tags.forEach(tag => {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  });
+});
+
+const sortedTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+// Pad to multiple of 4 for grid
+const totalSlots = Math.ceil(sortedTags.length / 16) * 16;
+---
+
+<Layout title="Tags | Dorgan's Blog">
+  <LcdStrip title="TAG BANK" subtitle={`${sortedTags.length} TAGS // SELECT GROUP`} />
+
+  <div class="ep-row">
+    <main class="w-full px-4 py-8">
+      <!-- EP-133 4x4 Grid of Tags - Dark pad style with 45-degree shadow -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      {sortedTags.map(([tag, count], index) => (
+        <a
+          href={getTagUrl(tag)}
+          class="group relative aspect-square bg-[#2a2a2a] text-[#e0e0e0] border border-[#4a4a4a] p-3 flex flex-col justify-between hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] hover:border-[hsl(var(--primary))] transition-all"
+          style="box-shadow: 4px 4px 0 #1a1a1a; transform: translate(-2px, -2px);"
+        >
+          <!-- Pad Number -->
+          <span class="text-md font-bold text-[#999] group-hover:text-[hsl(var(--primary-foreground))] font-mono">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+
+          <!-- Tag Name -->
+          <div class="flex-1 flex items-center justify-center">
+            <span class="text-xl font-bold uppercase text-center leading-tight line-clamp-2">
+              {tag}
+            </span>
+          </div>
+
+          <!-- Count -->
+          <span class="text-md font-mono text-[#999] group-hover:text-[hsl(var(--primary-foreground))]">
+            {count} POSTS
+          </span>
+        </a>
+      ))}
+
+      <!-- Empty pads to complete grid -->
+      {Array.from({ length: Math.max(0, totalSlots - sortedTags.length) }).map((_, i) => (
+        <div
+          class="aspect-square bg-[#2a2a2a] border border-[#4a4a4a] p-3 flex items-center justify-center opacity-30"
+          style="box-shadow: 4px 4px 0 #1a1a1a; transform: translate(-2px, -2px);"
+        >
+          <span class="text-md font-bold text-[#666] font-mono">
+            {String(sortedTags.length + i + 1).padStart(2, '0')}
+          </span>
+        </div>
+      ))}
+      </div>
+
+      <!-- Back Button -->
+      <div class="flex gap-2">
+        <a
+          href="/"
+          class="flex-1 py-3 px-4 bg-[#2a2a2a] text-[#e0e0e0] border border-[#4a4a4a] text-xs font-bold text-center uppercase tracking-widest hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] hover:border-[hsl(var(--primary))] transition-all"
+          style="box-shadow: 4px 4px 0 #1a1a1a; transform: translate(-2px, -2px);"
+        >
+          BACK
+        </a>
+      </div>
+    </main>
+  </div>
+</Layout>

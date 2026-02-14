@@ -1,0 +1,55 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import LcdStrip from "../components/LcdStrip.astro";
+import PostList from "../components/PostList.astro";
+
+const posts = await getCollection("posts", ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const sortedPosts = posts.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const recentPosts = sortedPosts.slice(0, 15);
+const hasMorePosts = sortedPosts.length > 15;
+---
+
+<Layout title="Dorgan's Blog">
+  <LcdStrip title="LATEST POSTS" subtitle={`${posts.length} POSTS TOTAL`} />
+
+  <div class="ep-row">
+    <main class="w-full px-4 py-12">
+      <!-- Recent Posts -->
+      <PostList posts={recentPosts} showNumber={true} numberStart={1} />
+
+      <!-- More Posts Link -->
+      {
+        hasMorePosts && (
+          <div class="mt-8 text-center">
+            <a
+              href="/posts"
+              class="inline-flex items-center gap-2 px-6 py-3 border-2 border-[hsl(var(--primary))] text-[hsl(var(--primary))] font-mono font-bold uppercase tracking-wider hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors"
+            >
+              <span>View All Posts</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        )
+      }
+    </main>
+  </div>
+</Layout>

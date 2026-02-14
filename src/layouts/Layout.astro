@@ -1,0 +1,152 @@
+---
+import "../styles/global.css";
+import Footer from "../components/Footer.astro";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = "Dorgan",
+  description = "ドラゴン",
+  image = "/assets/img/profile.jpg",
+  noindex = false,
+} = Astro.props;
+
+const siteUrl = "https://dorgan.ar";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="google-site-verification"
+      content="nzTHySE0OrTT835vavbNOzhAO7KIguYf-h75eYMvVUw"
+    />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={new URL(image, siteUrl).toString()} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@doorgan" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, siteUrl).toString()} />
+
+    <!-- Theme script - prevents flash -->
+    <script is:inline>
+      (function () {
+        let theme = "system";
+
+        try {
+          theme = localStorage.getItem("theme") || "system";
+        } catch (error) {}
+
+        const systemDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        const isDark = theme === "dark" || (theme === "system" && systemDark);
+
+        if (isDark) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+
+        document.documentElement.dataset.theme = isDark ? "dark" : "light";
+      })();
+    </script>
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/img/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="/assets/img/favicon/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- RSS Feed -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="RSS Feed"
+      href="/rss.xml"
+    />
+  </head>
+  <body class="min-h-screen bg-background text-foreground antialiased">
+    <div class="ep-page">
+      <slot />
+      <Footer />
+    </div>
+    <script is:inline>
+      (function () {
+        function addCopyButtons() {
+          document.querySelectorAll("pre > code").forEach((code) => {
+            const pre = code.parentElement;
+            if (!pre || pre.querySelector(".code-copy-btn")) return;
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "code-copy-btn";
+            button.textContent = "COPY";
+
+            button.addEventListener("click", async (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              const text = code.textContent || "";
+              let copied = false;
+
+              try {
+                if (navigator.clipboard && window.isSecureContext) {
+                  await navigator.clipboard.writeText(text);
+                  copied = true;
+                }
+              } catch (error) {
+                copied = false;
+              }
+
+              const originalText = button.textContent;
+              button.textContent = copied ? "COPIED" : "FAILED";
+              button.disabled = true;
+              setTimeout(() => {
+                button.textContent = originalText || "COPY";
+                button.disabled = false;
+              }, 1500);
+            });
+
+            pre.appendChild(button);
+          });
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", addCopyButtons);
+        } else {
+          addCopyButtons();
+        }
+      })();
+    </script>
+  </body>
+</html>

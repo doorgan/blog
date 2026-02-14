@@ -1,0 +1,486 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LcdStrip from '../components/LcdStrip.astro';
+
+const title = "Lucas San Román";
+const description = "Senior Elixir Engineer, open sourceror and jack of all trades.";
+---
+
+<Layout title={title} description={description}>
+  <style>
+    @media print {
+      a[href^="http"]::after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+      }
+    }
+    @media not print {
+      a[target="_blank"]::after {
+        content: " ↗";
+        margin: 0;
+      }
+    }
+
+    .about-page .about-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 240px;
+      gap: 2rem;
+      align-items: start;
+      padding: 1.5rem;
+    }
+
+    @media (max-width: 64rem) {
+      .about-page .about-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .about-page .ep-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .about-page .ep-row > * {
+        grid-column: 1;
+      }
+
+      .about-page .ep-left {
+        display: none;
+      }
+    }
+
+    .about-page .about-title {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin: 0 0 0.5rem;
+    }
+
+    .about-page .about-role {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: hsl(var(--muted-foreground));
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .about-page .about-summary {
+      margin-top: 0.9rem;
+      color: hsl(var(--muted-foreground));
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .about-page .about-signal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .about-page .about-signal {
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--card));
+      padding: 0.6rem 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .about-page .about-signal-label {
+      display: block;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: hsl(var(--muted-foreground));
+    }
+
+    .about-page .about-signal-value {
+      display: block;
+      margin-top: 0.3rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: hsl(var(--foreground));
+    }
+
+    .about-page .about-avatar {
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--muted));
+      padding: 0.5rem;
+    }
+
+    .about-page .about-avatar img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid hsl(var(--border));
+    }
+
+    @media (max-width: 64rem) {
+      .about-page .about-avatar {
+        display: none;
+      }
+    }
+
+    .about-page .about-contact {
+      margin-top: 0.9rem;
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--card));
+    }
+
+    .about-page .about-contact-row {
+      display: grid;
+      grid-template-columns: 35px 1fr;
+      align-items: center;
+      min-height: 2.25rem;
+      border-bottom: 1px solid hsl(var(--border));
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+    }
+
+    .about-page .about-contact-row:last-child {
+      border-bottom: none;
+    }
+
+    .about-page .about-contact-key {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      background: hsl(var(--muted));
+      border-right: 1px solid hsl(var(--border));
+      font-weight: 700;
+      color: hsl(var(--muted-foreground));
+    }
+
+    .about-page .about-contact-value {
+      padding: 0 0.75rem;
+      color: hsl(var(--foreground));
+      overflow-wrap: anywhere;
+    }
+
+    .about-page .about-contact-value a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .about-page .about-contact-value a:hover {
+      color: hsl(var(--primary));
+    }
+
+    .about-page .about-text {
+      padding: 1.5rem;
+      color: hsl(var(--muted-foreground));
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .about-page .about-text p + p {
+      margin-top: 0.9rem;
+    }
+
+    .about-page .about-entry-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem;
+    }
+
+    .about-page .about-entry {
+      border: 1px solid hsl(var(--border));
+      background: hsl(var(--card));
+    }
+
+    .about-page .about-entry-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.65rem 0.85rem;
+      background: hsl(var(--muted));
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    .about-page .about-entry-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .about-page .about-entry-role {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: hsl(var(--muted-foreground));
+    }
+
+    .about-page .about-entry-meta {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      color: hsl(var(--muted-foreground));
+      white-space: nowrap;
+    }
+
+    .about-page .about-entry-body {
+      padding: 0.85rem;
+      color: hsl(var(--muted-foreground));
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .about-page .about-entry-body p + p {
+      margin-top: 0.7rem;
+    }
+
+    .about-page .about-entry-body a {
+      color: hsl(var(--primary));
+    }
+  </style>
+
+  <div class="about-page">
+    <LcdStrip title="ABOUT" subtitle="SYSTEM PROFILE // DORGAN" />
+
+    <div class="ep-row">
+      <main class="w-full px-4 py-12 print:py-8">
+        <section class="ep-panel mb-8">
+          <div class="ep-panel-header">
+            <span class="ep-label">PROFILE</span>
+            <h2 class="text-xl font-bold uppercase tracking-wider">Overview</h2>
+          </div>
+          <div class="about-hero">
+            <div>
+              <h2 class="about-title">Lucas San Román</h2>
+              <p class="about-role">Senior Software Engineer</p>
+              <div class="about-summary">
+                <p>
+                  I'm a Senior Software Engineer currently specialized in the Elixir programming
+                  language and the BEAM runtime. I have experience building and maintaining backend
+                  systems in complex domains, and I have a strong interest in the development of tools
+                  and libraries to help other developers to build more maintainable systems.
+                </p>
+                <br/>
+                <p>
+                  I volunteer as a moderator for the
+                  <a href="https://discord.gg/elixir" target="_blank" rel="noopener noreferrer">Elixir Discord server</a>, where we provide assistance to
+                  other members of the Elixir community ranging from beginners to
+                  experts working on large scale projects. I'm the author of the
+                  <a href="https://github.com/doorgan/sourceror" target="_blank" rel="noopener noreferrer">Sourceror</a> library for AST-based Elixir
+                  source code manipulation, which helps to solve the long lasting issue
+                  of the lack of refactoring tools in the Elixir ecosystem.
+                </p>
+              </div>
+            </div>
+
+            <aside>
+              <div class="about-avatar">
+                <img
+                  src="/assets/img/profile.jpg"
+                  alt="Profile picture"
+                  itemprop="image"
+                />
+              </div>
+              <address class="about-contact not-italic" itemprop="address">
+                <div class="about-contact-row">
+                  <span class="about-contact-key">LOC</span>
+                  <span class="about-contact-value">Lobos, Argentina</span>
+                </div>
+                <div class="about-contact-row">
+                  <span class="about-contact-key">@</span>
+                  <span class="about-contact-value">
+                    <a
+                      href="mailto:lucassanroman97@gmail.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      itemprop="email"
+                    >
+                      lucassanroman97@gmail.com
+                    </a>
+                  </span>
+                </div>
+                <div class="about-contact-row">
+                  <span class="about-contact-key">GH</span>
+                  <span class="about-contact-value">
+                    <a
+                      href="https://github.com/doorgan"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      github.com/doorgan
+                    </a>
+                  </span>
+                </div>
+                <div class="about-contact-row">
+                  <span class="about-contact-key">TW</span>
+                  <span class="about-contact-value">
+                    <a
+                      href="https://twitter.com/dorgan_"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      twitter.com/dorgan_
+                    </a>
+                  </span>
+                </div>
+              </address>
+            </aside>
+          </div>
+        </section>
+
+        <div class="flex flex-col gap-8">
+          <section class="ep-panel">
+            <div class="ep-panel-header">
+              <span class="ep-label">EXP</span>
+              <h2 class="text-xl font-bold uppercase tracking-wider">Professional experience</h2>
+            </div>
+            <div class="about-entry-list">
+              <article class="about-entry">
+                <div class="about-entry-header">
+                  <div>
+                    <div class="about-entry-title">Expert LSP</div>
+                    <div class="about-entry-role">Full-time collaborator</div>
+                  </div>
+                  <div class="about-entry-meta">2025-Today</div>
+                </div>
+                <div class="about-entry-body">
+                  <p>
+                    <a href="https://github.com/elixir-lang/expert" target="_blank" rel="noopener noreferrer">Expert on Github</a>
+                  </p>
+                  <p>
+                    I unified the Lexical and NextLS codebases and core features into a single LSP. I implemented features like
+                    Workspace Folders, support for Windows and on-the-fly builds of Elixir projects and several new code actions.
+                    I also maintain related projects at the core of Expert like
+                    <a href="https://github.com/doorgan/sourceror" target="_blank" rel="noopener noreferrer">Sourceror</a>(code manipulation)
+                    and <a href="https://github.com/elixir-tools/spitfire" target="_blank" rel="noopener noreferrer">Spitfire</a>(error
+                    tolerant elixir parser).
+                  </p>
+                </div>
+              </article>
+
+              <article class="about-entry">
+                <div class="about-entry-header">
+                  <div>
+                    <div class="about-entry-title">Felt</div>
+                    <div class="about-entry-role">Senior Software Engineer</div>
+                  </div>
+                  <div class="about-entry-meta">2022-2024</div>
+                </div>
+                <div class="about-entry-body">
+                  <p>
+                    <a href="https://felt.com" target="_blank" rel="noopener noreferrer">felt.com</a>
+                  </p>
+                  <p>
+                    I developed and maintained the backend and realtime systems for the
+                    Felt mapping application. I also developed the Felt API to allow developers
+                    to programatically interact with the maps, and built the foundations for
+                    the live connections to external data sources. During this time I also
+                    developed tooling to help the team to maintain the codebase, like
+                    <a href="https://hex.pm/packages/channel_handler" target="_blank" rel="noopener noreferrer">ChannelHandler</a>, library to
+                    help with the maintenance of complex channel modules, and <a href="https://github.com/felt/channel_spec"
+                      target="_blank" rel="noopener noreferrer">ChannelSpec</a>,
+                    a library to specify JSON Schemas for Phoenix Channels, and test utilities
+                    to ensure the correctness of the system.
+                  </p>
+                </div>
+              </article>
+
+              <article class="about-entry">
+                <div class="about-entry-header">
+                  <div>
+                    <div class="about-entry-title">Packlane</div>
+                    <div class="about-entry-role">Senior Software Engineer</div>
+                  </div>
+                  <div class="about-entry-meta">2021-2022</div>
+                </div>
+                <div class="about-entry-body">
+                  <p>
+                    <a href="https://packlane.com" target="_blank" rel="noopener noreferrer">packlane.com</a>
+                  </p>
+                  <p>
+                    I maintained and improved a legacy Elixir and JavaScript/React
+                    codebase for the coordination of manufacturing and logistics of
+                    custom packaging solutions. I participated in all stages of
+                    product and feature development, from idea, to design, to
+                    implementation and deployment. I also regularly engaged in several
+                    investigations about complex domain problems and urgent/critical
+                    bug fixing. My work also involved the constant evaluation of
+                    access patterns to optimize our usage of the PostgreSQL database.
+                  </p>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="ep-panel">
+            <div class="ep-panel-header">
+              <span class="ep-label">OSS</span>
+              <h2 class="text-xl font-bold uppercase tracking-wider">Open Source work</h2>
+            </div>
+            <div class="about-entry-list">
+              <article class="about-entry">
+                <div class="about-entry-header">
+                  <div>
+                    <div class="about-entry-title">Sourceror</div>
+                  </div>
+                </div>
+                <div class="about-entry-body">
+                  <p>
+                    <a href="https://github.com/doorgan/sourceror" target="_blank" rel="noopener noreferrer">github.com/doorgan/sourceror</a>
+                  </p>
+                  <p>
+                    Sourceror is a toolkit to work with the Elixir source code. It's
+                    the first library in the Elixir ecosystem that empowers
+                    Elixirists and tool authors to build refactoring tools and
+                    migration scripts, similar to what jscodeshift has to offer
+                    for the JavaScript world. It provides an annotated Abstract
+                    Syntax Tree for the Elixir language, and a fork of the Elixir
+                    parser to backport features I contributed to Elixir 1.13 to
+                    older Elixir versions.
+                  </p>
+                </div>
+              </article>
+
+              <article class="about-entry">
+                <div class="about-entry-header">
+                  <div>
+                    <div class="about-entry-title">Elixir Core</div>
+                  </div>
+                </div>
+                <div class="about-entry-body">
+                  <p>
+                    I contributed a series of pull requests to core Elixir to enable programmatic manipulation
+                    of the source code. Through PRs
+                    <a href="https://github.com/elixir-lang/elixir/pull/10990" target="_blank" rel="noopener noreferrer">#10990</a> and <a
+                      href="https://github.com/elixir-lang/elixir/pull/10988" target="_blank" rel="noopener noreferrer">#10988</a>
+                    I helped solve the lack of the primitives required to build refactoring tools, an issue that was affecting
+                    the whole community since the early days of the language, in an incremental an backwards compatible way.
+                  </p>
+                </div>
+              </article>
+
+              <article class="about-entry">
+                <div class="about-entry-header">
+                  <div>
+                    <div class="about-entry-title">Embers</div>
+                  </div>
+                </div>
+                <div class="about-entry-body">
+                  <p>
+                    <a href="https://github.com/EmbersPlatform/embers" target="_blank" rel="noopener noreferrer">github.com/EmbersPlatform/embers</a>
+                  </p>
+                  <p>
+                    Embers was an exploratory project to build a social network
+                    platform built from the ground up with Elixir and the Phoenix
+                    Framework, where users could share a variety of multimedia content
+                    with their followers. Some of its features included a personal feed
+                    updated in real time, a private messaging system, real-time
+                    notifications, and asymmetric tracking of online presences.
+                  </p>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+</Layout>

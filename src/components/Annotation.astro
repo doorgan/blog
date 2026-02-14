@@ -1,0 +1,11 @@
+---
+export interface Props {
+  note: string;
+}
+
+const { note } = Astro.props;
+---
+
+<span class="annotation-mark" data-note={note}>
+  <slot />
+</span>
