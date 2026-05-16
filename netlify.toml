@@ -21,6 +21,11 @@
   status = 301
 
 [[headers]]
+  for = "/giscus-theme*.css"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://giscus.app"
+
+[[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
