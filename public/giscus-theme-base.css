@@ -1,0 +1,252 @@
+/* EP-133 sampler theme shared by the light and dark Giscus stylesheets. */
+
+.giscus * {
+  font-family:
+    "Iosevka",
+    ui-monospace,
+    SF Mono,
+    Menlo,
+    monospace !important;
+}
+
+.giscus,
+.giscus-frame {
+  background: transparent !important;
+  color: var(--gsc-foreground) !important;
+}
+
+.gsc-header {
+  display: none !important;
+}
+
+.gsc-reactions,
+.gsc-comment,
+.gsc-reply-box,
+.gsc-comment-box,
+.gsc-comment-box-tabs {
+  background: transparent !important;
+  border-color: var(--gsc-border) !important;
+}
+
+.gsc-reactions {
+  padding: 16px 24px !important;
+  border: none !important;
+  border-bottom: 1px solid var(--gsc-border) !important;
+}
+
+.gsc-reactions-count h4,
+.gsc-comment-author .link-primary,
+.gsc-comment-content,
+.gsc-reply-box button {
+  color: var(--gsc-foreground) !important;
+}
+
+.gsc-reactions-count h4 {
+  font-size: 14px !important;
+}
+
+.gsc-reactions-menu,
+.gsc-direct-reaction-buttons {
+  display: flex !important;
+  gap: 4px !important;
+}
+
+.gsc-social-reaction-summary-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 2px 8px !important;
+  border: 1px solid var(--gsc-border) !important;
+  border-radius: 2px !important;
+  background: var(--gsc-muted) !important;
+  color: var(--gsc-foreground) !important;
+  font-size: 12px !important;
+}
+
+.gsc-comment {
+  border: none !important;
+  border-bottom: 1px solid var(--gsc-border) !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.gsc-comment:last-child {
+  border-bottom: none !important;
+}
+
+.gsc-comment .color-bg-primary,
+.gsc-comment .rounded-md,
+.gsc-comment .border {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.gsc-comment-header {
+  padding: 16px 24px 8px 24px !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.gsc-comment-author-avatar img {
+  border-radius: 2px !important;
+  border: 1px solid var(--gsc-border) !important;
+}
+
+.gsc-comment-author .link-primary {
+  font-weight: bold !important;
+}
+
+.gsc-comment-author .link-secondary,
+.gsc-comment-replies-count {
+  color: var(--gsc-muted-foreground) !important;
+}
+
+.gsc-comment-content {
+  padding: 8px 24px !important;
+  background: transparent !important;
+}
+
+.gsc-comment-footer {
+  padding: 8px 24px !important;
+  background: transparent !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.gsc-comment-replies-count {
+  font-size: 12px !important;
+}
+
+.gsc-reply-box {
+  border: none !important;
+  border-bottom: 1px solid var(--gsc-border) !important;
+  padding: 8px 24px 16px 24px !important;
+}
+
+.gsc-reply-box button {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+.gsc-comment-box {
+  border: none !important;
+  border-top: 1px solid var(--gsc-border) !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.gsc-comment-box-tabs {
+  padding: 16px 24px 8px 24px !important;
+  border: none !important;
+  border-bottom: 1px solid var(--gsc-border) !important;
+}
+
+.gsc-comment-box-tabs button {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  color: var(--gsc-muted-foreground) !important;
+  padding: 8px 12px !important;
+}
+
+.gsc-comment-box-tabs button:first-child {
+  color: var(--gsc-accent) !important;
+  border-bottom-color: var(--gsc-accent) !important;
+}
+
+.gsc-comment-box-md-toolbar {
+  display: none !important;
+}
+
+.gsc-comment-box-main {
+  padding: 0 24px !important;
+  background: transparent !important;
+}
+
+.gsc-comment-box-textarea {
+  background: var(--gsc-input) !important;
+  border: 1px solid var(--gsc-border) !important;
+  border-radius: 2px !important;
+  color: var(--gsc-foreground) !important;
+  padding: 12px !important;
+}
+
+.gsc-comment-box-bottom {
+  padding: 8px 24px 16px 24px !important;
+  background: transparent !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.gsc-comment-box-bottom .btn {
+  border-radius: 2px !important;
+  border: 1px solid var(--gsc-border) !important;
+  background: var(--gsc-muted) !important;
+  color: var(--gsc-foreground) !important;
+  padding: 6px 12px !important;
+}
+
+.gsc-comment-box-bottom .btn:hover {
+  background: var(--gsc-accent) !important;
+  border-color: var(--gsc-accent) !important;
+  color: var(--gsc-accent-foreground) !important;
+}
+
+.gsc-comment-box-bottom button[type="button"]:not(.btn-primary),
+a {
+  color: var(--gsc-accent) !important;
+}
+
+.gsc-comment-box-bottom button[type="button"]:not(.btn-primary) {
+  background: transparent !important;
+  border: none !important;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+a:hover {
+  text-decoration: underline !important;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  color: var(--gsc-accent) !important;
+}
+
+.markdown-body code {
+  background: var(--gsc-muted) !important;
+  border: 1px solid var(--gsc-border) !important;
+  border-radius: 2px !important;
+  padding: 1px 4px !important;
+  color: var(--gsc-accent) !important;
+}
+
+.markdown-body pre {
+  background: var(--gsc-code-bg) !important;
+  border: 1px solid var(--gsc-border) !important;
+  border-radius: 2px !important;
+  padding: 12px !important;
+}
+
+.markdown-body pre code {
+  background: transparent !important;
+  border: none !important;
+  color: var(--gsc-foreground) !important;
+}
+
+.markdown-body blockquote {
+  border-left: 3px solid var(--gsc-accent) !important;
+  background: var(--gsc-muted) !important;
+  padding: 8px 12px !important;
+  color: var(--gsc-muted-foreground) !important;
+}

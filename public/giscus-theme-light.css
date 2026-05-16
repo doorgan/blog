@@ -1,0 +1,12 @@
+@import url("./giscus-theme-base.css");
+
+:root {
+  --gsc-foreground: hsl(220, 20%, 15%);
+  --gsc-muted-foreground: hsl(0, 0%, 20%);
+  --gsc-border: hsl(220, 15%, 65%);
+  --gsc-muted: hsl(220, 15%, 85%);
+  --gsc-input: hsl(40, 10%, 94%);
+  --gsc-code-bg: hsl(40, 10%, 90%);
+  --gsc-accent: hsl(265, 60%, 45%);
+  --gsc-accent-foreground: hsl(40, 10%, 96%);
+}

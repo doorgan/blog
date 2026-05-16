@@ -1,0 +1,666 @@
+---
+import Navigation from "./Navigation.astro";
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  titleSize?: "lg" | "md";
+  className?: string;
+}
+
+const { title, subtitle, titleSize = "lg", className = "" } = Astro.props;
+const titleClass = titleSize === "md" ? "text-2xl md:text-3xl" : "text-3xl";
+const stripClass =
+  `w-full bg-black border-b-4 border-[hsl(var(--border))] lcd-strip ${className}`.trim();
+---
+
+<div class={stripClass}>
+  <div class="ep-row">
+    <!-- Left column: intentionally empty -->
+    <div class="ep-left"></div>
+
+    <!-- Center column: LCD grid + content -->
+    <div class="relative min-h-[120px] min-w-0">
+      <canvas
+        class="absolute inset-0 w-full h-full pointer-events-auto z-0"
+        data-lcd-canvas></canvas>
+
+      <div
+        class="relative z-10 px-4 py-4 pointer-events-none [&>*]:[text-shadow:_-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000]"
+      >
+        <Navigation />
+        <slot name="kicker" />
+        <h1
+          class={`${titleClass} max-w-full break-words font-bold tracking-wider sm:tracking-widest text-[hsl(var(--primary))] uppercase pointer-events-auto w-fit`}
+        >
+          {title}
+        </h1>
+        {
+          subtitle && (
+            <p class="text-sm text-[#e6e6e6] mt-2 font-mono uppercase tracking-wider pointer-events-auto w-fit">
+              {subtitle}
+            </p>
+          )
+        }
+        <div class="pointer-events-auto w-fit max-w-full">
+          <slot />
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: intentionally empty -->
+    <div class="ep-right"></div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const COLOR_PALETTE = [
+      "#bc487d",
+      "#f05423",
+      "#e52816",
+      "#5394b5",
+      "#ffffff",
+    ];
+
+    const GREY_COLOR = "#404040";
+    function hexToRgba(hex, alpha) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    const GRID_SIZE = 20;
+    const MAX_ACTIVE_PERCENT = 0.5;
+    const COLORED_PERCENT = 0.2;
+    const ANIMATION_DURATION = 500;
+    const MIN_HOLD_TIME = 1000;
+    const MAX_HOLD_TIME = 5000;
+    const MIN_ACTIVATION_INTERVAL = 1000; // Minimum time between activations (ms)
+    const MAX_ACTIVATION_INTERVAL = 3000; // Maximum time between activations (ms)
+    const COLOR_SHUFFLE_INTERVAL = 10000; // 10 seconds between color shuffles
+    const COLOR_TRANSITION_DURATION = 1000; // 1 second fade out/in
+    const HOVER_GLOW_INTENSITY = 0.7; // 0.0 to 1.0 - controls max opacity of cursor glow effect
+    const WAVE_INTENSITY = 0.7; // 0.0 to 1.0 - controls max opacity of click wave effect
+    const WAVE_SPEED = 400; // pixels per second - speed of wave expansion
+    class LCDCell {
+      constructor(row, col, color, isColored) {
+        this.row = row;
+        this.col = col;
+        this.baseColor = color;
+        this.isColored = isColored;
+        this.nextColor = null;
+        this.transitionState = "none";
+        this.transitionProgress = 0;
+        this.state = "inactive";
+        this.opacity = 0;
+        this.targetOpacity = 0;
+        this.animationStart = 0;
+        this.holdEnd = 0;
+        this.isHovered = false;
+        this.hoverOpacity = 0;
+      }
+
+      getColor() {
+        if (this.transitionState === "fading-in" && this.nextColor) {
+          return this.nextColor;
+        }
+        return this.baseColor;
+      }
+
+      setHoverOpacity(opacity) {
+        this.hoverOpacity = Math.max(0, Math.min(1, opacity));
+      }
+
+      startColorTransition(newColor) {
+        this.nextColor = newColor;
+        this.transitionState = "fading-out";
+        this.transitionProgress = 0;
+      }
+
+      updateTransition(dt) {
+        if (this.transitionState === "none") return;
+        const speed = 2000 / COLOR_TRANSITION_DURATION;
+        this.transitionProgress += speed * dt;
+        if (
+          this.transitionState === "fading-out" &&
+          this.transitionProgress >= 0.5
+        ) {
+          this.baseColor = this.nextColor;
+          this.transitionState = "fading-in";
+        } else if (
+          this.transitionState === "fading-in" &&
+          this.transitionProgress >= 1.0
+        ) {
+          this.transitionState = "none";
+          this.transitionProgress = 0;
+          this.nextColor = null;
+        }
+      }
+
+      getTransitionOpacity() {
+        if (this.transitionState === "none") return 1;
+        if (this.transitionState === "fading-out") {
+          return 1 - this.transitionProgress * 2;
+        }
+        return (this.transitionProgress - 0.5) * 2;
+      }
+
+      activate() {
+        if (this.state !== "inactive") return false;
+        this.state = "fading-in";
+        this.animationStart = performance.now();
+        this.targetOpacity = 1;
+        return true;
+      }
+
+      deactivate() {
+        if (this.state === "inactive" || this.state === "fading-out") return;
+        this.state = "fading-out";
+        this.animationStart = performance.now();
+        this.targetOpacity = 0;
+      }
+
+      update(now) {
+        switch (this.state) {
+          case "fading-in":
+            const fadeInProgress =
+              (now - this.animationStart) / ANIMATION_DURATION;
+            if (fadeInProgress >= 1) {
+              this.opacity = 1;
+              this.state = "active";
+              this.holdEnd =
+                now +
+                MIN_HOLD_TIME +
+                Math.random() * (MAX_HOLD_TIME - MIN_HOLD_TIME);
+            } else {
+              this.opacity = easeOut(fadeInProgress);
+            }
+            break;
+          case "active":
+            this.opacity = 1;
+            if (now >= this.holdEnd) {
+              this.deactivate();
+            }
+            break;
+          case "fading-out":
+            const fadeOutProgress =
+              (now - this.animationStart) / ANIMATION_DURATION;
+            if (fadeOutProgress >= 1) {
+              this.opacity = 0;
+              this.state = "inactive";
+            } else {
+              this.opacity = easeIn(1 - fadeOutProgress);
+            }
+            break;
+        }
+      }
+
+      setHover(isHovered) {
+        this.isHovered = isHovered;
+      }
+    }
+
+    function easeOut(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function easeIn(t) {
+      return t * t * t;
+    }
+
+    class LCDGrid {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("2d");
+        this.animationFrame = null;
+        this.reducedMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+        this.cells = [];
+        this.coloredIndices = new Set();
+        this.hoveredCell = null;
+        this.cursorX = -1000;
+        this.cursorY = -1000;
+        this.lastTime = performance.now();
+        this.waves = []; // Active click waves
+        this.nextActivation = performance.now() + this.getRandomInterval();
+        this.nextColorShuffle = performance.now() + COLOR_SHUFFLE_INTERVAL;
+
+        this.init();
+        this.setupEvents();
+        this.render();
+
+        if (!this.reducedMotion) {
+          this.start();
+        }
+      }
+
+      getRandomInterval() {
+        return (
+          MIN_ACTIVATION_INTERVAL +
+          Math.random() * (MAX_ACTIVATION_INTERVAL - MIN_ACTIVATION_INTERVAL)
+        );
+      }
+
+      init() {
+        // Initial placeholder cells, will be recreated on resize
+        this.cols = GRID_SIZE;
+        this.rows = GRID_SIZE;
+        this.createCells(this.cols, this.rows);
+        this.activateRandomCells(Math.floor(this.cols * this.rows * 0.1));
+
+        this.resize();
+
+        // Resize again after layout settles to account for late content sizing.
+        requestAnimationFrame(() => this.resize());
+      }
+
+      createCells(cols, rows) {
+        this.cells = [];
+        const totalCells = cols * rows;
+        const numColored = Math.floor(totalCells * COLORED_PERCENT);
+
+        const allIndices = Array.from({ length: totalCells }, (_, i) => i);
+        this.shuffle(allIndices);
+        this.coloredIndices = new Set(allIndices.slice(0, numColored));
+
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const index = row * cols + col;
+            const isColored = this.coloredIndices.has(index);
+            const color = isColored
+              ? COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)]
+              : GREY_COLOR;
+            this.cells.push(new LCDCell(row, col, color, isColored));
+          }
+        }
+      }
+
+      shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      resize() {
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+
+        this.canvas.width = rect.width * dpr;
+        this.canvas.height = rect.height * dpr;
+        this.ctx.scale(dpr, dpr);
+
+        this.width = rect.width;
+        this.height = rect.height;
+
+        // Fixed cell size of 20px for square cells
+        this.cellSize = 20;
+
+        // Calculate how many columns and rows fit
+        const newCols = Math.floor(this.width / this.cellSize);
+        const newRows = Math.floor(this.height / this.cellSize);
+
+        // If dimensions changed significantly, recreate cells
+        if (
+          Math.abs(newCols - this.cols) > 0 ||
+          Math.abs(newRows - this.rows) > 0 ||
+          this.cells.length === 0
+        ) {
+          this.cols = Math.max(newCols, 1);
+          this.rows = Math.max(newRows, 1);
+          this.createCells(this.cols, this.rows);
+        }
+
+        // Center the grid within the available space
+        this.offsetX = (this.width - this.cols * this.cellSize) / 2;
+        this.offsetY = (this.height - this.rows * this.cellSize) / 2;
+      }
+
+      getCellFromPoint(x, y) {
+        const adjustedX = x - this.offsetX;
+        const adjustedY = y - this.offsetY;
+
+        const col = Math.floor(adjustedX / this.cellSize);
+        const row = Math.floor(adjustedY / this.cellSize);
+
+        if (col >= 0 && col < this.cols && row >= 0 && row < this.rows) {
+          return this.cells[row * this.cols + col];
+        }
+        return null;
+      }
+
+      setupEvents() {
+        // Get the parent container to capture mouse events even when hovering over overlay elements
+        const container = this.canvas.parentElement;
+
+        container.addEventListener("mousemove", (e) => {
+          const rect = this.canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          this.handleHover(x, y);
+        });
+
+        container.addEventListener("mouseleave", () => {
+          if (this.hoveredCell) {
+            this.hoveredCell.setHover(false);
+            this.hoveredCell = null;
+          }
+          // Move cursor far away so glow fades out
+          this.cursorX = -1000;
+          this.cursorY = -1000;
+        });
+
+        container.addEventListener(
+          "touchstart",
+          (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            for (let touch of e.touches) {
+              const x = touch.clientX - rect.left;
+              const y = touch.clientY - rect.top;
+              const cell = this.getCellFromPoint(x, y);
+              if (cell) {
+                cell.setHover(true);
+              }
+            }
+          },
+          { passive: true },
+        );
+
+        container.addEventListener("touchend", () => {
+          setTimeout(() => {
+            this.cells.forEach((cell) => cell.setHover(false));
+          }, 500);
+        });
+
+        container.addEventListener(
+          "touchmove",
+          (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            this.cells.forEach((cell) => cell.setHover(false));
+
+            for (let touch of e.touches) {
+              const x = touch.clientX - rect.left;
+              const y = touch.clientY - rect.top;
+              const cell = this.getCellFromPoint(x, y);
+              if (cell) {
+                cell.setHover(true);
+              }
+            }
+          },
+          { passive: true },
+        );
+
+        window.addEventListener("resize", () => {
+          this.resize();
+        });
+
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            this.stop();
+          } else if (!this.reducedMotion) {
+            this.lastTime = performance.now();
+            this.start();
+          }
+        });
+
+        // Click to create wave
+        container.addEventListener("click", (e) => {
+          const rect = this.canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          this.createWave(x, y);
+        });
+      }
+
+      createWave(x, y) {
+        this.waves.push({
+          x: x,
+          y: y,
+          radius: 0,
+          maxRadius: Math.max(this.width, this.height) * 0.8,
+          speed: WAVE_SPEED,
+          width: 100, // width of the wave band (5 cells)
+          intensity: WAVE_INTENSITY,
+        });
+      }
+
+      updateWaves(dt) {
+        // Update each wave's radius
+        for (let i = this.waves.length - 1; i >= 0; i--) {
+          const wave = this.waves[i];
+          wave.radius += wave.speed * dt;
+
+          // Remove wave if it's expanded beyond max radius
+          if (wave.radius > wave.maxRadius + wave.width) {
+            this.waves.splice(i, 1);
+          }
+        }
+      }
+
+      getWaveOpacity(cell) {
+        const cellCenterX =
+          this.offsetX + cell.col * this.cellSize + this.cellSize / 2;
+        const cellCenterY =
+          this.offsetY + cell.row * this.cellSize + this.cellSize / 2;
+
+        let totalOpacity = 0;
+
+        for (let wave of this.waves) {
+          const dx = cellCenterX - wave.x;
+          const dy = cellCenterY - wave.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          // Check if cell is within the wave band
+          const distFromWaveFront = Math.abs(distance - wave.radius);
+
+          if (distFromWaveFront < wave.width / 2) {
+            // Calculate opacity based on distance from wave front center
+            // Full intensity at the wave front (center), fading towards edges
+            const normalizedDist = distFromWaveFront / (wave.width / 2);
+            const opacity = wave.intensity * (1 - normalizedDist);
+            totalOpacity = Math.max(totalOpacity, opacity);
+          }
+        }
+
+        return totalOpacity;
+      }
+
+      handleHover(x, y) {
+        this.cursorX = x;
+        this.cursorY = y;
+
+        const cell = this.getCellFromPoint(x, y);
+
+        if (this.hoveredCell && this.hoveredCell !== cell) {
+          this.hoveredCell.setHover(false);
+        }
+
+        if (cell) {
+          if (cell !== this.hoveredCell) {
+            cell.setHover(true);
+            this.hoveredCell = cell;
+          }
+        } else if (this.hoveredCell) {
+          this.hoveredCell.setHover(false);
+          this.hoveredCell = null;
+        }
+      }
+
+      updateGlow() {
+        const maxDistance = 5 * this.cellSize; // 5 cells radius in pixels
+
+        for (let cell of this.cells) {
+          // Calculate cell center position
+          const cellCenterX =
+            this.offsetX + cell.col * this.cellSize + this.cellSize / 2;
+          const cellCenterY =
+            this.offsetY + cell.row * this.cellSize + this.cellSize / 2;
+
+          // Calculate distance from cursor to cell center
+          const dx = cellCenterX - this.cursorX;
+          const dy = cellCenterY - this.cursorY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          let hoverOpacity = 0;
+          if (distance <= maxDistance) {
+            // Base opacity from distance (100% at cursor, 0% at maxDistance)
+            const distanceOpacity = 1 - distance / maxDistance;
+            // Apply configurable intensity
+            hoverOpacity = distanceOpacity * HOVER_GLOW_INTENSITY;
+          }
+
+          cell.setHoverOpacity(hoverOpacity);
+        }
+      }
+
+      activateRandomCells(count) {
+        const inactiveCells = this.cells.filter((c) => c.state === "inactive");
+        this.shuffle(inactiveCells);
+
+        let activated = 0;
+        for (let cell of inactiveCells) {
+          if (activated >= count) break;
+          const activeCount = this.cells.filter(
+            (c) => c.state !== "inactive",
+          ).length;
+          if (activeCount / this.cells.length >= MAX_ACTIVE_PERCENT) break;
+
+          if (cell.activate()) {
+            activated++;
+          }
+        }
+      }
+
+      shuffleColors() {
+        // Generate new random selection of colored cells
+        const totalCells = this.cells.length;
+        const numColored = Math.floor(totalCells * COLORED_PERCENT);
+
+        const allIndices = Array.from({ length: totalCells }, (_, i) => i);
+        this.shuffle(allIndices);
+        const newColoredIndices = new Set(allIndices.slice(0, numColored));
+
+        // Transition each cell based on its new state
+        for (let i = 0; i < this.cells.length; i++) {
+          const cell = this.cells[i];
+          const shouldBeColored = newColoredIndices.has(i);
+
+          if (shouldBeColored && cell.isColored) {
+            // Staying colored: transition to new random color
+            const newColor =
+              COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)];
+            cell.startColorTransition(newColor);
+          } else if (shouldBeColored && !cell.isColored) {
+            // Becoming colored: transition from grey to random color
+            cell.isColored = true;
+            const newColor =
+              COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)];
+            cell.startColorTransition(newColor);
+          } else if (!shouldBeColored && cell.isColored) {
+            // Becoming grey: transition to grey
+            cell.isColored = false;
+            cell.startColorTransition(GREY_COLOR);
+          }
+          // If already grey and staying grey: no transition needed
+        }
+      }
+
+      start() {
+        if (this.animationFrame !== null) return;
+        this.animationFrame = requestAnimationFrame(() => this.animate());
+      }
+
+      stop() {
+        if (this.animationFrame === null) return;
+        cancelAnimationFrame(this.animationFrame);
+        this.animationFrame = null;
+      }
+
+      animate() {
+        this.animationFrame = null;
+
+        if (document.hidden || this.reducedMotion) return;
+
+        const now = performance.now();
+        const dt = (now - this.lastTime) / 1000; // Convert to seconds
+        this.lastTime = now;
+
+        if (now > this.nextActivation) {
+          this.activateRandomCells(1);
+          this.nextActivation = now + this.getRandomInterval();
+        }
+
+        this.updateGlow(dt);
+        this.updateWaves(dt);
+        // Check if it's time to shuffle colors
+        if (now > this.nextColorShuffle) {
+          this.shuffleColors();
+          this.nextColorShuffle = now + COLOR_SHUFFLE_INTERVAL;
+        }
+
+        // Update color transitions
+        this.cells.forEach((cell) => cell.updateTransition(dt));
+        this.cells.forEach((cell) => cell.update(now));
+        this.render();
+
+        this.animationFrame = requestAnimationFrame(() => this.animate());
+      }
+
+      render() {
+        this.ctx.fillStyle = "hsl(0, 0%, 0%)";
+        this.ctx.fillRect(0, 0, this.width, this.height);
+
+        for (let cell of this.cells) {
+          const x = this.offsetX + cell.col * this.cellSize;
+          const y = this.offsetY + cell.row * this.cellSize;
+          const color = cell.getColor();
+
+          // Combine all opacity sources: base animation, cursor hover, click waves
+          const baseOpacity = cell.state !== "inactive" ? cell.opacity : 0;
+          const waveOpacity = this.getWaveOpacity(cell);
+          const transitionOpacity = cell.getTransitionOpacity();
+          const combinedOpacity = Math.max(
+            baseOpacity,
+            cell.hoverOpacity,
+            waveOpacity,
+          );
+          const finalOpacity = combinedOpacity * transitionOpacity;
+
+          if (finalOpacity > 0.01) {
+            // Show cell with its assigned color (colored or grey) at calculated opacity
+            this.ctx.fillStyle = hexToRgba(color, finalOpacity);
+            this.ctx.fillRect(
+              x + 1,
+              y + 1,
+              this.cellSize - 2,
+              this.cellSize - 2,
+            );
+          }
+        }
+      }
+    }
+
+    function init() {
+      const canvases = document.querySelectorAll("[data-lcd-canvas]");
+      canvases.forEach((canvas) => {
+        new LCDGrid(canvas);
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>
+
+<style>
+  [data-lcd-canvas] {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+</style>

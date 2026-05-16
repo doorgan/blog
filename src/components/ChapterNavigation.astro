@@ -1,0 +1,101 @@
+---
+interface Chapter {
+  slug: string;
+  title: string;
+  chapter: number;
+  url: string;
+}
+
+const {
+  series = '',
+  currentChapter = 1,
+  chapters = [],
+} = Astro.props as {
+  series: string;
+  currentChapter: number;
+  chapters: Chapter[];
+};
+
+if (!Array.isArray(chapters) || chapters.length <= 1) {
+  return null;
+}
+
+const listItems = chapters.map((chapter) => ({
+  id: chapter.chapter,
+  number: chapter.chapter.toString().padStart(2, '0'),
+  title: chapter.title,
+  url: chapter.url,
+}));
+
+const rowHeight = 40;
+const currentIndex = listItems.findIndex((item) => item.id === currentChapter);
+const arrowTop = currentIndex >= 0 ? currentIndex * rowHeight + 10 : null;
+
+const headerSubtitle = `CH ${currentChapter.toString().padStart(2, '0')} / ${chapters.length
+  .toString()
+  .padStart(2, '0')}`;
+---
+
+<div class="relative mb-8">
+  <!-- Stacked paper shadows - right side only -->
+  <div class="absolute border border-[hsl(var(--border))] border-l-[30px] border-l-[hsl(var(--border))] top-[12px] right-[-12px] w-full h-full bg-[hsl(var(--card))]" style="z-index: -2;"></div>
+  <div class="absolute border border-[hsl(var(--border))] border-l-[30px] border-l-[hsl(var(--border))] top-[8px] right-[-8px] w-full h-full bg-[hsl(var(--secondary))]" style="z-index: -1;"></div>
+  <div class="absolute border border-[hsl(var(--border))] border-l-[30px] border-l-[hsl(var(--border))] top-[4px] right-[-4px] w-full h-full bg-[hsl(var(--muted))]" style="z-index: 0;"></div>
+
+  <!-- Main container with thick left border -->
+  <div class="relative border border-[hsl(var(--border))] bg-[hsl(var(--card))]" style="z-index: 1; border-left: 30px solid hsl(var(--primary));">
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b border-[hsl(var(--border))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] h-[42px]">
+      <div class="flex items-center gap-1 px-3 h-full">
+        <span class="text-sm font-bold uppercase tracking-wider font-mono">{series}</span>
+      </div>
+      <div class="flex items-center h-full">
+        <span class="text-sm font-mono opacity-75 pr-3">{headerSubtitle}</span>
+      </div>
+    </div>
+
+    <div class="relative">
+      {arrowTop !== null && (
+        <div
+          class="absolute z-10 pointer-events-none transition-all duration-150 flex items-center justify-center"
+          style={`left: -30px; top: ${arrowTop}px; width: 30px; height: 20px;`}
+        >
+          <svg width="20" height="18" viewBox="0 0 18 18">
+            <polygon
+              points="1,2 7,2 16,9 7,16 1,16"
+              fill="#f2f2f2"
+              stroke="hsl(var(--muted-foreground))"
+              stroke-width="1"
+              stroke-linejoin="miter"
+            />
+          </svg>
+        </div>
+      )}
+      <div class="flex flex-col">
+        {listItems.map((item) => {
+          const isActive = item.id === currentChapter;
+          return (
+            <a
+              href={item.url}
+              class={`grid min-w-0 items-center border-b border-[hsl(var(--border))] last:border-b-0 uppercase tracking-wide font-mono text-sm min-h-[40px] leading-none grid-cols-[28px_40px_minmax(0,1fr)] ${
+                isActive
+                  ? 'text-[hsl(var(--foreground))] bg-[hsl(var(--muted))]'
+                  : 'text-[hsl(var(--muted-foreground))] bg-[hsl(var(--card))] hover:bg-[hsl(var(--muted))]'
+              }`}
+            >
+              <div class="flex items-center justify-center h-full">
+                <span class="text-sm text-[hsl(var(--primary))]">{isActive ? '●' : '○'}</span>
+              </div>
+              <div class="flex items-center justify-center h-full border-r border-[hsl(var(--border))]">
+                <span class="text-sm font-mono">{item.number}</span>
+              </div>
+              <div class="flex min-w-0 items-center h-full py-2 pl-3">
+                <span class={`min-w-0 truncate pr-2 ${isActive ? 'font-bold' : ''}`}>{item.title}</span>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+</div>

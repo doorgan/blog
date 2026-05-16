@@ -1,0 +1,62 @@
+---
+import { getCollection, render } from "astro:content";
+import PostLayout from "../../layouts/PostLayout.astro";
+import {
+  getPostEditPath,
+  getPostRouteParam,
+  getPostUrl,
+} from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts", ({ data }) => {
+    return import.meta.env.PROD ? !data.draft : true;
+  });
+
+  return posts.map((post) => ({
+    params: { slug: getPostRouteParam(post) },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+
+// Get all chapters in the same series if this post is part of a series
+let seriesChapters: {
+  slug: string;
+  title: string;
+  chapter: number;
+  url: string;
+}[] = [];
+if (post.data.series) {
+  const allPosts = await getCollection("posts", ({ data }) => {
+    return import.meta.env.PROD ? !data.draft : true;
+  });
+
+  seriesChapters = allPosts
+    .filter((p) => p.data.series === post.data.series)
+    .sort((a, b) => (a.data.chapter || 0) - (b.data.chapter || 0))
+    .map((p) => ({
+      slug: p.id,
+      title: p.data.title,
+      chapter: p.data.chapter || 0,
+      url: getPostUrl(p),
+    }));
+}
+---
+
+<PostLayout
+  title={post.data.title}
+  date={post.data.date}
+  tags={post.data.tags}
+  headings={headings}
+  slug={post.id}
+  image={post.data.image}
+  series={post.data.series}
+  seriesSlug={post.data.seriesSlug}
+  chapter={post.data.chapter}
+  seriesChapters={seriesChapters}
+  editPath={getPostEditPath(post)}
+>
+  <Content />
+</PostLayout>
