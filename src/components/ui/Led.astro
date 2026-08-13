@@ -1,0 +1,9 @@
+---
+interface Props {
+  on?: boolean;
+}
+
+const { on = false } = Astro.props;
+---
+
+<span class:list={["led", { "led--on": on }]} aria-hidden="true"></span>
