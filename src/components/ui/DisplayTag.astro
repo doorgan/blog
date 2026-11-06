@@ -1,0 +1,40 @@
+---
+import { tagColor } from "../../lib/lcd";
+
+interface Props {
+  text: string;
+  href?: string;
+}
+
+const { text, href } = Astro.props;
+const Element = href ? "a" : "span";
+---
+
+<Element class="tag" href={href} style={`--tag: ${tagColor(text)}`}
+  >{text}</Element
+>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    padding-inline: 0.5rem;
+    color: #14141a;
+    background: #f1f2f2;
+    box-shadow: 3px 3px 0 var(--tag);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  a.tag:hover {
+    color: #fff;
+    background: var(--tag);
+    box-shadow: 3px 3px 0 #f1f2f2;
+  }
+</style>

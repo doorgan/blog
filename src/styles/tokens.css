@@ -1,0 +1,49 @@
+/*
+ * Colors follow the EP sample tool's own values, with Elixir purple in the
+ * accent role. --accent is a fill; use --accent-ink for accent-colored text.
+ */
+:root {
+  --field: #abb5ba;
+  --grid: #b5bec2;
+  --face: #e5e6e6;
+  --face-sunk: #dbdddb;
+  --line: #818e95;
+  --strip: #d3d4d2;
+
+  --ink: #192a3c;
+  --ink-soft: #4d5a66;
+
+  --accent: #6e2e9e;
+  --accent-ink: #6e2e9e;
+  --on-accent: #ffffff;
+
+  --display: #000005;
+  --display-ink: #e5e6e6;
+  --display-soft: #8a959a;
+  --phosphor: #c084fc;
+  --seg-on: #d9ecff;
+  --seg-off: #141c27;
+
+  --key: #232424;
+  --key-ink: #e5e6e6;
+
+  --unit: 26px;
+  --nav-height: 2.25rem;
+  --font-body: "Iosevka", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.dark {
+  --field: #14171a;
+  --grid: #191d21;
+  --face: #1c2024;
+  --face-sunk: #262b30;
+  --line: #48535b;
+  --strip: #2b3035;
+
+  --ink: #e5e6e6;
+  --ink-soft: #a3adb3;
+
+  --accent-ink: #c084fc;
+
+  --key: #2e3338;
+}

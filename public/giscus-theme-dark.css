@@ -1,12 +1,12 @@
 @import url("./giscus-theme-base.css");
 
 :root {
-  --gsc-foreground: hsl(40, 10%, 96%);
-  --gsc-muted-foreground: hsl(40, 0%, 80%);
-  --gsc-border: hsl(220, 10%, 30%);
-  --gsc-muted: hsl(220, 10%, 24%);
-  --gsc-input: hsl(220, 10%, 28%);
-  --gsc-code-bg: hsl(220, 10%, 15%);
-  --gsc-accent: hsl(265, 50%, 70%);
-  --gsc-accent-foreground: hsl(220, 20%, 10%);
+  --gsc-foreground: #e5e6e6;
+  --gsc-muted-foreground: #a3adb3;
+  --gsc-border: #48535b;
+  --gsc-muted: #262b30;
+  --gsc-input: #1c2024;
+  --gsc-code-bg: #262b30;
+  --gsc-accent: #c084fc;
+  --gsc-accent-foreground: #000005;
 }

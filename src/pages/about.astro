@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import LcdStrip from '../components/LcdStrip.astro';
+import Panel from '../components/ui/Panel.astro';
 
 const title = "Lucas San Román";
 const description = "Senior Elixir Engineer, open sourceror and jack of all trades.";
@@ -35,18 +36,6 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
         grid-template-columns: 1fr;
       }
 
-      .about-page .ep-row {
-        grid-template-columns: 1fr;
-        gap: 0;
-      }
-
-      .about-page .ep-row > * {
-        grid-column: 1;
-      }
-
-      .about-page .ep-left {
-        display: none;
-      }
     }
 
     .about-page .about-title {
@@ -59,14 +48,14 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
     .about-page .about-role {
       font-size: 0.85rem;
       font-weight: 700;
-      color: hsl(var(--muted-foreground));
+      color: var(--ink-soft);
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
 
     .about-page .about-summary {
       margin-top: 0.9rem;
-      color: hsl(var(--muted-foreground));
+      color: var(--ink-soft);
       font-size: 0.95rem;
       line-height: 1.7;
     }
@@ -79,8 +68,8 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
     }
 
     .about-page .about-signal {
-      border: 1px solid hsl(var(--border));
-      background: hsl(var(--card));
+      border: 1px solid var(--line);
+      background: var(--face);
       padding: 0.6rem 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -90,7 +79,7 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
       display: block;
       font-size: 0.6rem;
       font-weight: 700;
-      color: hsl(var(--muted-foreground));
+      color: var(--ink-soft);
     }
 
     .about-page .about-signal-value {
@@ -98,12 +87,12 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
       margin-top: 0.3rem;
       font-size: 0.78rem;
       font-weight: 700;
-      color: hsl(var(--foreground));
+      color: var(--ink);
     }
 
     .about-page .about-avatar {
-      border: 1px solid hsl(var(--border));
-      background: hsl(var(--muted));
+      border: 1px solid var(--line);
+      background: var(--face-sunk);
       padding: 0.5rem;
     }
 
@@ -111,7 +100,7 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
       display: block;
       width: 100%;
       height: auto;
-      border: 1px solid hsl(var(--border));
+      border: 1px solid var(--line);
     }
 
     @media (max-width: 64rem) {
@@ -122,8 +111,8 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
 
     .about-page .about-contact {
       margin-top: 0.9rem;
-      border: 1px solid hsl(var(--border));
-      background: hsl(var(--card));
+      border: 1px solid var(--line);
+      background: var(--face);
     }
 
     .about-page .about-contact-row {
@@ -131,7 +120,7 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
       grid-template-columns: 35px 1fr;
       align-items: center;
       min-height: 2.25rem;
-      border-bottom: 1px solid hsl(var(--border));
+      border-bottom: 1px solid var(--line);
       text-transform: uppercase;
       letter-spacing: 0.1em;
       font-size: 0.7rem;
@@ -146,15 +135,15 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
       align-items: center;
       justify-content: center;
       height: 100%;
-      background: hsl(var(--muted));
-      border-right: 1px solid hsl(var(--border));
+      background: var(--face-sunk);
+      border-right: 1px solid var(--line);
       font-weight: 700;
-      color: hsl(var(--muted-foreground));
+      color: var(--ink-soft);
     }
 
     .about-page .about-contact-value {
       padding: 0 0.75rem;
-      color: hsl(var(--foreground));
+      color: var(--ink);
       overflow-wrap: anywhere;
     }
 
@@ -164,12 +153,12 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
     }
 
     .about-page .about-contact-value a:hover {
-      color: hsl(var(--primary));
+      color: var(--accent-ink);
     }
 
     .about-page .about-text {
       padding: 1.5rem;
-      color: hsl(var(--muted-foreground));
+      color: var(--ink-soft);
       font-size: 1rem;
       line-height: 1.7;
     }
@@ -186,8 +175,8 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
     }
 
     .about-page .about-entry {
-      border: 1px solid hsl(var(--border));
-      background: hsl(var(--card));
+      border: 1px solid var(--line);
+      background: var(--face);
     }
 
     .about-page .about-entry-header {
@@ -196,8 +185,8 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
       justify-content: space-between;
       gap: 1rem;
       padding: 0.65rem 0.85rem;
-      background: hsl(var(--muted));
-      border-bottom: 1px solid hsl(var(--border));
+      background: var(--face-sunk);
+      border-bottom: 1px solid var(--line);
     }
 
     .about-page .about-entry-title {
@@ -211,19 +200,19 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: hsl(var(--muted-foreground));
+      color: var(--ink-soft);
     }
 
     .about-page .about-entry-meta {
       font-size: 0.7rem;
-      font-family: var(--font-mono);
-      color: hsl(var(--muted-foreground));
+      font-family: var(--font-body);
+      color: var(--ink-soft);
       white-space: nowrap;
     }
 
     .about-page .about-entry-body {
       padding: 0.85rem;
-      color: hsl(var(--muted-foreground));
+      color: var(--ink-soft);
       font-size: 1rem;
       line-height: 1.6;
     }
@@ -233,20 +222,26 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
     }
 
     .about-page .about-entry-body a {
-      color: hsl(var(--primary));
+      color: var(--accent-ink);
+    }
+  
+    .about-page {
+      display: contents;
+    }
+
+    .about-page .about-stack {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--unit);
     }
   </style>
 
   <div class="about-page">
-    <LcdStrip title="ABOUT" subtitle="SYSTEM PROFILE // DORGAN" />
+    <LcdStrip title="About" subtitle="Lucas San Román" />
 
-    <div class="ep-row">
-      <main class="w-full px-4 py-12 print:py-8">
-        <section class="ep-panel mb-8">
-          <div class="ep-panel-header">
-            <span class="ep-label">PROFILE</span>
-            <h2 class="text-xl font-bold uppercase tracking-wider">Overview</h2>
-          </div>
+    <main class="rack page-body">
+      <div class="about-stack">
+        <Panel label="Overview" meta="PROFILE" flush>
           <div class="about-hero">
             <div>
               <h2 class="about-title">Lucas San Román</h2>
@@ -324,14 +319,10 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
               </address>
             </aside>
           </div>
-        </section>
+        </Panel>
 
-        <div class="flex flex-col gap-8">
-          <section class="ep-panel">
-            <div class="ep-panel-header">
-              <span class="ep-label">EXP</span>
-              <h2 class="text-xl font-bold uppercase tracking-wider">Professional experience</h2>
-            </div>
+        <div class="about-stack">
+          <Panel label="Professional experience" meta="EXP" flush>
             <div class="about-entry-list">
               <article class="about-entry">
                 <div class="about-entry-header">
@@ -408,13 +399,9 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
                 </div>
               </article>
             </div>
-          </section>
+          </Panel>
 
-          <section class="ep-panel">
-            <div class="ep-panel-header">
-              <span class="ep-label">OSS</span>
-              <h2 class="text-xl font-bold uppercase tracking-wider">Open Source work</h2>
-            </div>
+          <Panel label="Open Source work" meta="OSS" flush>
             <div class="about-entry-list">
               <article class="about-entry">
                 <div class="about-entry-header">
@@ -478,9 +465,9 @@ const description = "Senior Elixir Engineer, open sourceror and jack of all trad
                 </div>
               </article>
             </div>
-          </section>
+          </Panel>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   </div>
 </Layout>

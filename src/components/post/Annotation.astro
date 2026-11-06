@@ -1,0 +1,83 @@
+---
+interface Props {
+  note: string;
+}
+
+const { note } = Astro.props;
+---
+
+<span class="annotation">
+  <span class="annotation-mark" role="button" tabindex="0"><slot /></span>
+  <span class="annotation-note" role="note">{note}</span>
+</span>
+
+<style>
+  .annotation-mark {
+    background: color-mix(in srgb, var(--accent-ink) 12%, transparent);
+    border-bottom: 1px solid var(--accent-ink);
+    counter-increment: annotation;
+    cursor: pointer;
+  }
+
+  .annotation-mark::after {
+    margin-left: 0.2em;
+    color: var(--accent-ink);
+    content: counter(annotation, decimal-leading-zero);
+    font-size: 0.65em;
+    font-weight: 800;
+    vertical-align: super;
+    line-height: 0;
+  }
+
+  .annotation-note {
+    padding: 0.5rem 0.75rem;
+    background: var(--face);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+  }
+
+  .annotation-note::before {
+    display: block;
+    color: var(--accent-ink);
+    content: counter(annotation, decimal-leading-zero);
+    font-weight: 800;
+  }
+
+  /* Wide screens: the note hangs in the right rack column, level with its text. */
+  @media (min-width: 80.01rem) {
+    .annotation-note {
+      position: absolute;
+      left: calc(100% + var(--unit) + clamp(1.25rem, 4vw, 2.5rem));
+      width: 15rem;
+      color: var(--ink);
+    }
+  }
+
+  /* Narrow screens: the note opens as a sheet when its text is tapped. */
+  @media (max-width: 80rem) {
+    .annotation-note {
+      position: fixed;
+      inset: auto 1rem 1rem;
+      z-index: 70;
+      display: none;
+    }
+
+    .annotation.is-open .annotation-note {
+      display: block;
+    }
+  }
+
+  @media print {
+    .annotation-note {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { mountAnnotations } from "../../lib/annotations";
+
+  mountAnnotations();
+</script>

@@ -1,0 +1,24 @@
+---
+interface Props {
+  href?: string;
+  variant?: "dark" | "light" | "accent";
+  label?: string;
+  [attribute: string]: unknown;
+}
+
+const { href, variant = "dark", label, ...rest } = Astro.props;
+const Element = href ? "a" : "button";
+const className = ["key", variant !== "dark" && `key--${variant}`]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<Element
+  class={className}
+  href={href}
+  type={href ? undefined : "button"}
+  aria-label={label}
+  {...rest}
+>
+  <slot />
+</Element>

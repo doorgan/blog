@@ -1,61 +1,155 @@
-<div class="lcd-nav-bar pointer-events-auto">
-  <div class="ep-row">
-    <div class="flex min-w-0 items-center justify-between gap-2 w-full px-4">
-      <a href="/" class="flex min-w-0 items-baseline gap-2 font-mono">
-        <span class="text-base font-bold tracking-widest text-[#e6e6e6]"
-          >DORGAN</span
-        >
-      </a>
-      <div class="lcd-nav shrink-0">
-        <a href="/posts" class="lcd-tab">Posts</a>
-        <a href="/tags" class="lcd-tab">Tags</a>
-        <a href="/about" class="lcd-tab">About</a>
+---
+const path = Astro.url.pathname;
+const current = (href: string) => (path.startsWith(href) ? "page" : undefined);
+---
+
+<nav class="strip" aria-label="Site">
+  <div class="rack">
+    <div class="strip-inner">
+      <a href="/" class="brand">Dorgan</a>
+      <div class="ports">
+      <a href="/posts" class="port port--cream" aria-current={current("/posts")}
+        >Posts</a
+      >
+      <a href="/tags" class="port port--accent" aria-current={current("/tags")}
+        >Tags</a
+      >
+      <div class="port-group">
+        <a href="/about" class="port" aria-current={current("/about")}>About</a>
         <button
           id="theme-toggle"
-          class="lcd-tab lcd-tab-icon"
+          class="port switch"
+          type="button"
           aria-label="Toggle theme"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="dark:hidden"
-          >
-            <circle cx="12" cy="12" r="4"></circle>
-            <path d="M12 2v2"></path>
-            <path d="M12 20v2"></path>
-            <path d="m4.93 4.93 1.41 1.41"></path>
-            <path d="m17.66 17.66 1.41 1.41"></path>
-            <path d="M2 12h2"></path>
-            <path d="M20 12h2"></path>
-            <path d="m6.34 17.66-1.41 1.41"></path>
-            <path d="m19.07 4.93-1.41 1.41"></path>
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="hidden dark:block"
-          >
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-          </svg>
+          <span class="switch-marks" aria-hidden="true">
+            <span class="mark-on">I</span>
+            <span class="mark-off">O</span>
+          </span>
+          Theme
         </button>
+      </div>
       </div>
     </div>
   </div>
-</div>
+</nav>
+
+<style>
+  .strip {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 60;
+    height: var(--nav-height);
+    background: var(--strip);
+  }
+
+  .rack,
+  .strip-inner,
+  .ports {
+    height: 100%;
+  }
+
+  .strip-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .brand {
+    color: var(--ink);
+    font-size: 1.125rem;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .ports {
+    display: flex;
+    gap: clamp(0.375rem, 1.5vw, 1rem);
+  }
+
+  .port-group {
+    display: flex;
+    color: #e5e6e6;
+    background: #1c1d1e;
+    box-shadow: 2px 0 4px rgb(0 0 0 / 0.16);
+  }
+
+  .port {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: clamp(3.5rem, 11vw, 5.5rem);
+    padding: 0;
+    color: inherit;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  @media (max-width: 23rem) {
+    .port {
+      min-width: 3.125rem;
+    }
+  }
+
+  .port--cream,
+  .port--accent {
+    box-shadow: 2px 0 4px rgb(0 0 0 / 0.16);
+  }
+
+  .port--cream {
+    color: #2a2a2a;
+    background: #f4f3ef;
+  }
+
+  .port--accent {
+    color: var(--on-accent);
+    background: var(--accent);
+  }
+
+  .port:hover {
+    filter: brightness(1.15);
+  }
+
+  /* A printed tick marks the page you're on, like the marks on the real ports. */
+  .port[aria-current]::before {
+    position: absolute;
+    top: 0.1875rem;
+    left: 50%;
+    width: 1px;
+    height: 0.3125rem;
+    background: currentColor;
+    content: "";
+  }
+
+  .switch-marks {
+    position: absolute;
+    top: 0.125rem;
+    left: 50%;
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.5rem;
+    line-height: 1;
+    transform: translateX(-50%);
+  }
+
+  .mark-off,
+  :global(.dark) .mark-on {
+    opacity: 0.4;
+  }
+
+  :global(.dark) .mark-off {
+    opacity: 1;
+  }
+</style>
 
 <script>
   const themeToggle = document.getElementById("theme-toggle");

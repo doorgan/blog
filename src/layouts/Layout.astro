@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import Footer from "../components/Footer.astro";
+import Navigation from "../components/Navigation.astro";
 
 export interface Props {
   title?: string;
@@ -21,7 +22,7 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -96,57 +97,12 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
       href="/rss.xml"
     />
   </head>
-  <body class="min-h-screen bg-background text-foreground antialiased">
-    <div class="ep-page">
-      <slot />
-      <Footer />
-    </div>
-    <script is:inline>
-      (function () {
-        function addCopyButtons() {
-          document.querySelectorAll("pre > code").forEach((code) => {
-            const pre = code.parentElement;
-            if (!pre || pre.querySelector(".code-copy-btn")) return;
-
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "code-copy-btn";
-            button.textContent = "COPY";
-
-            button.addEventListener("click", async (event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              const text = code.textContent || "";
-              let copied = false;
-
-              try {
-                if (navigator.clipboard && window.isSecureContext) {
-                  await navigator.clipboard.writeText(text);
-                  copied = true;
-                }
-              } catch (error) {
-                copied = false;
-              }
-
-              const originalText = button.textContent;
-              button.textContent = copied ? "COPIED" : "FAILED";
-              button.disabled = true;
-              setTimeout(() => {
-                button.textContent = originalText || "COPY";
-                button.disabled = false;
-              }, 1500);
-            });
-
-            pre.appendChild(button);
-          });
-        }
-
-        if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", addCopyButtons);
-        } else {
-          addCopyButtons();
-        }
-      })();
+  <body>
+    <Navigation />
+    <slot />
+    <Footer />
+    <script>
+      import "../lib/copy-code";
     </script>
   </body>
 </html>

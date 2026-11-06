@@ -20,6 +20,8 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content, headings } = await render(post);
+const wordCount = post.body?.split(/\s+/).filter(Boolean).length ?? 0;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
 // Get all chapters in the same series if this post is part of a series
 let seriesChapters: {
@@ -50,10 +52,10 @@ if (post.data.series) {
   date={post.data.date}
   tags={post.data.tags}
   headings={headings}
-  slug={post.id}
+  readingTime={readingTime}
+  wordCount={wordCount}
   image={post.data.image}
   series={post.data.series}
-  seriesSlug={post.data.seriesSlug}
   chapter={post.data.chapter}
   seriesChapters={seriesChapters}
   editPath={getPostEditPath(post)}

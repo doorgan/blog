@@ -1,6 +1,5 @@
 ---
-// Footer component - EP-133 sampler aesthetic
-// Single row: Copyright (left) | Social + RSS (right)
+import Key from "./ui/Key.astro";
 
 interface Props {
   year?: number;
@@ -28,76 +27,80 @@ const socialLinks = [
 ];
 ---
 
-<footer class="w-full bg-black border-t-4 border-[hsl(var(--primary))]">
-  <div class="w-full">
-    <div class="ep-row py-6">
-      <div class="w-full flex items-center justify-between gap-4">
-        <!-- Left: Copyright -->
-        <p
-          class="text-sm font-mono text-[hsl(var(--lcd-text))] uppercase tracking-wider"
-        >
-          ©<span class="copyright-year">{year}</span> Lucas San Román • CC BY-SA 4.0
-        </p>
-
-        <!-- Right: Social + RSS -->
-        <div class="flex items-center gap-3">
-          {
-            socialLinks.map((social) => (
-              <a
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="group flex items-center justify-center w-10 h-10 bg-[#2a2a2a] text-[#e0e0e0] border border-[#4a4a4a] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] hover:border-[hsl(var(--primary))] transition-all"
-                style="box-shadow: 3px 3px 0 #1a1a1a; transform: translate(-2px, -2px);"
-                aria-label={social.name}
-              >
-                <span set:html={social.icon} />
-              </a>
-            ))
-          }
-
-          <!-- RSS -->
-          <a
-            href="/rss.xml"
-            class="group flex items-center justify-center w-10 h-10 bg-[#2a2a2a] text-[#e0e0e0] border border-[#4a4a4a] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] hover:border-[hsl(var(--primary))] transition-all"
-            style="box-shadow: 3px 3px 0 #1a1a1a; transform: translate(-2px, -2px);"
-            aria-label="RSS Feed"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+<footer class="footer">
+  <div class="rack">
+    <div class="footer-inner">
+      <p class="label">
+        © <span data-year>{year}</span> Lucas San Román / CC BY-SA 4.0
+      </p>
+      <div class="footer-keys">
+        {
+          socialLinks.map((social) => (
+            <Key
+              href={social.url}
+              label={social.name}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <path d="M4 11a9 9 0 0 1 9 9"></path><path
-                d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"
-              ></circle>
-            </svg>
-          </a>
-        </div>
+              <span class="icon" set:html={social.icon} />
+            </Key>
+          ))
+        }
+        <Key href="/rss.xml" label="RSS Feed">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 11a9 9 0 0 1 9 9"></path>
+            <path d="M4 4a16 16 0 0 1 16 16"></path>
+            <circle cx="5" cy="19" r="1"></circle>
+          </svg>
+        </Key>
       </div>
     </div>
   </div>
 </footer>
 
-<script is:inline>
-  // Auto-update copyright year
-  (function () {
-    const yearElements = document.querySelectorAll(".copyright-year");
-    const currentYear = new Date().getFullYear();
-    yearElements.forEach(function (el) {
-      el.textContent = currentYear;
-    });
-  })();
-</script>
-
 <style>
-  footer {
-    color: hsl(var(--foreground));
+  .footer {
+    padding-block: 1.25rem;
+    color: var(--display-ink);
+    background: var(--display);
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .footer-keys {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .footer-keys :global(.key) {
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+  }
+
+  .icon {
+    display: contents;
   }
 </style>
+
+<script>
+  document.querySelectorAll("[data-year]").forEach((element) => {
+    element.textContent = String(new Date().getFullYear());
+  });
+</script>
