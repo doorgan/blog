@@ -18,3 +18,10 @@ for style in 400-normal 400-italic 700-normal 800-normal; do
     --flavor=woff2 \
     --output-file="$OUT/iosevka-$style.woff2"
 done
+
+# Preview cards are rendered at build time by resvg, which can't read woff2.
+pyftsubset "$SOURCE/iosevka-latin-800-normal.woff2" \
+  --unicodes="$UNICODES" \
+  --layout-features='kern,mark,mkmk,ccmp,locl' \
+  --flavor= \
+  --output-file="$OUT/iosevka-800-normal.ttf"

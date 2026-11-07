@@ -36,7 +36,7 @@ const { tag, posts } = Astro.props;
     <DisplayTag href="/tags" text="All tags" />
   </LcdStrip>
 
-  <main class="rack page-body">
+  <main id="content" class="rack page-body" tabindex="-1">
     <PostList posts={posts} label="Tagged" />
   </main>
 </Layout>

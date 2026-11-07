@@ -6,27 +6,31 @@ interface Props {
 const { note } = Astro.props;
 ---
 
-<span class="annotation">
-  <span class="annotation-mark" role="button" tabindex="0"><slot /></span>
-  <span class="annotation-note" role="note">{note}</span>
-</span>
-
 <style>
   .annotation-mark {
     background: color-mix(in srgb, var(--accent-ink) 12%, transparent);
     border-bottom: 1px solid var(--accent-ink);
-    counter-increment: annotation;
     cursor: pointer;
   }
 
-  .annotation-mark::after {
+  /* The number is the real button: a button can't wrap across lines like text. */
+  .annotation-ref {
     margin-left: 0.2em;
+    padding: 0;
     color: var(--accent-ink);
-    content: counter(annotation, decimal-leading-zero);
+    background: none;
+    border: 0;
+    counter-increment: annotation;
+    cursor: pointer;
+    font: inherit;
     font-size: 0.65em;
     font-weight: 800;
-    vertical-align: super;
-    line-height: 0;
+    line-height: 1;
+    vertical-align: 0.5em;
+  }
+
+  .annotation-ref::before {
+    content: counter(annotation, decimal-leading-zero);
   }
 
   .annotation-note {
@@ -55,13 +59,16 @@ const { note } = Astro.props;
     }
   }
 
-  /* Narrow screens: the note opens as a sheet when its text is tapped. */
+  /* Narrow screens: there's no side column, so the note opens under its text. */
   @media (max-width: 80rem) {
     .annotation-note {
-      position: fixed;
-      inset: auto 1rem 1rem;
-      z-index: 70;
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 10;
       display: none;
+      color: var(--ink);
+      box-shadow: 4px 4px 0 var(--line);
     }
 
     .annotation.is-open .annotation-note {
@@ -81,3 +88,14 @@ const { note } = Astro.props;
 
   mountAnnotations();
 </script>
+
+{/* Keep this last and tight: whitespace would show up in the sentence. */}
+<span class="annotation"
+  ><span class="annotation-mark"><slot /></span>&#8288;<button
+    class="annotation-ref"
+    type="button"
+    aria-label="Toggle note"
+    aria-expanded="false"></button><span class="annotation-note" role="note"
+    >{note}</span
+  ></span
+>

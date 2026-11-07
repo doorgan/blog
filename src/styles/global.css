@@ -87,6 +87,22 @@ svg {
   background: var(--accent);
 }
 
+.skip-link {
+  position: fixed;
+  top: 0.125rem;
+  left: 0.5rem;
+  z-index: 80;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+#content:focus {
+  outline: 0;
+}
+
 /* Layout */
 
 .rack {

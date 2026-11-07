@@ -28,7 +28,7 @@ const sortedTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
     stats={["Tags"]}
   />
 
-  <main class="rack page-body">
+  <main id="content" class="rack page-body" tabindex="-1">
     <Panel label="Tags" meta={`${sortedTags.length} assigned`}>
       <div class="pads">
         {
