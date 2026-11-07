@@ -9,17 +9,6 @@ import { rehypeHeadingLinks } from "./src/lib/rehype-heading-links.js";
 import { remarkPostComponents } from "./src/lib/remark-post-components.js";
 import { koTheme } from "./src/lib/shiki-theme.js";
 
-const labRoute = {
-  name: "lab-route",
-  hooks: {
-    "astro:config:setup": ({ command, injectRoute }) => {
-      if (command === "dev") {
-        injectRoute({ pattern: "/lab", entrypoint: "./src/lab/Lab.astro" });
-      }
-    },
-  },
-};
-
 // https://astro.build/config
 export default defineConfig({
   site: "https://dorgan.ar",
@@ -27,7 +16,6 @@ export default defineConfig({
     mdx(),
     svelte(),
     sitemap(),
-    labRoute,
   ],
   markdown: {
     remarkPlugins: [remarkElixirTree, remarkPostComponents],

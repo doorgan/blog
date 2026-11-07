@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Footer from "../components/Footer.astro";
 import Navigation from "../components/Navigation.astro";
+import { SITE_DESCRIPTION } from "../lib/site";
 
 export interface Props {
   title?: string;
@@ -16,8 +17,8 @@ export interface Props {
 
 const {
   title = "Dorgan",
-  description = "Thoughts on Elixir, programming, and software engineering.",
-  image = "/assets/img/profile.jpg",
+  description = SITE_DESCRIPTION,
+  image = "/og/site.png",
   noindex = false,
   article,
 } = Astro.props;
