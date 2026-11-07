@@ -55,7 +55,7 @@ if (post.data.series) {
   headings={headings}
   readingTime={readingTime}
   wordCount={wordCount}
-  image={post.data.image}
+  image={post.data.image ?? `/og/${post.id}.png`}
   series={post.data.series}
   chapter={post.data.chapter}
   seriesChapters={seriesChapters}

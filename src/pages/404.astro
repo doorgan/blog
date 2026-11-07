@@ -8,7 +8,7 @@ import Layout from "../layouts/Layout.astro";
 <Layout title="Not all who wander are lost" noindex>
   <LcdStrip title="Page not found" readout="404" stats={["Error"]} />
 
-  <main class="rack page-body">
+  <main id="content" class="rack page-body" tabindex="-1">
     <Panel label="No sample loaded">
       <div class="prose">
         <p>The page you are looking for does not seem to exist.</p>
