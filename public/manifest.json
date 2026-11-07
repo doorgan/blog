@@ -5,8 +5,7 @@
     {
       "src": "/assets/img/favicon/favicon-32x32.png",
       "sizes": "32x32",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "/assets/img/favicon/favicon-192x192.png",

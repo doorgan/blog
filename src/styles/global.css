@@ -1,7 +1,4 @@
-@import "@fontsource/iosevka/400.css";
-@import "@fontsource/iosevka/400-italic.css";
-@import "@fontsource/iosevka/700.css";
-@import "@fontsource/iosevka/800.css";
+@import "./fonts.css";
 @import "./tokens.css";
 
 /* Base */
@@ -416,6 +413,12 @@ pre {
 .prose pre:hover .code-copy-btn,
 .code-copy-btn:focus-visible {
   opacity: 1;
+}
+
+@media (hover: none) {
+  .code-copy-btn {
+    opacity: 1;
+  }
 }
 
 .prose pre.marked-code {

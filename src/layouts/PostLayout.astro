@@ -17,6 +17,7 @@ interface Chapter {
 
 interface Props {
   title: string;
+  description?: string;
   date: Date;
   tags: string[];
   headings: { depth: number; slug: string; text: string }[];
@@ -31,6 +32,7 @@ interface Props {
 
 const {
   title,
+  description,
   date,
   tags,
   headings,
@@ -46,7 +48,12 @@ const {
 const hasChapters = series && chapter && seriesChapters.length > 1;
 ---
 
-<Layout title={((series && series + ": ") || "") + title} image={image}>
+<Layout
+  title={((series && series + ": ") || "") + title}
+  description={description}
+  image={image}
+  article={{ publishedAt: date, tags }}
+>
   <LcdStrip
     title={title}
     readout={date.toISOString().slice(2, 10).replaceAll("-", ".")}
