@@ -1,3 +1,4 @@
+import { Resvg } from "@resvg/resvg-js";
 import { parseReadout, SEGMENT_SHAPES, tagColor } from "./lcd";
 
 const WIDTH = 1200;
@@ -12,7 +13,7 @@ const MAX_TAGS = 3;
 
 interface Card {
   title: string;
-  date: Date;
+  date?: Date;
   tags: string[];
 }
 
@@ -140,8 +141,23 @@ export function cardSvg({ title, date, tags }: Card) {
     <rect width="${WIDTH}" height="${HEIGHT}" fill="#000005"/>
     <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#dots)"/>
     <text x="${MARGIN}" y="${MARGIN + 36}" font-size="34" letter-spacing="3" fill="#8a959a">DORGAN</text>
-    ${readout(date)}
+    ${date ? readout(date) : ""}
     ${titleLines}
     ${tagTiles(tags)}
   </svg>`;
+}
+
+/** Renders a card to PNG bytes. */
+export function renderCard(card: Card) {
+  const png = new Resvg(cardSvg(card), {
+    font: {
+      fontFiles: ["src/styles/fonts/iosevka-800-normal.ttf"],
+      defaultFontFamily: "Iosevka",
+      loadSystemFonts: false,
+    },
+  })
+    .render()
+    .asPng();
+
+  return new Uint8Array(png);
 }

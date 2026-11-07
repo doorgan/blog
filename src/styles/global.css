@@ -48,9 +48,6 @@ body {
     linear-gradient(var(--grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid) 1px, transparent 1px);
   background-size: var(--unit) var(--unit);
-  font-feature-settings:
-    "zero" on,
-    "tnum" on;
   -webkit-font-smoothing: antialiased;
 }
 
